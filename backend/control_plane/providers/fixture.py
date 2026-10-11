@@ -18,6 +18,7 @@ def _digest(*parts: str) -> int:
 
 class FixtureProvider:
     provenance = Provenance.FIXTURE
+    backend = "fixture"
 
     def count_tokens(self, model_id: str, prompt: str) -> TokenCount:
         # Rough 4 characters per token, which is enough for reservation tests.

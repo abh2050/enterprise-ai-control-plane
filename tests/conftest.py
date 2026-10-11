@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 from control_plane.api import create_app
 from control_plane.fixtures import seed_fixture
 from control_plane.settings import Settings
-from control_plane.store import FirestoreStore, MemoryStore, Store
+from control_plane.store import FileStore, FirestoreStore, MemoryStore, Store
 
 LOOPBACK = ("127.0.0.1", 50000)
 
@@ -17,16 +17,18 @@ def memory_store() -> MemoryStore:
 
 
 def _stores() -> list[str]:
-    names = ["memory"]
+    names = ["memory", "file"]
     if os.environ.get("FIRESTORE_EMULATOR_HOST"):
         names.append("firestore")
     return names
 
 
 @pytest.fixture(params=_stores())
-def any_store(request: pytest.FixtureRequest) -> Store:
+def any_store(request: pytest.FixtureRequest, tmp_path_factory: pytest.TempPathFactory) -> Store:
     if request.param == "memory":
         return MemoryStore()
+    if request.param == "file":
+        return FileStore(tmp_path_factory.mktemp("store"))
     import uuid
 
     # A fresh project id per test isolates emulator data.

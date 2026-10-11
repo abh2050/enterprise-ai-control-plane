@@ -1,10 +1,29 @@
-# Support Triage configurations (Section 6.2). LLM configs are added in M3.
+# Support Triage configurations (Section 6.2). All three run on identical cases.
 configs:
   classifier_v1:
     kind: classifier
     version: 1
     model: classifier_v1          # artifacts/models/classifier_v1.{pkl,json}
     policy_id: policy_classifier_v1
+
+  # Both LLM configs share one prompt and schema; only the model differs.
+  llm_low_cost_v1:
+    kind: llm
+    version: 1
+    model_setting: vertex_low_cost_model          # env VERTEX_LOW_COST_MODEL
+    policy_id: policy_llm_low_cost_v1
+    examples_per_label: 1
+    max_output_tokens: 256        # the answer is one label plus at most 300 characters
+    thinking_level: minimal       # thinking tokens bill as output
+
+  llm_high_capability_v1:
+    kind: llm
+    version: 1
+    model_setting: vertex_high_capability_model   # env VERTEX_HIGH_CAPABILITY_MODEL
+    policy_id: policy_llm_high_capability_v1
+    examples_per_label: 1
+    max_output_tokens: 256
+    thinking_level: minimal
 
 # Threshold tuning runs on the development split only, then the policy is frozen
 # before the frozen evaluation set is touched.

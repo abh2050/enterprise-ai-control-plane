@@ -1,28 +1,30 @@
-# Checkpoint: M2 Data and classifier complete
+# Checkpoint: M3 in progress, waiting on Vertex auth
 
-Plan: ~/.claude/plans/enterprise-ai-control-temporal-magpie.md. Next: M3 (Vertex provider, preflight, pricecheck, budget ledger, LLM configs, business model). M3 needs gcloud installed and a GCP project.
+Plan: ~/.claude/plans/enterprise-ai-control-temporal-magpie.md. No paid model calls made yet.
 
-## M2 delivered
-- triage/dataset.py: pinned Banking77 commit 57ec275d, SHA256 checks, header and 77-label checks, sensitive intent validation, seed-42 splits (dev 770, classifier_train 9226, frozen_eval 1540, shadow_pool 1540 in 14 days of 110)
-- Dropped 7 train rows whose text duplicates test.csv (docs/decisions.md D4)
-- triage/classifier.py: TF-IDF word and char n-grams plus logistic regression, sigmoid calibration on dev with a frozen estimator
-- triage/policy.py: full six-rule deterministic policy and dev threshold tuning
-- triage/scorecard.py: all ten Section 6.5 metrics, paired bootstrap
-- triage/evaluate.py: train, freeze (create-only policy and config), single frozen run with rerun guard
-- triage/llm.py: prompt builder with the leakage guard (model calls are M3)
-- triage/report.py and `cp experiment-report` → docs/experiment_report.md
-- data/risk_suite.jsonl (60 AUTHORED cases) and data/risk_suite.meta.json (single-rater disclosure)
-- docs/decisions.md D1 to D10
+## M3 built and tested (offline)
+- pricing.py: versioned price cards from the official Vertex pricing page (standard table, Global endpoint, <= 200K tier, date-effective prices); refuses to guess
+- providers/vertex.py: google-genai client for Vertex (global endpoint), one attempt, 30 s deadline, thinking minimal, usage incl. thinking and cached tokens; any error response releases the reservation (Vertex bills only 200s)
+- budget.py: ledger (reserve, send, settle once, unknown hold, release on error, overrun pause and incident), $10 total cap; call_with_budget
+- store.py: FileStore for durable local ledger; paid commands refuse the memory store
+- triage/llm.py: response schema, parsing, response cache (never pay twice), rate limiter
+- triage/llm_eval.py: pilot, dev tuning of agreement threshold (examples excluded), freeze, resumable frozen evaluation
+- triage/preflight.py: model access, token counting, structured output; live runs require a pass
+- triage/business_model.py and configs/business_model.yaml: net value, breakeven precision, sensitivity (all ASSUMPTION inputs, justified)
+- CLI: pricecheck, preflight, pilot, tune, evaluate (LLM), ledger
+- docs/decisions.md D11 to D17
+- Tests: 136 passed (ledger concurrency, settlement, unknown outcome, overrun, pricing, business model); ruff and mypy clean
 
-## Exit evidence (2026-10-11)
-- Classifier scorecard on the frozen set, all MEASURED: macro F1 0.913, auto precision 0.944, coverage 86.2%, p95 2 ms. Four sensitive intents are below 0.95 label recall.
-- Leakage test passes: no frozen row in any prompt; dev, train, and test splits share no text; the risk suite shares no text with Banking77
-- ruff and mypy clean, pytest 91 passed
-- A second `cp freeze` and a second `cp evaluate` both refuse (exit 1)
-- No Banking77 text in any committed file
+## Waiting on the owner
+- `gcloud auth login` and `gcloud auth application-default login` (current gcloud token has expired)
+- Confirm billing is enabled and the Vertex AI API is on for gen-lang-client-0320912223
+- Delete the AI Studio key (pasted in chat); then remove it from .env
 
-## Known gaps carried forward
-- Model binary (27 MB) is gitignored; a fresh clone must `cp train`, and the retrained hash will not match the frozen config (decisions D9; M6 publishes the binary to GCS)
-- Total cost per correctly handled case and bootstrap intervals wait for M3
-- The risk suite was drafted by Claude; the owner should review its labels
-- Experiments are written to artifacts/ files; syncing them into Firestore comes with M3/M4 API work
+## Next steps once authenticated
+1. `cp pricecheck --backend vertex`
+2. `cp preflight` (two tiny calls)
+3. `cp pilot llm_low_cost_v1 --n 50` and the same for llm_high_capability_v1 → projected cost; ask before full runs
+4. `cp tune` both configs, `cp evaluate` both, regenerate the experiment report with economics and bootstrap, write docs/business_case.md
+
+## Still to build in M3
+- Report: LLM sections, paired bootstrap vs classifier, total cost per correct case, business case doc

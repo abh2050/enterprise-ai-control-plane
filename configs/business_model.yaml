@@ -1,3 +1,59 @@
-# Business operating model assumptions (Section 6.4). Each value is labeled ASSUMPTION
-# with a justification. Defined in M3.
-assumptions: {}
+# Business operating model for Support Triage (Section 6.4).
+# Every input is an ASSUMPTION. None is measured. They are illustrative figures for a
+# mid-sized retail bank's support queue; replace them with your organization's numbers.
+# Model cost is the one MEASURED input and comes from experiment results, not this file.
+assumptions:
+  monthly_volume:
+    value: 50000
+    unit: cases per month
+    provenance: ASSUMPTION
+    justification: >-
+      A mid-sized retail bank's written support queue (chat and secure messages).
+      Chosen to make per-case economics visible, not taken from any real bank.
+  manual_handling_minutes:
+    value: 3.0
+    unit: minutes per case
+    provenance: ASSUMPTION
+    justification: >-
+      Time for an agent to read a message, pick the queue, and tag it without help.
+      Triage only; resolving the request is out of scope and unchanged by this system.
+  review_minutes:
+    value: 1.0
+    unit: minutes per case
+    provenance: ASSUMPTION
+    justification: >-
+      Time for an agent to confirm or correct a suggested route. Shorter than manual
+      handling because the suggestion and the policy reason are shown.
+  loaded_labor_rate:
+    value: 45.0
+    unit: USD per hour
+    provenance: ASSUMPTION
+    justification: >-
+      Fully loaded cost of a support agent, including benefits and overhead.
+      Placeholder for a figure finance would supply.
+  misroute_cost_standard:
+    value: 8.0
+    unit: USD per wrong auto route
+    provenance: ASSUMPTION
+    justification: >-
+      Rework when a standard request lands in the wrong queue: a second agent touch,
+      a transfer, and a slower resolution.
+  misroute_cost_sensitive:
+    value: 150.0
+    unit: USD per wrong auto route
+    provenance: ASSUMPTION
+    justification: >-
+      A fraud or lost-card report that sits in the wrong queue risks further losses,
+      reimbursement, and complaint handling. Deliberately high; sensitive cases should
+      never auto-route under the policy, so this mostly prices residual risk.
+  infrastructure_monthly:
+    value: 400.0
+    unit: USD per month
+    provenance: ASSUMPTION
+    justification: >-
+      Allocation for hosting, storage, monitoring, and on-call share for one managed
+      app. Not a quote; M6 measures actual GCP spend for the demo deployment.
+
+sensitivity:
+  misroute_cost_standard: [4.0, 8.0, 16.0, 32.0]
+  review_minutes: [0.5, 1.0, 2.0]

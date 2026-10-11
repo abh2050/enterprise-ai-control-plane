@@ -12,9 +12,13 @@ still alter these records; the guarantee covers application code paths only.
 from __future__ import annotations
 
 import copy
+import fcntl
+import json
 import os
 import threading
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
+from pathlib import Path
 from typing import Any, Protocol, TypeVar
 
 from control_plane.settings import Settings, StoreBackend
@@ -85,23 +89,23 @@ class _MemoryTransaction:
     def get(self, collection: str, doc_id: str) -> Doc | None:
         if self._writes:
             raise StoreError("transaction reads must happen before writes")
-        return self._store.get(collection, doc_id)
+        return MemoryStore.get(self._store, collection, doc_id)
 
     def create(self, collection: str, doc_id: str, data: Doc) -> None:
-        if self._store.get(collection, doc_id) is not None:
+        if MemoryStore.get(self._store, collection, doc_id) is not None:
             self._raise_exists(collection, doc_id)
-        self._writes.append(lambda: self._store.create(collection, doc_id, data))
+        self._writes.append(lambda: MemoryStore.create(self._store, collection, doc_id, data))
 
     def set(self, collection: str, doc_id: str, data: Doc) -> None:
-        if self._store.get(collection, doc_id) is not None:
+        if MemoryStore.get(self._store, collection, doc_id) is not None:
             _guard_mutation(collection, doc_id)
-        self._writes.append(lambda: self._store.set(collection, doc_id, data))
+        self._writes.append(lambda: MemoryStore.set(self._store, collection, doc_id, data))
 
     def update(self, collection: str, doc_id: str, fields: Doc) -> None:
         _guard_mutation(collection, doc_id)
-        if self._store.get(collection, doc_id) is None:
+        if MemoryStore.get(self._store, collection, doc_id) is None:
             raise DocumentNotFoundError(f"{collection}/{doc_id}")
-        self._writes.append(lambda: self._store.update(collection, doc_id, fields))
+        self._writes.append(lambda: MemoryStore.update(self._store, collection, doc_id, fields))
 
     @staticmethod
     def _raise_exists(collection: str, doc_id: str) -> None:
@@ -162,6 +166,83 @@ class MemoryStore:
             tx = _MemoryTransaction(self)
             result = fn(tx)
             tx.commit()
+            return result
+
+
+# File backend
+
+
+class FileStore(MemoryStore):
+    """MemoryStore persisted to one JSON file, safe across processes on one machine.
+
+    Every write and every transaction holds an exclusive file lock, reloads the latest
+    state, applies the change, and replaces the file atomically. Paid local runs use it
+    so the budget ledger survives between commands.
+    """
+
+    def __init__(self, directory: str | os.PathLike[str]) -> None:
+        super().__init__()
+        self._dir = Path(directory)
+        self._dir.mkdir(parents=True, exist_ok=True)
+        self._path = self._dir / "store.json"
+        self._lock_path = self._dir / "store.lock"
+        self._reload()
+
+    def _reload(self) -> None:
+        if self._path.exists():
+            self._data = json.loads(self._path.read_text())
+
+    def _persist(self) -> None:
+        tmp = self._path.with_suffix(".tmp")
+        tmp.write_text(json.dumps(self._data))
+        os.replace(tmp, self._path)
+
+    @contextmanager
+    def _exclusive(self) -> Iterator[None]:
+        with self._lock, self._lock_path.open("a") as fh:
+            fcntl.flock(fh, fcntl.LOCK_EX)
+            try:
+                self._reload()
+                yield
+                self._persist()
+            finally:
+                fcntl.flock(fh, fcntl.LOCK_UN)
+
+    def get(self, collection: str, doc_id: str) -> Doc | None:
+        with self._lock:
+            self._reload()
+            return super().get(collection, doc_id)
+
+    def list(self, collection: str) -> list[Doc]:
+        with self._lock:
+            self._reload()
+            return super().list(collection)
+
+    def create(self, collection: str, doc_id: str, data: Doc) -> None:
+        with self._exclusive():
+            super().create(collection, doc_id, data)
+
+    def set(self, collection: str, doc_id: str, data: Doc) -> None:
+        with self._exclusive():
+            super().set(collection, doc_id, data)
+
+    def update(self, collection: str, doc_id: str, fields: Doc) -> None:
+        _guard_mutation(collection, doc_id)
+        with self._exclusive():
+            super().update(collection, doc_id, fields)
+
+    def delete(self, collection: str, doc_id: str) -> None:
+        _guard_mutation(collection, doc_id)
+        with self._exclusive():
+            super().delete(collection, doc_id)
+
+    def run_transaction(self, fn: Callable[[Transaction], T]) -> T:
+        with self._exclusive():
+            tx = _MemoryTransaction(self)
+            result = fn(tx)
+            # Commit through the in-memory methods; _exclusive persists on exit.
+            for write in tx._writes:
+                write()
             return result
 
 
@@ -275,4 +356,6 @@ class FirestoreStore:
 def build_store(settings: Settings) -> Store:
     if settings.store_backend is StoreBackend.FIRESTORE:
         return FirestoreStore(settings.gcp_project, settings.firestore_emulator_host)
+    if settings.store_backend is StoreBackend.FILE:
+        return FileStore(settings.file_store_dir)
     return MemoryStore()

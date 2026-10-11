@@ -282,13 +282,17 @@ class Budget(Record):
 class Attempt(Record):
     attempt_id: str
     app_id: str
+    experiment_id: str
     case_id: str
     model_id: str
     status: AttemptStatus
     reserved_micros: int
+    budget_ids: list[str]
     actual_micros: int | None = None
     input_tokens: int | None = None
     output_tokens: int | None = None
+    cached_tokens: int | None = None
+    failure_reason: str | None = None
     created_at: datetime
 
 

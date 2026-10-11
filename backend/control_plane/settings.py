@@ -3,7 +3,7 @@
 from enum import StrEnum
 from functools import lru_cache
 
-from pydantic import Field
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 MICROS_PER_USD = 1_000_000
@@ -17,11 +17,13 @@ class IdentityMode(StrEnum):
 
 class ProviderMode(StrEnum):
     FIXTURE = "fixture"
+    GEMINI_API = "gemini_api"  # Gemini Developer API (AI Studio)
     VERTEX = "vertex"
 
 
 class StoreBackend(StrEnum):
     MEMORY = "memory"
+    FILE = "file"  # durable single-machine store for local paid runs
     FIRESTORE = "firestore"
 
 
@@ -37,15 +39,22 @@ class Settings(BaseSettings):
     bind_host: str = "127.0.0.1"
     bind_port: int = 8000
 
-    vertex_location: str = "us-central1"
+    # The global endpoint is priced below regional endpoints on the Vertex pricing page.
+    vertex_location: str = "global"
     vertex_low_cost_model: str = "gemini-3.1-flash-lite"
     vertex_high_capability_model: str = "gemini-3.8-flash"
 
+    gemini_api_key: SecretStr | None = None
+    llm_requests_per_minute: int = Field(default=10, ge=1)
+    file_store_dir: str = ".local/store"
+
     iap_audience: str | None = None
 
+    # Spec defaults are $5, $40, and $60. The owner capped all LLM spend at $10
+    # (docs/decisions.md D11), measured at paid-tier list prices.
     budget_app_daily_usd: int = Field(default=5, ge=0)
-    budget_experiment_usd: int = Field(default=40, ge=0)
-    budget_experiment_total_usd: int = Field(default=60, ge=0)
+    budget_experiment_usd: int = Field(default=10, ge=0)
+    budget_experiment_total_usd: int = Field(default=10, ge=0)
 
     @property
     def budget_app_daily_micros(self) -> int:
