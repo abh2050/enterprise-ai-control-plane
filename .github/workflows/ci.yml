@@ -1,0 +1,65 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --frozen
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run mypy
+      - run: uv run pytest -q
+
+  backend-emulator:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --frozen
+      - name: Start emulator
+        run: |
+          docker run -d -p 8081:8080 gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators \
+            gcloud emulators firestore start --host-port=0.0.0.0:8080 --project=demo-control-plane
+          for i in $(seq 1 60); do curl -sf http://127.0.0.1:8081 && break; sleep 2; done
+      - run: uv run pytest -q tests/test_immutability.py
+        env:
+          FIRESTORE_EMULATOR_HOST: 127.0.0.1:8081
+
+  scope:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Forbidden dependencies (Section 0 scope rule)
+        run: |
+          if grep -Eiq '^name = "(kubernetes|redis|langchain[a-z_-]*|langgraph[a-z_-]*|pinecone[a-z_-]*|chromadb|weaviate[a-z_-]*|qdrant[a-z_-]*)"' uv.lock; then
+            echo "Forbidden Python dependency in uv.lock"; exit 1
+          fi
+          if grep -Eq '"node_modules/(redis|langchain|@langchain/[^"]+|langgraph|@kubernetes/[^"]+|pinecone[^"]*|chromadb)"' frontend/package-lock.json; then
+            echo "Forbidden npm dependency in package-lock.json"; exit 1
+          fi
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build

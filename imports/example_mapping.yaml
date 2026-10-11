@@ -1,0 +1,8 @@
+# Column mapping for `cp importregistry` (M4). Keys are control plane fields,
+# values are column names in your CSV export.
+name: Application Name
+owner: Owner Email
+business_unit: Department
+platform: Platform
+risk_tier: Risk Rating
+business_problem: Problem Statement

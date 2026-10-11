@@ -1,0 +1,3 @@
+# Release gates and monitoring alert thresholds (Sections 6.5 and 6.8). Defined in M5.
+gates: []
+alerts: []

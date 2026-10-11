@@ -1,0 +1,12 @@
+# Lifecycle stages in order (Section 5). Transition rules, review gates per risk tier,
+# and portfolio health rules are added in M4.
+stages:
+  - intake
+  - business_case
+  - review_gates
+  - evaluation
+  - shadow
+  - controlled_activation
+  - monitored
+  - paused
+  - retired

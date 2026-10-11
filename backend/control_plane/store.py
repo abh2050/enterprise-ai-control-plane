@@ -172,6 +172,7 @@ class _FirestoreTransaction:
     def __init__(self, client: Any, tx: Any) -> None:
         self._client = client
         self._tx = tx
+        self.created: list[str] = []
 
     def _ref(self, collection: str, doc_id: str) -> Any:
         return self._client.collection(collection).document(doc_id)
@@ -181,13 +182,14 @@ class _FirestoreTransaction:
         return snap.to_dict() if snap.exists else None
 
     def create(self, collection: str, doc_id: str, data: Doc) -> None:
+        self.created.append(collection)
         self._tx.create(self._ref(collection, doc_id), data)
 
     def set(self, collection: str, doc_id: str, data: Doc) -> None:
         if is_immutable(collection):
             # Firestore cannot express "set unless exists" in a transaction write,
             # so create-only collections always use create().
-            self._tx.create(self._ref(collection, doc_id), data)
+            self.create(collection, doc_id, data)
         else:
             self._tx.set(self._ref(collection, doc_id), data)
 
@@ -213,7 +215,8 @@ class FirestoreStore:
         return snap.to_dict() if snap.exists else None
 
     def list(self, collection: str) -> list[Doc]:
-        return [s.to_dict() for s in self._client.collection(collection).stream()]
+        snaps = self._client.collection(collection).stream()
+        return [d for s in snaps if (d := s.to_dict()) is not None]
 
     def create(self, collection: str, doc_id: str, data: Doc) -> None:
         from google.api_core.exceptions import AlreadyExists
@@ -245,13 +248,27 @@ class FirestoreStore:
         self._ref(collection, doc_id).delete()
 
     def run_transaction(self, fn: Callable[[Transaction], T]) -> T:
+        from google.api_core.exceptions import AlreadyExists
+
         client = self._client
+        wrappers: list[_FirestoreTransaction] = []
 
-        @self._firestore.transactional  # type: ignore[misc]
+        @self._firestore.transactional
         def _run(tx: Any) -> T:
-            return fn(_FirestoreTransaction(client, tx))
+            wrapper = _FirestoreTransaction(client, tx)
+            wrappers.append(wrapper)
+            return fn(wrapper)
 
-        result: T = _run(client.transaction())
+        try:
+            result: T = _run(client.transaction())
+        except AlreadyExists as exc:
+            # Firestore reports a create conflict at commit, without naming the document.
+            created = wrappers[-1].created if wrappers else []
+            if any(is_immutable(c) for c in created):
+                raise ImmutableRecordError(
+                    "transaction tried to recreate a create-only record"
+                ) from exc
+            raise DocumentExistsError("transaction tried to create an existing document") from exc
         return result
 
 
