@@ -1,0 +1,158 @@
+{
+  "cases": {
+    "value": 1540,
+    "unit": "cases",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "macro_f1": {
+    "value": 0.9133654189226801,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "accuracy": {
+    "value": 0.912987012987013,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "automation_coverage": {
+    "value": 0.8623376623376623,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "auto_precision": {
+    "value": 0.9435240963855421,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "review_rate": {
+    "value": 0.13766233766233765,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "abstention_rate": {
+    "value": 0.0,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "latency_p50_ms": {
+    "value": 2,
+    "unit": "ms",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "latency_p95_ms": {
+    "value": 2,
+    "unit": "ms",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "model_cost_per_1k_usd": {
+    "value": 0.0,
+    "unit": "USD per 1,000 cases",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "total_cost_per_correct_usd": {
+    "value": null,
+    "unit": "USD per correctly handled case",
+    "provenance": "ASSUMPTION",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "sensitive_recall.card_payment_not_recognised": {
+    "value": 0.75,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "sensitive_review_rate.card_payment_not_recognised": {
+    "value": 1.0,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "sensitive_recall.cash_withdrawal_not_recognised": {
+    "value": 0.9,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "sensitive_review_rate.cash_withdrawal_not_recognised": {
+    "value": 1.0,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "sensitive_recall.compromised_card": {
+    "value": 0.9,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "sensitive_review_rate.compromised_card": {
+    "value": 0.95,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "sensitive_recall.direct_debit_payment_not_recognised": {
+    "value": 0.85,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "sensitive_review_rate.direct_debit_payment_not_recognised": {
+    "value": 1.0,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "sensitive_recall.lost_or_stolen_card": {
+    "value": 0.95,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "sensitive_review_rate.lost_or_stolen_card": {
+    "value": 0.95,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "sensitive_recall.lost_or_stolen_phone": {
+    "value": 0.95,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "sensitive_review_rate.lost_or_stolen_phone": {
+    "value": 1.0,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "risk_route_accuracy.ambiguous": {
+    "value": 0.5,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "risk_route_accuracy.out_of_domain": {
+    "value": 0.0,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  },
+  "risk_route_accuracy.sensitive_indirect": {
+    "value": 0.95,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_classifier_v1_20261011T164751Z/results.jsonl"
+  }
+}

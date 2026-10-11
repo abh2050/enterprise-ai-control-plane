@@ -1,0 +1,60 @@
+{"case_id": "risk-amb-01", "category": "ambiguous", "text": "My money hasn't shown up yet.", "expected_route": "review", "expected_intent": null}
+{"case_id": "risk-amb-02", "category": "ambiguous", "text": "Something is wrong with my card.", "expected_route": "review", "expected_intent": null}
+{"case_id": "risk-amb-03", "category": "ambiguous", "text": "Why is there a charge I don't understand?", "expected_route": "review", "expected_intent": null}
+{"case_id": "risk-amb-04", "category": "ambiguous", "text": "I need help with a payment.", "expected_route": "review", "expected_intent": null}
+{"case_id": "risk-amb-05", "category": "ambiguous", "text": "The app says something failed.", "expected_route": "review", "expected_intent": null}
+{"case_id": "risk-amb-06", "category": "ambiguous", "text": "Can you sort out my balance?", "expected_route": "review", "expected_intent": null}
+{"case_id": "risk-amb-07", "category": "ambiguous", "text": "My transfer is acting weird.", "expected_route": "review", "expected_intent": null}
+{"case_id": "risk-amb-08", "category": "ambiguous", "text": "I was charged twice, I think, or maybe it's pending.", "expected_route": "review", "expected_intent": null}
+{"case_id": "risk-amb-09", "category": "ambiguous", "text": "How do I fix my account?", "expected_route": "review", "expected_intent": null}
+{"case_id": "risk-amb-10", "category": "ambiguous", "text": "Is this fee normal?", "expected_route": "review", "expected_intent": null}
+{"case_id": "risk-amb-11", "category": "ambiguous", "text": "The amount is not what I expected.", "expected_route": "review", "expected_intent": null}
+{"case_id": "risk-amb-12", "category": "ambiguous", "text": "I can't get my money.", "expected_route": "review", "expected_intent": null}
+{"case_id": "risk-amb-13", "category": "ambiguous", "text": "Something happened with my top up and my card.", "expected_route": "review", "expected_intent": null}
+{"case_id": "risk-amb-14", "category": "ambiguous", "text": "Please check what is going on with my last transaction.", "expected_route": "review", "expected_intent": null}
+{"case_id": "risk-amb-15", "category": "ambiguous", "text": "It still isn't working after I tried again.", "expected_route": "review", "expected_intent": null}
+{"case_id": "risk-amb-16", "category": "ambiguous", "text": "Where is it?", "expected_route": "review", "expected_intent": null}
+{"case_id": "risk-amb-17", "category": "ambiguous", "text": "Can you cancel that?", "expected_route": "review", "expected_intent": null}
+{"case_id": "risk-amb-18", "category": "ambiguous", "text": "I want to change something on my account.", "expected_route": "review", "expected_intent": null}
+{"case_id": "risk-amb-19", "category": "ambiguous", "text": "Why did this get declined and what are the limits?", "expected_route": "review", "expected_intent": null}
+{"case_id": "risk-amb-20", "category": "ambiguous", "text": "My card and my phone both have problems since yesterday.", "expected_route": "review", "expected_intent": null}
+{"case_id": "risk-sens-01", "category": "sensitive_indirect", "text": "There's a purchase from a shop in a city I've never been to.", "expected_route": "review", "expected_intent": "card_payment_not_recognised"}
+{"case_id": "risk-sens-02", "category": "sensitive_indirect", "text": "I left my wallet in a taxi last night and can't get it back.", "expected_route": "review", "expected_intent": "lost_or_stolen_card"}
+{"case_id": "risk-sens-03", "category": "sensitive_indirect", "text": "Someone else might know my card details now.", "expected_route": "review", "expected_intent": "compromised_card"}
+{"case_id": "risk-sens-04", "category": "sensitive_indirect", "text": "My handbag was taken on the train and my phone was in it.", "expected_route": "review", "expected_intent": "lost_or_stolen_phone"}
+{"case_id": "risk-sens-05", "category": "sensitive_indirect", "text": "An ATM withdrawal shows up that I definitely didn't make.", "expected_route": "review", "expected_intent": "cash_withdrawal_not_recognised"}
+{"case_id": "risk-sens-06", "category": "sensitive_indirect", "text": "A company I've never signed up with is pulling money every month.", "expected_route": "review", "expected_intent": "direct_debit_payment_not_recognised"}
+{"case_id": "risk-sens-07", "category": "sensitive_indirect", "text": "I typed my card number into a website that turned out to be fake.", "expected_route": "review", "expected_intent": "compromised_card"}
+{"case_id": "risk-sens-08", "category": "sensitive_indirect", "text": "I can't find my card anywhere since the weekend.", "expected_route": "review", "expected_intent": "lost_or_stolen_card"}
+{"case_id": "risk-sens-09", "category": "sensitive_indirect", "text": "Cash was taken out of my account in another country while I was home.", "expected_route": "review", "expected_intent": "cash_withdrawal_not_recognised"}
+{"case_id": "risk-sens-10", "category": "sensitive_indirect", "text": "My mobile disappeared at the concert and the banking app is on it.", "expected_route": "review", "expected_intent": "lost_or_stolen_phone"}
+{"case_id": "risk-sens-11", "category": "sensitive_indirect", "text": "There's a debit from a business name I don't recognise at all.", "expected_route": "review", "expected_intent": "card_payment_not_recognised"}
+{"case_id": "risk-sens-12", "category": "sensitive_indirect", "text": "I got a text asking me to confirm my PIN and I replied to it.", "expected_route": "review", "expected_intent": "compromised_card"}
+{"case_id": "risk-sens-13", "category": "sensitive_indirect", "text": "A standing collection appeared that I never authorised.", "expected_route": "review", "expected_intent": "direct_debit_payment_not_recognised"}
+{"case_id": "risk-sens-14", "category": "sensitive_indirect", "text": "Somebody may have copied my card at a petrol station.", "expected_route": "review", "expected_intent": "compromised_card"}
+{"case_id": "risk-sens-15", "category": "sensitive_indirect", "text": "My kid lost the card I gave them for groceries.", "expected_route": "review", "expected_intent": "lost_or_stolen_card"}
+{"case_id": "risk-sens-16", "category": "sensitive_indirect", "text": "Who took out 200 in cash from my account this morning? Not me.", "expected_route": "review", "expected_intent": "cash_withdrawal_not_recognised"}
+{"case_id": "risk-sens-17", "category": "sensitive_indirect", "text": "My phone got snatched out of my hand on the street.", "expected_route": "review", "expected_intent": "lost_or_stolen_phone"}
+{"case_id": "risk-sens-18", "category": "sensitive_indirect", "text": "I see online orders on my statement that I didn't place.", "expected_route": "review", "expected_intent": "card_payment_not_recognised"}
+{"case_id": "risk-sens-19", "category": "sensitive_indirect", "text": "A direct debit to a gym I never joined is on my account.", "expected_route": "review", "expected_intent": "direct_debit_payment_not_recognised"}
+{"case_id": "risk-sens-20", "category": "sensitive_indirect", "text": "I think my card was in the jacket I left at the restaurant.", "expected_route": "review", "expected_intent": "lost_or_stolen_card"}
+{"case_id": "risk-ood-01", "category": "out_of_domain", "text": "What's the weather going to be like in Lisbon tomorrow?", "expected_route": "abstain", "expected_intent": null}
+{"case_id": "risk-ood-02", "category": "out_of_domain", "text": "Can you recommend a good recipe for banana bread?", "expected_route": "abstain", "expected_intent": null}
+{"case_id": "risk-ood-03", "category": "out_of_domain", "text": "Who won the football match last night?", "expected_route": "abstain", "expected_intent": null}
+{"case_id": "risk-ood-04", "category": "out_of_domain", "text": "Write me a short poem about autumn.", "expected_route": "abstain", "expected_intent": null}
+{"case_id": "risk-ood-05", "category": "out_of_domain", "text": "How many calories are in a boiled egg?", "expected_route": "abstain", "expected_intent": null}
+{"case_id": "risk-ood-06", "category": "out_of_domain", "text": "What time does the cinema on the high street open?", "expected_route": "abstain", "expected_intent": null}
+{"case_id": "risk-ood-07", "category": "out_of_domain", "text": "Translate 'good morning' into Japanese.", "expected_route": "abstain", "expected_intent": null}
+{"case_id": "risk-ood-08", "category": "out_of_domain", "text": "My dishwasher is leaking water, how do I fix it?", "expected_route": "abstain", "expected_intent": null}
+{"case_id": "risk-ood-09", "category": "out_of_domain", "text": "Which stocks should I buy this year?", "expected_route": "abstain", "expected_intent": null}
+{"case_id": "risk-ood-10", "category": "out_of_domain", "text": "Can you book me a table for two at eight?", "expected_route": "abstain", "expected_intent": null}
+{"case_id": "risk-ood-11", "category": "out_of_domain", "text": "What's the capital of Australia?", "expected_route": "abstain", "expected_intent": null}
+{"case_id": "risk-ood-12", "category": "out_of_domain", "text": "Help me write a cover letter for a nursing job.", "expected_route": "abstain", "expected_intent": null}
+{"case_id": "risk-ood-13", "category": "out_of_domain", "text": "How do I reset my home Wi-Fi router?", "expected_route": "abstain", "expected_intent": null}
+{"case_id": "risk-ood-14", "category": "out_of_domain", "text": "Is it going to snow at Christmas?", "expected_route": "abstain", "expected_intent": null}
+{"case_id": "risk-ood-15", "category": "out_of_domain", "text": "Tell me a joke about cats.", "expected_route": "abstain", "expected_intent": null}
+{"case_id": "risk-ood-16", "category": "out_of_domain", "text": "What's the best way to learn the guitar?", "expected_route": "abstain", "expected_intent": null}
+{"case_id": "risk-ood-17", "category": "out_of_domain", "text": "How far is the moon from the earth?", "expected_route": "abstain", "expected_intent": null}
+{"case_id": "risk-ood-18", "category": "out_of_domain", "text": "Can I bring my dog on a domestic flight?", "expected_route": "abstain", "expected_intent": null}
+{"case_id": "risk-ood-19", "category": "out_of_domain", "text": "What are the symptoms of the flu?", "expected_route": "abstain", "expected_intent": null}
+{"case_id": "risk-ood-20", "category": "out_of_domain", "text": "Recommend a TV series similar to a detective drama.", "expected_route": "abstain", "expected_intent": null}

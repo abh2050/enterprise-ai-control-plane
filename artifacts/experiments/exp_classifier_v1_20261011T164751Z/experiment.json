@@ -1,0 +1,14 @@
+{
+  "experiment_id": "exp_classifier_v1_20261011T164751Z",
+  "config_id": "classifier_v1",
+  "policy_id": "policy_classifier_v1",
+  "dataset_id": "banking77_frozen_eval",
+  "dataset_sha256": "a7cc275b7eb234f798f079df819c674a4cb9d1b6dbbbb94b667272b53ef199bb",
+  "case_order_seed": 42,
+  "status": "finished",
+  "cost_micros": 0,
+  "started_at": "2026-10-11T16:47:48.535701+00:00",
+  "finished_at": "2026-10-11T16:47:51.620921+00:00",
+  "provenance": "MEASURED",
+  "rerun_reason": null
+}

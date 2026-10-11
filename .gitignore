@@ -26,3 +26,6 @@ imports/*
 assets/generated/*.tmp
 playwright-report/
 test-results/
+
+# Trained model binaries are rebuilt by `cp train`; their hashes are committed
+artifacts/models/*.pkl

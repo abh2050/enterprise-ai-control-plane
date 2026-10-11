@@ -1,0 +1,23 @@
+{
+  "name": "classifier_v1",
+  "model_sha256": "869f5387189880916543c7c0bd1b79167b4f91c3169ff9c05e1f1b51df0cd77a",
+  "hyperparameters": {
+    "word_ngrams": [
+      1,
+      2
+    ],
+    "char_ngrams": [
+      2,
+      5
+    ],
+    "C": 10.0,
+    "max_iter": 3000,
+    "calibration": "sigmoid"
+  },
+  "train_split_sha256": "32d2ba5e513ad0d99fe70782f2ea62cb69af57570aab379fd64d7eb762233ade",
+  "calibration_split_sha256": "e934defabf5f07d74f47c92da3861691bb4522316c3aa888dd2a487372ed2845",
+  "train_rows": 9226,
+  "calibration_rows": 770,
+  "train_seconds": 10.7,
+  "trained_at": "2026-10-11T16:47:35.396540+00:00"
+}

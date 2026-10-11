@@ -1,0 +1,14 @@
+{
+  "config_id": "classifier_v1",
+  "app_id": "support-triage",
+  "version": 1,
+  "kind": "classifier",
+  "model_id": "classifier_v1@869f53871898",
+  "prompt_text": null,
+  "prompt_sha256": null,
+  "policy_id": "policy_classifier_v1",
+  "limits": {},
+  "price_card": null,
+  "created_by": "cli",
+  "created_at": "2026-10-11T16:47:42.280857+00:00"
+}

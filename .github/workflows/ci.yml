@@ -18,6 +18,8 @@ jobs:
       - run: uv run ruff check .
       - run: uv run ruff format --check .
       - run: uv run mypy
+      - name: Fetch Banking77 at the pinned commit (enables leakage tests)
+        run: uv run cp data fetch
       - run: uv run pytest -q
 
   backend-emulator:

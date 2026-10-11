@@ -1,0 +1,17 @@
+{
+  "provenance": "AUTHORED",
+  "rows": 60,
+  "categories": {
+    "ambiguous": 20,
+    "sensitive_indirect": 20,
+    "out_of_domain": 20
+  },
+  "expected_routes": {
+    "ambiguous": "review",
+    "sensitive_indirect": "review",
+    "out_of_domain": "abstain"
+  },
+  "authored_by": "Drafted by Claude (AI coding assistant) during the build session on 2026-10-11. Labeled by a single rater. Pending review by the project owner.",
+  "rater_count": 1,
+  "limitations": "One rater; no inter-annotator agreement. Phrasings reflect one author's style and are not drawn from real customer traffic. No text is copied from Banking77."
+}

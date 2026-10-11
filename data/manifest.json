@@ -1,4 +1,55 @@
 {
-  "note": "Populated by `cp data fetch` in M2 with the pinned Banking77 commit and SHA256 hashes.",
-  "files": []
+  "dataset": "banking77",
+  "source_url": "https://github.com/PolyAI-LDN/task-specific-datasets",
+  "source_commit": "57ec275d8078af65b7731c2a98be812d844a6d6b",
+  "license": "CC-BY-4.0",
+  "citation": "Casanueva, I., Tem\u010dinas, T., Gerz, D., Henderson, M., Vuli\u0107, I. (2020). Efficient Intent Detection with Dual Sentence Encoders. Proceedings of the 2nd Workshop on Natural Language Processing for Conversational AI.",
+  "files": [
+    {
+      "name": "train.csv",
+      "sha256": "b06e26ac675513959a63135f11b94ea7786ed02da65db93a5650d8838cbc664b"
+    },
+    {
+      "name": "test.csv",
+      "sha256": "d12d6e3bc4c3103966ae786dc435913c0c563dfa328f5a3646d0e62cfeeb474d"
+    },
+    {
+      "name": "categories.json",
+      "sha256": "53261da888122daf2d120d925458631d9619e15d82e56052e7a42e535ce32b63"
+    }
+  ],
+  "dedup": {
+    "rule": "drop train rows whose normalized text appears in test.csv",
+    "train_rows_dropped": [
+      "train:1722",
+      "train:3103",
+      "train:3116",
+      "train:4476",
+      "train:4576",
+      "train:6984",
+      "train:9921"
+    ]
+  },
+  "splits": {
+    "dev": {
+      "row_count": 770,
+      "sha256": "e934defabf5f07d74f47c92da3861691bb4522316c3aa888dd2a487372ed2845",
+      "seed": 42
+    },
+    "classifier_train": {
+      "row_count": 9226,
+      "sha256": "32d2ba5e513ad0d99fe70782f2ea62cb69af57570aab379fd64d7eb762233ade",
+      "seed": 42
+    },
+    "frozen_eval": {
+      "row_count": 1540,
+      "sha256": "a7cc275b7eb234f798f079df819c674a4cb9d1b6dbbbb94b667272b53ef199bb",
+      "seed": 42
+    },
+    "shadow_pool": {
+      "row_count": 1540,
+      "sha256": "db949af95ad2fe59b43012cdc80c47e050b3368cc40eeae00eef4519eafd4783",
+      "seed": 42
+    }
+  }
 }

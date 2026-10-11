@@ -1,2 +1,22 @@
-# Support Triage configurations (Section 6.2). Defined in M2 (classifier_v1) and M3 (LLM configs).
-configs: []
+# Support Triage configurations (Section 6.2). LLM configs are added in M3.
+configs:
+  classifier_v1:
+    kind: classifier
+    version: 1
+    model: classifier_v1          # artifacts/models/classifier_v1.{pkl,json}
+    policy_id: policy_classifier_v1
+
+# Threshold tuning runs on the development split only, then the policy is frozen
+# before the frozen evaluation set is touched.
+policy_tuning:
+  target_dev_auto_precision:
+    value: 0.95
+    provenance: ASSUMPTION
+    justification: >-
+      Placeholder automation quality bar until the M3 business model computes breakeven
+      precision. The release gate (breakeven plus 0.03) is checked separately on the
+      frozen set; this value only selects the threshold on dev.
+  min_dev_auto_cases:
+    value: 50
+    provenance: ASSUMPTION
+    justification: Avoids choosing a threshold supported by only a handful of dev cases.
