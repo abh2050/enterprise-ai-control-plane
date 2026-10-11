@@ -59,7 +59,9 @@ def _fmt(metric: dict[str, Any], pattern: str) -> str:
     return f"{pattern.format(metric['value'])} `{metric['provenance']}`"
 
 
-def _usd(value: float, decimals: int = 0) -> str:
+def _usd(value: float | None, decimals: int = 0) -> str:
+    if value is None:
+        return "n/a"
     sign = "−" if value < 0 else ""
     return f"{sign}${abs(value):,.{decimals}f}"
 
