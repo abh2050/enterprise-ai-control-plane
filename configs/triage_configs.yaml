@@ -12,20 +12,20 @@ configs:
     version: 1
     model_setting: vertex_low_cost_model          # env VERTEX_LOW_COST_MODEL
     policy_id: policy_llm_low_cost_v1
-    examples_per_label: 1
+    examples_per_label: 2        # static prefix 4,850 tokens, above Vertex's 4,096 cache minimum
     max_output_tokens: 256        # the answer is one label plus at most 300 characters
     thinking_level: minimal       # thinking tokens bill as output
-    context_cache: true           # static prefix cached on Vertex; cached input bills at 1/10
+    context_cache: false          # Vertex offers no explicit caching for flash-lite (403/404)
 
   llm_high_capability_v1:
     kind: llm
     version: 1
     model_setting: vertex_high_capability_model   # env VERTEX_HIGH_CAPABILITY_MODEL
     policy_id: policy_llm_high_capability_v1
-    examples_per_label: 1
+    examples_per_label: 2        # static prefix 4,850 tokens, above Vertex's 4,096 cache minimum
     max_output_tokens: 256
     thinking_level: low           # 3.8 Flash rejects minimal (preflight 2026-10-11)
-    context_cache: true
+    context_cache: true           # cached input bills at 1/10 of the input price
 
 # Threshold tuning runs on the development split only, then the policy is frozen
 # before the frozen evaluation set is touched.

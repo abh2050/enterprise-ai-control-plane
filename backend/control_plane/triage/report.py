@@ -1,7 +1,8 @@
-"""Generate docs/experiment_report.md from experiment artifacts.
+"""Generate docs/experiment_report.md and docs/business_case.md from artifacts.
 
-Every number in the report is read from an artifact file and printed with its
-provenance label and the file it came from. Nothing in the report is typed by hand.
+Every number is read from an artifact or config file and printed with its provenance
+label and source. Nothing in either report is typed by hand. Economics combine MEASURED
+rates and model cost with ASSUMPTION inputs, so every economic result is ASSUMPTION.
 """
 
 from __future__ import annotations
@@ -10,10 +11,34 @@ import json
 from pathlib import Path
 from typing import Any
 
-from control_plane.triage.dataset import REPO_ROOT, SENSITIVE_INTENTS, load_manifest
+from control_plane.contracts import Route
+from control_plane.triage.business_model import (
+    Assumptions,
+    Rates,
+    breakeven_precision,
+    load_assumptions,
+    net_monthly_value,
+    sensitivity_table,
+)
+from control_plane.triage.dataset import (
+    REPO_ROOT,
+    SENSITIVE_INTENTS,
+    load_categories,
+    load_manifest,
+)
 from control_plane.triage.evaluate import CONFIG_DIR, EXPERIMENT_DIR, FROZEN_RUNS, POLICY_DIR
+from control_plane.triage.scorecard import (
+    CaseResult,
+    auto_precision,
+    macro_f1,
+    paired_bootstrap,
+    total_cost_per_correct,
+)
 
 REPORT_PATH = REPO_ROOT / "docs" / "experiment_report.md"
+BUSINESS_CASE_PATH = REPO_ROOT / "docs" / "business_case.md"
+BASELINE = "classifier_v1"
+GATE_MARGIN = 0.03  # configs/release_gates.yaml arrives in M5; Section 6.5 sets 0.03
 
 ROWS = [
     ("macro_f1", "Macro F1 (77 labels, abstain counts as miss)", "{:.3f}"),
@@ -22,31 +47,89 @@ ROWS = [
     ("auto_precision", "Precision on auto-routed cases", "{:.3f}"),
     ("review_rate", "Review rate", "{:.1%}"),
     ("abstention_rate", "Abstention rate", "{:.1%}"),
-    ("latency_p50_ms", "Latency p50 (ms)", "{:.0f}"),
-    ("latency_p95_ms", "Latency p95 (ms)", "{:.0f}"),
-    ("model_cost_per_1k_usd", "Model cost per 1,000 cases (USD)", "${:.4f}"),
-    ("total_cost_per_correct_usd", "Total cost per correctly handled case (USD)", "${:.4f}"),
+    ("latency_p50_ms", "Latency p50 (ms)", "{:,.0f}"),
+    ("latency_p95_ms", "Latency p95 (ms)", "{:,.0f}"),
+    ("model_cost_per_1k_usd", "Model cost per 1,000 cases (USD, list price)", "${:.4f}"),
 ]
 
 
 def _fmt(metric: dict[str, Any], pattern: str) -> str:
     if metric["value"] is None:
-        return f"not computed `{metric['provenance']}`"
+        return f"n/a `{metric['provenance']}`"
     return f"{pattern.format(metric['value'])} `{metric['provenance']}`"
+
+
+def _usd(value: float, decimals: int = 0) -> str:
+    sign = "−" if value < 0 else ""
+    return f"{sign}${abs(value):,.{decimals}f}"
 
 
 def _rel(path: Path) -> str:
     return str(path.relative_to(REPO_ROOT))
 
 
-def generate() -> str:
+def _finished_runs() -> dict[str, dict[str, Any]]:
     runs: dict[str, Any] = json.loads(FROZEN_RUNS.read_text())
+    return {k: v for k, v in runs.items() if v.get("status", "finished") == "finished"}
+
+
+def _load(config_id: str, run: dict[str, Any]) -> dict[str, Any]:
+    exp_dir = EXPERIMENT_DIR / run["experiment_id"]
+    rows = [json.loads(x) for x in (exp_dir / "results.jsonl").read_text().splitlines()]
+    results = [
+        CaseResult(
+            r["case_id"],
+            r["reference_label"],
+            r["predicted_label"],
+            Route(r["route"]),
+            r["latency_ms"],
+            r["cost_micros"],
+        )
+        for r in rows
+    ]
+    config = json.loads((CONFIG_DIR / f"{config_id}.json").read_text())
+    return {
+        "dir": exp_dir,
+        "rows": rows,
+        "results": results,
+        "card": json.loads((exp_dir / "scorecard.json").read_text()),
+        "experiment": json.loads((exp_dir / "experiment.json").read_text()),
+        "config": config,
+        "policy": json.loads((POLICY_DIR / f"{config['policy_id']}.json").read_text()),
+    }
+
+
+def rates_from(results: list[CaseResult]) -> Rates:
+    n = len(results)
+    auto = [r for r in results if r.route is Route.AUTO]
+    wrong = [r for r in auto if not r.correct]
+    return Rates(
+        coverage=len(auto) / n,
+        auto_precision=(sum(r.correct for r in auto) / len(auto)) if auto else 0.0,
+        review_rate=sum(r.route is Route.REVIEW for r in results) / n,
+        sensitive_share_of_wrong_autos=(
+            sum(r.reference_label in SENSITIVE_INTENTS for r in wrong) / len(wrong)
+            if wrong
+            else 0.0
+        ),
+        model_cost_per_case_usd=sum(r.cost_micros for r in results) / n / 1e6,
+    )
+
+
+def generate() -> str:
+    runs = _finished_runs()
+    data = {cid: _load(cid, run) for cid, run in sorted(runs.items())}
+    assumptions, _ = load_assumptions()
+    econ = assumptions.economics()
+    labels = load_categories()
     manifest = load_manifest()
+    configs = list(data)
+
     lines = [
         "# Experiment report: Support Triage",
         "",
         "Generated by `cp experiment-report` from files under `artifacts/`. Every number",
-        "carries a provenance label, and each table names the file that holds its values.",
+        "carries a provenance label, and each table names the files that hold its values.",
         "",
         "## Data",
         "",
@@ -54,67 +137,228 @@ def generate() -> str:
         f"  Citation: {manifest['citation']}",
         f"- Frozen evaluation set: {manifest['splits']['frozen_eval']['row_count']} rows "
         f"`MEASURED` (20 per label, seed 42), sha256 "
-        f"`{manifest['splits']['frozen_eval']['sha256'][:16]}`.",
+        f"`{manifest['splits']['frozen_eval']['sha256'][:16]}`. Every config saw the same "
+        "cases in the same shuffled order.",
         f"- {len(manifest['dedup']['train_rows_dropped'])} train rows `MEASURED` were dropped "
         "because their text also appears in test.csv (see `data/manifest.json`).",
         "- Risk suite: 60 cases `AUTHORED` by one rater (`data/risk_suite.meta.json`).",
         "",
+        "## Comparison on the frozen set",
+        "",
+        "| Metric | " + " | ".join(configs) + " |",
+        "|---|" + "---|" * len(configs),
     ]
-    for config_id, run in sorted(runs.items()):
-        exp_dir = EXPERIMENT_DIR / run["experiment_id"]
-        card = json.loads((exp_dir / "scorecard.json").read_text())
-        experiment = json.loads((exp_dir / "experiment.json").read_text())
-        config = json.loads((CONFIG_DIR / f"{config_id}.json").read_text())
-        policy = json.loads((POLICY_DIR / f"{config['policy_id']}.json").read_text())
-        source = _rel(exp_dir / "scorecard.json")
-        lines += [
-            f"## {config_id}",
-            "",
-            f"- Experiment `{run['experiment_id']}`, finished {experiment['finished_at']}.",
-            f"- Model `{config['model_id']}`; policy `{policy['policy_id']}` frozen "
-            f"{policy['created_at']} before the run.",
-            f"- Classifier threshold {policy['thresholds']['classifier_threshold']} "
-            "`MEASURED` (tuned on dev to the "
-            f"{policy['tuning']['target_dev_auto_precision']['value']} `ASSUMPTION` "
-            f"precision target; dev auto precision "
-            f"{policy['tuning']['dev_auto_precision']:.3f} `MEASURED`, dev coverage "
-            f"{policy['tuning']['dev_coverage']:.1%} `MEASURED`).",
-            f"- Frozen-set runs: {len(run['history'])} `MEASURED` "
-            f"({'; '.join(h['reason'] for h in run['history'])}).",
-            "",
-            f"Source: `{source}`",
-            "",
-            "| Metric | Value |",
-            "|---|---|",
+    for key, label, pat in ROWS:
+        lines.append(
+            f"| {label} | " + " | ".join(_fmt(data[c]["card"][key], pat) for c in configs) + " |"
+        )
+    cost_cells = []
+    for c in configs:
+        value = total_cost_per_correct(data[c]["results"], econ, frozenset(SENSITIVE_INTENTS))
+        cost_cells.append(f"${value:.4f} `ASSUMPTION`" if value is not None else "n/a")
+    lines.append("| Total cost per correctly handled case (USD) | " + " | ".join(cost_cells) + " |")
+    lines += [
+        "",
+        "Sources: "
+        + ", ".join(f"`{_rel(data[c]['dir'] / 'scorecard.json')}`" for c in configs)
+        + ". Total cost per correctly handled case adds assumed review and misroute costs "
+        "from `configs/business_model.yaml` to measured model cost.",
+        "",
+        "### Sensitive intents (gate: recall at least 0.95 on each intent in the cohort)",
+        "",
+        "| Intent | " + " | ".join(f"{c} recall / to review" for c in configs) + " |",
+        "|---|" + "---|" * len(configs),
+    ]
+    for intent in sorted(SENSITIVE_INTENTS):
+        cells = [
+            f"{_fmt(data[c]['card'][f'sensitive_recall.{intent}'], '{:.2f}')} / "
+            f"{_fmt(data[c]['card'][f'sensitive_review_rate.{intent}'], '{:.2f}')}"
+            for c in configs
         ]
-        lines += [f"| {label} | {_fmt(card[key], pat)} |" for key, label, pat in ROWS]
+        lines.append(f"| {intent} | " + " | ".join(cells) + " |")
+    lines += [
+        "",
+        "### Risk suite route accuracy (`AUTHORED` cases, single rater)",
+        "",
+        "| Category | " + " | ".join(configs) + " |",
+        "|---|" + "---|" * len(configs),
+    ]
+    for cat in ("ambiguous", "sensitive_indirect", "out_of_domain"):
+        lines.append(
+            f"| {cat} | "
+            + " | ".join(
+                _fmt(data[c]["card"][f"risk_route_accuracy.{cat}"], "{:.2f}") for c in configs
+            )
+            + " |"
+        )
+
+    if BASELINE in data and len(configs) > 1:
         lines += [
             "",
-            "Sensitive intents (gate: recall at least 0.95 on each intent in the cohort):",
+            f"## Paired bootstrap against {BASELINE}",
             "",
-            "| Intent | Label recall | Routed to review |",
+            "Candidate minus baseline on identical cases, 1,000 resamples, seed 42, 95% "
+            "percentile interval.",
+            "",
+            "| Candidate | Macro F1 delta [95% CI] | Auto precision delta [95% CI] |",
             "|---|---|---|",
         ]
-        for intent in sorted(SENSITIVE_INTENTS):
-            recall = card[f"sensitive_recall.{intent}"]
-            review = card[f"sensitive_review_rate.{intent}"]
-            lines.append(f"| {intent} | {_fmt(recall, '{:.2f}')} | {_fmt(review, '{:.2f}')} |")
-        lines += ["", "Risk suite route accuracy (`AUTHORED` cases, single rater):", ""]
-        lines += ["| Category | Route accuracy |", "|---|---|"]
-        for key in sorted(k for k in card if k.startswith("risk_route_accuracy.")):
-            lines.append(f"| {key.split('.', 1)[1]} | {_fmt(card[key], '{:.2f}')} |")
+        base = data[BASELINE]["results"]
+        for c in configs:
+            if c == BASELINE:
+                continue
+            cand = data[c]["results"]
+            f1 = paired_bootstrap(base, cand, lambda rs: macro_f1(rs, labels))
+            ap = paired_bootstrap(base, cand, auto_precision)
+            lines.append(f"| {c} | {_ci(f1)} | {_ci(ap)} |")
+
+    lines += ["", "## Configs, policies, and usage", ""]
+    for c in configs:
+        d = data[c]
+        t = d["policy"]["thresholds"]
+        tuning = d["policy"]["tuning"]
+        threshold_text = (
+            f"agreement threshold {t['agreement_threshold']} `MEASURED`"
+            if "agreement_threshold" in t
+            else f"classifier threshold {t['classifier_threshold']} `MEASURED`"
+        )
+        lines += [
+            f"### {c}",
+            "",
+            f"- Experiment `{d['experiment']['experiment_id']}`; model `{d['config']['model_id']}`"
+            + (f" on `{d['experiment']['backend']}`" if "backend" in d["experiment"] else "")
+            + f"; policy `{d['policy']['policy_id']}` frozen {d['policy']['created_at']}, "
+            "before the frozen run.",
+            f"- Dev tuning ({tuning['split']}): {threshold_text}; target dev auto precision "
+            f"{tuning['target_dev_auto_precision']['value']} `ASSUMPTION`; dev auto precision "
+            f"{tuning['dev_auto_precision']:.3f} `MEASURED`; dev coverage "
+            f"{tuning['dev_coverage']:.1%} `MEASURED`.",
+            f"- Frozen-set runs: {len(runs[c]['history'])} `MEASURED` "
+            f"({'; '.join(h['reason'] for h in runs[c]['history'])}).",
+        ]
+        usage = d["experiment"].get("usage")
+        if usage:
+            lines.append(
+                f"- Usage `MEASURED`: {usage['calls']:,} calls ({usage['fresh_calls']:,} fresh), "
+                f"{usage['input_tokens']:,} input tokens of which {usage['cached_tokens']:,} "
+                f"cached, {usage['output_tokens']:,} output tokens including "
+                f"{usage['thinking_tokens']:,} thinking, "
+                f"{usage['unknown_outcomes']} unknown outcomes, "
+                f"{usage['invalid_outputs']} invalid outputs, cost "
+                f"${usage['cost_micros_list_price'] / 1e6:.4f} at list price "
+                f"(price card `{d['experiment']['price_card']}`)."
+            )
         lines.append("")
     lines += [
         "## Notes",
         "",
-        "- Total cost per correctly handled case needs the M3 business model, so it is not",
-        "  computed yet.",
         "- The classifier cannot predict `out_of_scope`, so it never abstains. Its",
         "  out-of-domain risk accuracy is a structural result, not a tuning failure.",
-        "- Paired bootstrap intervals need a candidate config; they arrive with the LLM",
-        "  configs in M3.",
+        "- LLM costs are Vertex list prices from the versioned price card, which ignores",
+        "  promotional credits, so they are an upper bound on billed spend.",
+        "- Token counting before each call misses structured-output overhead (about 700",
+        "  tokens per call). Reservations stayed above actual cost because each one also",
+        "  holds the full 256-token output allowance; see docs/decisions.md.",
         "",
     ]
     text = "\n".join(lines)
     REPORT_PATH.write_text(text)
+    BUSINESS_CASE_PATH.write_text(business_case(data, assumptions))
     return text
+
+
+def _ci(result: tuple[float | None, float | None, float | None]) -> str:
+    point, lo, hi = result
+    if point is None:
+        return "n/a"
+    if lo is None or hi is None:
+        return f"{point:+.3f} `MEASURED`"
+    return f"{point:+.3f} [{lo:+.3f}, {hi:+.3f}] `MEASURED`"
+
+
+def business_case(data: dict[str, dict[str, Any]], a: Assumptions) -> str:
+    _, raw = load_assumptions()
+    lines = [
+        "# Business case: Support Triage",
+        "",
+        "Generated by `cp experiment-report`. Rates and model cost are `MEASURED` on the",
+        "frozen evaluation set. Every other input is an `ASSUMPTION` from",
+        "`configs/business_model.yaml`, so every money figure below is an `ASSUMPTION`.",
+        "Replace the assumptions with your organization's numbers before relying on them.",
+        "",
+        "## Assumptions",
+        "",
+        "| Input | Value | Justification |",
+        "|---|---|---|",
+    ]
+    for key, item in raw["assumptions"].items():
+        lines.append(
+            f"| {key} | {item['value']:,} {item['unit']} `ASSUMPTION` | "
+            f"{' '.join(item['justification'].split())} |"
+        )
+    lines += [
+        "",
+        "Net monthly value = labor saved on correct auto routes − misroute costs on wrong",
+        "auto routes − review labor − model cost − infrastructure. An abstained case falls",
+        "back to the manual process at no extra cost.",
+        "",
+        "## Net monthly value by config",
+        "",
+        "| Config | Coverage | Auto precision | Breakeven precision | Gate (breakeven + 0.03) "
+        "| Net monthly value |",
+        "|---|---|---|---|---|---|",
+    ]
+    for c, d in data.items():
+        r = rates_from(d["results"])
+        be = breakeven_precision(a, r)
+        value = net_monthly_value(a, r)["net_monthly_value"]
+        gate = "n/a" if be is None else ("pass" if r.auto_precision >= be + GATE_MARGIN else "fail")
+        be_text = "n/a" if be is None else f"{be:.3f} `ASSUMPTION`"
+        lines.append(
+            f"| {c} | {r.coverage:.1%} `MEASURED` | {r.auto_precision:.3f} `MEASURED` | "
+            f"{be_text} | {gate} | {_usd(value)} `ASSUMPTION` |"
+        )
+    lines += ["", "## Monthly breakdown (USD, `ASSUMPTION`)", ""]
+    lines += ["| Config | Labor saved | Misroutes | Review labor | Model | Infrastructure |"]
+    lines += ["|---|---|---|---|---|---|"]
+    for c, d in data.items():
+        b = net_monthly_value(a, rates_from(d["results"]))
+        lines.append(
+            f"| {c} | ${b['labor_saved']:,.0f} | ${b['misroute_cost']:,.0f} | "
+            f"${b['review_labor']:,.0f} | ${b['model_cost']:,.2f} | ${b['infrastructure']:,.0f} |"
+        )
+    _, raw_cfg = load_assumptions()
+    grid = raw_cfg["sensitivity"]
+    for c, d in data.items():
+        rows = sensitivity_table(
+            a, rates_from(d["results"]), grid["misroute_cost_standard"], grid["review_minutes"]
+        )
+        lines += [
+            "",
+            f"## Sensitivity: {c}",
+            "",
+            "Net monthly value (breakeven precision) as the standard misroute cost and review",
+            "minutes vary. All values `ASSUMPTION`.",
+            "",
+            "| Misroute cost \\ Review minutes | "
+            + " | ".join(f"{m:g} min" for m in grid["review_minutes"])
+            + " |",
+            "|---|" + "---|" * len(grid["review_minutes"]),
+        ]
+        for cost in grid["misroute_cost_standard"]:
+            cells = []
+            for minutes in grid["review_minutes"]:
+                row = next(
+                    x
+                    for x in rows
+                    if x["misroute_cost_standard"] == cost and x["review_minutes"] == minutes
+                )
+                be = row["breakeven_precision"]
+                cells.append(
+                    f"{_usd(row['net_monthly_value'])} ({be:.3f})"
+                    if be is not None
+                    else _usd(row["net_monthly_value"])
+                )
+            lines.append(f"| ${cost:g} | " + " | ".join(cells) + " |")
+    lines.append("")
+    return "\n".join(lines)

@@ -1,4 +1,4 @@
-# Checkpoint: M3 in progress, paused by the owner to revise the spec (2026-10-11)
+# Checkpoint: M3 in progress, LLM configs tuned and frozen; frozen runs await owner go-ahead (2026-10-11)
 
 Plan: ~/.claude/plans/enterprise-ai-control-temporal-magpie.md. GCP project: spheric-bloom-350617 (billing on, Vertex AI enabled, ADC set with quota project).
 
@@ -32,3 +32,13 @@ $0.1896 at Vertex list prices (`uv run cp ledger`), all on dev-set pilots and pr
 ## Housekeeping for the owner
 - Rotate the secrets pasted in chat: AI Studio Gemini key, OpenAI key, Hugging Face token, and HF_CREDENTIALS (printed by mistake)
 - After the Gemini key is revoked, remove GEMINI_API_KEY from .env
+
+## Update: caching resolved, dev tuning done (2026-10-11)
+- Console spec saved to docs/spec/console_spec.md (replaces Sections 9, 9A, and 9B; applies to M4 and M8).
+- Caching: both configs use 2 dev examples per label (4,850-token prefix). 3.8 Flash uses Vertex explicit caching; flash-lite runs uncached. The owner pre-approved a $11 cap if needed; it was not needed.
+- Re-run pilots: flash-lite $0.00139/call, 3.8 Flash $0.00107/call (cached).
+- Dev tuning on 616 rows and freezing (both MEASURED):
+  - llm_low_cost_v1: dev LLM accuracy 0.847, auto precision 0.975, coverage 77.1%, agreement threshold 0.00
+  - llm_high_capability_v1: dev LLM accuracy 0.881, auto precision 0.976, coverage 79.7%, agreement threshold 0.00
+- Spend $1.55 of $10. The frozen runs are projected at about $3.90 and would cross the $5 per-app daily limit today.
+- The report generator now covers three configs, paired bootstrap, total cost per correct case, and docs/business_case.md.
