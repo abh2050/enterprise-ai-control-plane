@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+dist/
+
+# Node
+node_modules/
+frontend/dist/
+
+# Secrets and local env
+.env
+*.key.json
+service-account*.json
+
+# Raw data and real registry exports stay out of the repo
+data/raw/
+imports/*
+!imports/.gitkeep
+!imports/example_mapping.yaml
+
+# Generated scratch
+assets/generated/*.tmp
+playwright-report/
+test-results/

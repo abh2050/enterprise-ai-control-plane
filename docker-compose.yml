@@ -1,0 +1,7 @@
+services:
+  firestore:
+    image: gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators
+    command: >
+      gcloud emulators firestore start --host-port=0.0.0.0:8080 --project=demo-control-plane
+    ports:
+      - "127.0.0.1:8080:8080"
