@@ -16,6 +16,8 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Any
 
+import httpx
+
 from control_plane.budget import (
     BudgetLimits,
     CallOutcome,
@@ -268,6 +270,23 @@ def _fresh_call(
     limiter: RateLimiter,
     session: ContextCacheSession | None,
 ) -> LLMCall:
+    prior = ledger.unknown_attempt(experiment_id, case_id)
+    if prior is not None:
+        # Section 7: an unknown outcome is never retried automatically, even on resume.
+        return LLMCall(
+            case_id=case_id,
+            llm_label=None,
+            status=AttemptStatus.UNKNOWN.value,
+            input_tokens=0,
+            output_tokens=0,
+            thinking_tokens=0,
+            cached_tokens=0,
+            cost_micros=0,
+            latency_ms=ctx.limits.deadline_seconds * 1000,
+            attempt_count=1,
+            finish_reason=None,
+            from_cache=False,
+        )
     outcome: CallOutcome | None = None
     attempts = 0
     for attempt in range(ctx.limits.max_attempts_per_case):
@@ -276,20 +295,27 @@ def _fresh_call(
         limiter.wait()
         attempts += 1
         handle = session.current() if session else None
-        outcome = call_with_budget(
-            ledger,
-            provider,
-            price,
-            ctx.limits,
-            app_id=APP_ID,
-            experiment_id=experiment_id,
-            case_id=case_id,
-            model_id=ctx.model_id,
-            # With a context cache, only the per-case suffix is sent.
-            prompt=build_suffix(text) if handle else build_prompt(ctx.static_prompt, text),
-            response_schema=ctx.schema,
-            cache=handle,
-        )
+        try:
+            outcome = call_with_budget(
+                ledger,
+                provider,
+                price,
+                ctx.limits,
+                app_id=APP_ID,
+                experiment_id=experiment_id,
+                case_id=case_id,
+                model_id=ctx.model_id,
+                # With a context cache, only the per-case suffix is sent.
+                prompt=build_suffix(text) if handle else build_prompt(ctx.static_prompt, text),
+                response_schema=ctx.schema,
+                cache=handle,
+            )
+        except httpx.TransportError as exc:
+            # Raised only by the free token count, before any reservation.
+            raise RunPausedError(
+                f"{case_id}: token count failed ({type(exc).__name__}). Re-run the same "
+                "command; completed cases come from the saved responses."
+            ) from exc
         # Only an error response (not billed) may be tried again. Unknown never retries.
         if outcome.status is not AttemptStatus.FAILED:
             break

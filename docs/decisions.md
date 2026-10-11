@@ -64,3 +64,18 @@ Each entry records the decision, the alternatives considered, and the reason.
 
 ## D17. No stand-in model tests of the LLM pipeline (M3)
 - At the owner's direction, the LLM pipeline is verified with real Vertex calls (the pilot is the integration check). Ledger tests still simulate timeouts and error responses, which cannot be triggered on demand.
+
+## D18. Two examples per label; explicit caching for 3.8 Flash only (M3)
+- Vertex explicit caching needs at least 4,096 tokens, and it is unavailable for gemini-3.1-flash-lite (403 on the global endpoint; the model returns 404 in us-central1 and us-east5).
+- Both LLM configs use the same prompt with 2 dev examples per label, a 4,850-token static prefix. That prefix is cached for gemini-3.8-flash, where cached input bills at one-tenth. flash-lite runs uncached.
+- Effect (MEASURED pilots): 3.8 Flash went from $0.00283 to $0.00107 per call; flash-lite went from $0.00095 to $0.00139 because of the larger prompt. Projected M3 plus M5 fell from about $10.30 to about $7.90.
+- Cache storage is charged through the ledger for each cache's full one-hour TTL.
+
+## D19. Per-app daily limit raised to $6 (M3)
+- The spec default is $5 per app per day. The owner raised it to $6 so both frozen evaluations could run on the same day. The $10 total cap is unchanged. The ledger applies the configured limit to existing daily budget documents.
+
+## D20. Lost responses become unknown and are never re-called, even on resume (M3)
+- During the 3.8 Flash frozen run, Vertex dropped a connection without a response (`RemoteProtocolError`). The provider now treats timeouts, dropped connections, and read errors after send as unknown outcomes. A connection that never opened is treated as unsent and unbilled.
+- `cp ledger --reconcile` marks attempts left in `sent` by a crashed process as unknown. Their reservations stay held, because the call may have been billed.
+- A resumed run never calls a case again if an earlier attempt for it in the same experiment ended unknown. The case is recorded as unknown and routes to review (Section 7, rule 5).
+- Follow-up: a second dropped connection hit the free token-count call, which comes before any reservation. Token counts now retry up to three times. If they still fail, the run pauses cleanly and resumes from saved responses. Billed generate calls are still never retried after an unknown outcome.

@@ -198,3 +198,27 @@ def test_file_store_ledger_survives_restart(tmp_path) -> None:  # type: ignore[n
     run(lg, FakeProvider("ok"))
     reopened = ledger(FileStore(tmp_path))
     assert reopened.totals()["allowance_total"]["committed_micros"] > 0
+
+
+def test_configured_limit_applies_to_existing_budget(any_store: Store) -> None:
+    tight = ledger(any_store, BudgetLimits(1_000, 100_000, 100_000))
+    reserve(tight, "c1", 900)
+    with pytest.raises(BudgetExhaustedError):
+        reserve(tight, "c2", 200)
+    raised = ledger(any_store, BudgetLimits(2_000, 100_000, 100_000))
+    reserve(raised, "c2", 200)  # the raised daily limit applies to today's document
+
+
+def test_reconcile_marks_stuck_sent_attempt_unknown(any_store: Store) -> None:
+    from datetime import UTC, datetime, timedelta
+
+    now = datetime.now(UTC)
+    old = Ledger(any_store, LIMITS, clock=lambda: now - timedelta(minutes=10))
+    aid = reserve(old, "c1", 500)
+    old.mark_sent(aid)  # the process crashed before a response was recorded
+    lg = ledger(any_store)
+    assert lg.reconcile_sent() == [aid]
+    assert any_store.get("attempts", aid)["status"] == "unknown"  # type: ignore[index]
+    assert lg.totals()["allowance_total"]["reserved_micros"] == 500  # still held
+    assert lg.unknown_attempt("exp1", "c1") is not None
+    assert lg.unknown_attempt("exp1", "c2") is None

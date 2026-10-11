@@ -81,6 +81,8 @@ class Ledger:
 
     @staticmethod
     def _budget(tx: Transaction, budget_id: str, limit: int) -> dict[str, Any]:
+        """Read a budget document. The configured limit is the source of truth, so a
+        changed limit applies to the next reservation."""
         doc = tx.get("budgets", budget_id)
         if doc is None:
             doc = {
@@ -89,6 +91,7 @@ class Ledger:
                 "committed_micros": 0,
                 "reserved_micros": 0,
             }
+        doc["limit_usd_micros"] = limit
         return doc
 
     # 2. Reserve
@@ -258,6 +261,33 @@ class Ledger:
             )
 
         self._store.run_transaction(go)
+
+    def reconcile_sent(self, older_than_seconds: int = 120) -> list[str]:
+        """Mark attempts stuck in ``sent`` (for example after a crash) as unknown.
+
+        Their reservations stay held, because the calls may have been billed.
+        """
+        cutoff = self._clock().timestamp() - older_than_seconds
+        stale = [
+            a["attempt_id"]
+            for a in self._store.list("attempts")
+            if a["status"] == AttemptStatus.SENT.value
+            and datetime.fromisoformat(a["created_at"]).timestamp() < cutoff
+        ]
+        for attempt_id in stale:
+            self.mark_unknown(attempt_id, "process ended before a response was recorded")
+        return stale
+
+    def unknown_attempt(self, experiment_id: str, case_id: str) -> dict[str, Any] | None:
+        """An earlier attempt for this case whose outcome is unknown, if any."""
+        for a in self._store.list("attempts"):
+            if (
+                a["experiment_id"] == experiment_id
+                and a["case_id"] == case_id
+                and a["status"] == AttemptStatus.UNKNOWN.value
+            ):
+                return a
+        return None
 
     # 7. Overrun
 

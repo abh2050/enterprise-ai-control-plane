@@ -16,6 +16,8 @@ import logging
 import time
 from typing import Any
 
+import httpx
+
 from control_plane.contracts import Provenance
 from control_plane.providers.base import (
     CacheHandle,
@@ -26,6 +28,7 @@ from control_plane.providers.base import (
 )
 
 log = logging.getLogger(__name__)
+COUNT_ATTEMPTS = 3
 
 # Vertex pricing page (checked 2026-10-11): "You're charged only for requests that return
 # a 200 response code. Requests returning any other response codes, such as 4xx and 5xx
@@ -76,7 +79,18 @@ class GenAIProvider:
                     response_mime_type="application/json", response_json_schema=response_schema
                 )
             )
-        resp = self._client.models.count_tokens(model=model_id, contents=prompt, config=config)
+        # Counting is free and precedes any reservation, so a dropped connection here can
+        # be retried without breaking the no-retry rule for billed calls.
+        for attempt in range(COUNT_ATTEMPTS):
+            try:
+                resp = self._client.models.count_tokens(
+                    model=model_id, contents=prompt, config=config
+                )
+                break
+            except httpx.TransportError:
+                if attempt == COUNT_ATTEMPTS - 1:
+                    raise
+                time.sleep(2 * (attempt + 1))
         return TokenCount(input_tokens=int(resp.total_tokens or 0))
 
     def generate_structured(
@@ -110,10 +124,12 @@ class GenAIProvider:
             )
         except errors.APIError as exc:
             raise ProviderRejectedError(exc.code, exc.status or "error response") from exc
-        except Exception as exc:  # timeouts and dropped connections from the HTTP layer
-            if _is_timeout(exc):
-                raise ProviderTimeoutError("deadline passed after send") from exc
-            raise
+        except httpx.ConnectError as exc:
+            # The connection never opened, so the request was not sent or billed.
+            raise ProviderRejectedError(0, "connect error") from exc
+        except (httpx.TimeoutException, httpx.RemoteProtocolError, httpx.ReadError) as exc:
+            # Sent, but no response arrived: the outcome is unknown.
+            raise ProviderTimeoutError(f"{type(exc).__name__} after send") from exc
         latency_ms = round((time.perf_counter() - started) * 1000)
 
         usage = resp.usage_metadata
@@ -171,11 +187,6 @@ def create_cache(
 
 def delete_cache(provider: GenAIProvider, name: str) -> None:
     provider._client.caches.delete(name=name)
-
-
-def _is_timeout(exc: BaseException) -> bool:
-    name = type(exc).__name__.lower()
-    return "timeout" in name or "timedout" in name or "readerror" in name
 
 
 # Kept for the Section 3 layout: the Vertex provider is this class with backend="vertex".

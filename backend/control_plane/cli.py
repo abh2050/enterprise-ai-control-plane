@@ -120,17 +120,21 @@ def evaluate(
     kind = triage_settings()["configs"][config_id]["kind"]
     try:
         if kind == "llm":
-            from control_plane.triage.llm_eval import evaluate_llm_config
+            from control_plane.triage.llm_eval import RunPausedError, evaluate_llm_config
 
             provider, store, settings = _live(config_id)
-            out = evaluate_llm_config(
-                config_id,
-                provider=provider,
-                store=store,
-                settings=settings,
-                rerun_reason=rerun_reason,
-                progress=_progress,
-            )
+            try:
+                out = evaluate_llm_config(
+                    config_id,
+                    provider=provider,
+                    store=store,
+                    settings=settings,
+                    rerun_reason=rerun_reason,
+                    progress=_progress,
+                )
+            except RunPausedError as exc:
+                typer.echo(str(exc), err=True)
+                raise typer.Exit(code=3) from exc
         else:
             out = evaluate_config(config_id, rerun_reason)
     except FreezeError as exc:
@@ -220,13 +224,20 @@ def tune(config_id: Annotated[str, typer.Argument()]) -> None:
 
 
 @app.command()
-def ledger() -> None:
-    """Show budget totals at paid-tier list prices."""
+def ledger(
+    reconcile: Annotated[
+        bool, typer.Option(help="Mark attempts stuck in 'sent' as unknown (after a crash)")
+    ] = False,
+) -> None:
+    """Show budget totals at list prices."""
     from control_plane.budget import Ledger
     from control_plane.triage.llm_eval import _ledger
 
     settings = get_settings()
     lg: Ledger = _ledger(_live_store(settings), settings)
+    if reconcile:
+        marked = lg.reconcile_sent()
+        typer.echo(f"Marked {len(marked)} attempt(s) unknown; their reservations stay held.")
     for budget_id, b in sorted(lg.totals().items()):
         typer.echo(
             f"{budget_id}: committed ${b['committed_micros'] / 1e6:.4f}, reserved "

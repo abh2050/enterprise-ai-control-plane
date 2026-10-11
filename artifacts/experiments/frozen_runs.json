@@ -7,5 +7,22 @@
         "reason": "first run"
       }
     ]
+  },
+  "llm_low_cost_v1": {
+    "experiment_id": "exp_llm_low_cost_v1_20261011T195657Z",
+    "status": "finished",
+    "history": [
+      {
+        "experiment_id": "exp_llm_low_cost_v1_20261011T195657Z",
+        "reason": "first run"
+      }
+    ],
+    "started_at": "2026-10-11T19:56:57.682278+00:00"
+  },
+  "llm_high_capability_v1": {
+    "experiment_id": "exp_llm_high_capability_v1_20261011T203415Z",
+    "status": "running",
+    "history": [],
+    "started_at": "2026-10-11T20:34:15.415215+00:00"
   }
 }
