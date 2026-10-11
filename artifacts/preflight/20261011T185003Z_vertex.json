@@ -1,0 +1,37 @@
+{
+  "backend": "vertex",
+  "checked_at": "2026-10-11T18:50:03.010217+00:00",
+  "price_card": "2026-10-11_vertex",
+  "thinking_level": "minimal",
+  "models": {
+    "gemini-3.1-flash-lite": {
+      "model_id": "gemini-3.1-flash-lite",
+      "count_tokens": 51,
+      "status": "completed",
+      "structured_output_valid": true,
+      "intent": "card_arrival",
+      "finish_reason": "STOP",
+      "input_tokens": 167,
+      "output_tokens": 36,
+      "thinking_tokens": 0,
+      "latency_ms": 990,
+      "cost_usd_list_price": 9.6e-05,
+      "passed": true
+    },
+    "gemini-3.8-flash": {
+      "model_id": "gemini-3.8-flash",
+      "count_tokens": 51,
+      "status": "failed",
+      "structured_output_valid": false,
+      "intent": null,
+      "finish_reason": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "thinking_tokens": null,
+      "latency_ms": null,
+      "cost_usd_list_price": 0.0,
+      "passed": false
+    }
+  },
+  "passed": false
+}

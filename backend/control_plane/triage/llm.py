@@ -54,8 +54,13 @@ def build_static_prompt(
     return f"{INSTRUCTIONS}\n\nIntent catalog:\n{catalog}\n\nExamples:\n{shots}\n"
 
 
+def build_suffix(message: str) -> str:
+    """The per-case part of a prompt; the static part may live in a context cache."""
+    return f'\nMessage: "{message}"\nIntent:'
+
+
 def build_prompt(static_prompt: str, message: str) -> str:
-    return f'{static_prompt}\nMessage: "{message}"\nIntent:'
+    return static_prompt + build_suffix(message)
 
 
 def prompt_sha256(static_prompt: str) -> str:

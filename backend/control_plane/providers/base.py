@@ -27,6 +27,16 @@ class ProviderResponse:
     finish_reason: str | None = None
 
 
+@dataclass(frozen=True)
+class CacheHandle:
+    """An explicit context cache holding a fixed prompt prefix."""
+
+    name: str
+    model_id: str
+    token_count: int
+    expires_at: float  # unix seconds
+
+
 class ProviderTimeoutError(Exception):
     """The deadline passed after the request was sent; the outcome is unknown."""
 
@@ -46,7 +56,9 @@ class Provider(Protocol):
     provenance: Provenance
     backend: str
 
-    def count_tokens(self, model_id: str, prompt: str) -> TokenCount: ...
+    def count_tokens(
+        self, model_id: str, prompt: str, response_schema: dict[str, Any] | None = None
+    ) -> TokenCount: ...
 
     def generate_structured(
         self,
@@ -55,4 +67,5 @@ class Provider(Protocol):
         response_schema: dict[str, Any],
         max_output_tokens: int,
         deadline_seconds: float,
+        cached_content: str | None = None,
     ) -> ProviderResponse: ...

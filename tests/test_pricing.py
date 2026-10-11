@@ -50,3 +50,18 @@ def test_gemini_api_page_parses() -> None:
     text = p._page_text((FIX / "gemini_pricing_2026-10-11.html").read_text())
     price, _ = p._section_prices(text, "gemini-3.1-flash-lite", date(2026, 10, 11))
     assert price.input == Fraction("0.25")
+
+
+def test_cached_reservation_and_storage_math() -> None:
+    price = p.ModelPrice(Fraction(1), Fraction(2), Fraction(1, 10), Fraction(1, 1_000_000))
+    # suffix 100 -> 110 at $1/M = 110; cached 3,000 -> 3,300 at $0.10/M = 330; 256 cap at $2 = 512
+    assert price.reservation_micros(100, 256, cached_tokens=3000) == 110 + 330 + 512
+    # 3,400 tokens for one hour at $0.000001 per token-hour = $0.0034 = 3,400 micros
+    assert price.storage_micros(3400, 3600) == 3400
+    assert price.storage_micros(3400, 1800) == 1700
+
+
+def test_vertex_storage_price_parses() -> None:
+    for model in ("gemini-3.1-flash-lite", "gemini-3.8-flash"):
+        storage, _ = p._vertex_storage_price(VERTEX, model)
+        assert storage == Fraction("0.000001")

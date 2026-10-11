@@ -20,7 +20,9 @@ class FixtureProvider:
     provenance = Provenance.FIXTURE
     backend = "fixture"
 
-    def count_tokens(self, model_id: str, prompt: str) -> TokenCount:
+    def count_tokens(
+        self, model_id: str, prompt: str, response_schema: dict[str, Any] | None = None
+    ) -> TokenCount:
         # Rough 4 characters per token, which is enough for reservation tests.
         return TokenCount(input_tokens=max(1, len(prompt) // 4))
 
@@ -31,6 +33,7 @@ class FixtureProvider:
         response_schema: dict[str, Any],
         max_output_tokens: int,
         deadline_seconds: float,
+        cached_content: str | None = None,
     ) -> ProviderResponse:
         h = _digest(model_id, prompt)
         intent_enum: list[str] = (

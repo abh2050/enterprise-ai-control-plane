@@ -15,6 +15,7 @@ Flow for every paid model call:
 
 from __future__ import annotations
 
+import math
 import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -24,6 +25,7 @@ from typing import Any
 from control_plane.contracts import AttemptStatus, IncidentStatus, Limits, Provenance
 from control_plane.pricing import ModelPrice
 from control_plane.providers.base import (
+    CacheHandle,
     Provider,
     ProviderRejectedError,
     ProviderResponse,
@@ -319,12 +321,20 @@ def call_with_budget(
     model_id: str,
     prompt: str,
     response_schema: dict[str, Any],
+    cache: CacheHandle | None = None,
 ) -> CallOutcome:
-    """One budgeted attempt. It never retries; the caller decides on a second attempt."""
-    counted = provider.count_tokens(model_id, prompt).input_tokens
-    if counted > limits.max_input_tokens:
-        raise InputTooLargeError(f"{counted} input tokens exceeds {limits.max_input_tokens}")
-    reservation = price.reservation_micros(counted, limits.max_output_tokens)
+    """One budgeted attempt. It never retries; the caller decides on a second attempt.
+
+    With a cache, ``prompt`` is only the uncached suffix and the cached prefix is reserved
+    at the cached-input rate.
+    """
+    counted = provider.count_tokens(model_id, prompt, response_schema).input_tokens
+    cached = cache.token_count if cache else 0
+    if counted + cached > limits.max_input_tokens:
+        raise InputTooLargeError(
+            f"{counted + cached} input tokens exceeds {limits.max_input_tokens}"
+        )
+    reservation = price.reservation_micros(counted, limits.max_output_tokens, cached)
     attempt_id = ledger.reserve(
         app_id=app_id,
         experiment_id=experiment_id,
@@ -336,7 +346,12 @@ def call_with_budget(
     ledger.mark_sent(attempt_id)
     try:
         response = provider.generate_structured(
-            model_id, prompt, response_schema, limits.max_output_tokens, limits.deadline_seconds
+            model_id,
+            prompt,
+            response_schema,
+            limits.max_output_tokens,
+            limits.deadline_seconds,
+            cached_content=cache.name if cache else None,
         )
     except ProviderTimeoutError as exc:
         ledger.mark_unknown(attempt_id, str(exc))
@@ -359,3 +374,41 @@ def call_with_budget(
         cached_tokens=response.cached_tokens,
     )
     return CallOutcome(AttemptStatus.COMPLETED, attempt_id, counted, reservation, response, actual)
+
+
+def charge_cache_storage(
+    ledger: Ledger,
+    price: ModelPrice,
+    *,
+    app_id: str,
+    experiment_id: str,
+    model_id: str,
+    create: Callable[[], CacheHandle],
+    expected_tokens: int,
+    ttl_seconds: int,
+) -> CacheHandle:
+    """Reserve storage for the full TTL, create the cache, then settle the full TTL.
+
+    Storage is charged for the whole TTL even if the cache is deleted early, so the
+    recorded cost is an upper bound.
+    """
+    reservation = max(1, price.storage_micros(math.ceil(expected_tokens * 1.1), ttl_seconds))
+    attempt_id = ledger.reserve(
+        app_id=app_id,
+        experiment_id=experiment_id,
+        case_id=f"cache_storage:{uuid.uuid4().hex[:8]}",
+        model_id=model_id,
+        reservation_micros=reservation,
+        max_attempts=1,
+    )
+    ledger.mark_sent(attempt_id)
+    try:
+        handle = create()
+    except Exception as exc:
+        ledger.release(attempt_id, f"cache create failed: {type(exc).__name__}")
+        raise
+    actual = max(1, price.storage_micros(handle.token_count, ttl_seconds))
+    ledger.settle(
+        attempt_id, actual_micros=actual, input_tokens=handle.token_count, output_tokens=0
+    )
+    return handle

@@ -15,6 +15,7 @@ configs:
     examples_per_label: 1
     max_output_tokens: 256        # the answer is one label plus at most 300 characters
     thinking_level: minimal       # thinking tokens bill as output
+    context_cache: true           # static prefix cached on Vertex; cached input bills at 1/10
 
   llm_high_capability_v1:
     kind: llm
@@ -23,7 +24,8 @@ configs:
     policy_id: policy_llm_high_capability_v1
     examples_per_label: 1
     max_output_tokens: 256
-    thinking_level: minimal
+    thinking_level: low           # 3.8 Flash rejects minimal (preflight 2026-10-11)
+    context_cache: true
 
 # Threshold tuning runs on the development split only, then the policy is frozen
 # before the frozen evaluation set is touched.

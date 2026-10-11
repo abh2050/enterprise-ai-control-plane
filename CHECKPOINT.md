@@ -1,30 +1,34 @@
-# Checkpoint: M3 in progress, waiting on Vertex auth
+# Checkpoint: M3 in progress, paused by the owner to revise the spec (2026-10-11)
 
-Plan: ~/.claude/plans/enterprise-ai-control-temporal-magpie.md. No paid model calls made yet.
+Plan: ~/.claude/plans/enterprise-ai-control-temporal-magpie.md. GCP project: spheric-bloom-350617 (billing on, Vertex AI enabled, ADC set with quota project).
 
-## M3 built and tested (offline)
-- pricing.py: versioned price cards from the official Vertex pricing page (standard table, Global endpoint, <= 200K tier, date-effective prices); refuses to guess
-- providers/vertex.py: google-genai client for Vertex (global endpoint), one attempt, 30 s deadline, thinking minimal, usage incl. thinking and cached tokens; any error response releases the reservation (Vertex bills only 200s)
-- budget.py: ledger (reserve, send, settle once, unknown hold, release on error, overrun pause and incident), $10 total cap; call_with_budget
-- store.py: FileStore for durable local ledger; paid commands refuse the memory store
-- triage/llm.py: response schema, parsing, response cache (never pay twice), rate limiter
-- triage/llm_eval.py: pilot, dev tuning of agreement threshold (examples excluded), freeze, resumable frozen evaluation
-- triage/preflight.py: model access, token counting, structured output; live runs require a pass
-- triage/business_model.py and configs/business_model.yaml: net value, breakeven precision, sensitivity (all ASSUMPTION inputs, justified)
-- CLI: pricecheck, preflight, pilot, tune, evaluate (LLM), ledger
-- docs/decisions.md D11 to D17
-- Tests: 136 passed (ledger concurrency, settlement, unknown outcome, overrun, pricing, business model); ruff and mypy clean
+## Spend so far
+$0.1896 at Vertex list prices (`uv run cp ledger`), all on dev-set pilots and preflight. Cap: $10 total, $5 per app per day.
 
-## Waiting on the owner
-- `gcloud auth login` and `gcloud auth application-default login` (current gcloud token has expired)
-- Confirm billing is enabled and the Vertex AI API is on for gen-lang-client-0320912223
-- Delete the AI Studio key (pasted in chat); then remove it from .env
+## Done in M3
+- Vertex price card `configs/price_cards/2026-10-11_vertex.yaml` (standard table, Global endpoint, <= 200K tier, cache storage rate)
+- Preflight passed for both models (artifacts/preflight/): flash-lite with thinking `minimal`; 3.8 Flash rejects `minimal`, uses `low`. Both 0 thinking tokens.
+- Uncached 50-case dev pilots (real Vertex calls):
+  - gemini-3.1-flash-lite: 50/50 valid, ~3,557 input tokens, ~42 output, ~1.0 s, $0.00095 per call, projected M3 $2.19
+  - gemini-3.8-flash: 50/50 valid, ~3,557 input, ~43 output, ~1.7 s, $0.00283 per call, projected M3 $6.49
+  - Projected M3 plus M5 is about $10.20, over the cap. Implicit caching gave 0 cached tokens.
+  - Token count vs billed input: flash-lite 6 percent under, 3.8 Flash 20 percent under (structured output overhead); no reservation was exceeded.
+- Owner chose explicit context caching to fit the cap. Code is built and tested (cache session, storage charged through the ledger, cached reservations), 138 tests pass.
 
-## Next steps once authenticated
-1. `cp pricecheck --backend vertex`
-2. `cp preflight` (two tiny calls)
-3. `cp pilot llm_low_cost_v1 --n 50` and the same for llm_high_capability_v1 → projected cost; ask before full runs
-4. `cp tune` both configs, `cp evaluate` both, regenerate the experiment report with economics and bootstrap, write docs/business_case.md
+## Blocker found just before the pause (explicit caching probe, ledgered, $0)
+- gemini-3.1-flash-lite: cache create on global returns 403 PERMISSION_DENIED; the model is 404 in us-central1 and us-east5. Explicit caching appears unavailable for it.
+- gemini-3.8-flash on global: 400 INVALID_ARGUMENT, "The cached content is of 2836 tokens..." (below the minimum cache size; message truncated). It is 404 in us-central1 and us-east5.
+- `configs/triage_configs.yaml` currently sets `context_cache: true` for both LLM configs, so `cp pilot` will fail until this is resolved.
 
-## Still to build in M3
-- Report: LLM sections, paired bootstrap vs classifier, total cost per correct case, business case doc
+## Options to decide after the spec revision
+1. 3.8 Flash: pad or enlarge the static prefix above the minimum (e.g. 2 examples per label) and cache it; flash-lite: run uncached (it is cheap).
+2. Drop caching; use a smaller prompt or raise the cap.
+3. Vertex batch prediction (50 percent off) for dev tuning and the frozen set.
+
+## Not yet done in M3
+- Dev tuning, freezing, and frozen evaluation of both LLM configs
+- Experiment report LLM sections, paired bootstrap, total cost per correct case, docs/business_case.md
+
+## Housekeeping for the owner
+- Rotate the secrets pasted in chat: AI Studio Gemini key, OpenAI key, Hugging Face token, and HF_CREDENTIALS (printed by mistake)
+- After the Gemini key is revoked, remove GEMINI_API_KEY from .env

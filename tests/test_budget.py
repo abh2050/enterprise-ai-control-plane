@@ -105,7 +105,7 @@ class FakeProvider:
         self.tokens = tokens
         self.calls = 0
 
-    def count_tokens(self, model_id: str, prompt: str) -> TokenCount:
+    def count_tokens(self, model_id: str, prompt: str, response_schema: Any = None) -> TokenCount:
         return TokenCount(self.tokens)
 
     def generate_structured(
@@ -115,6 +115,7 @@ class FakeProvider:
         response_schema: dict[str, Any],
         max_output_tokens: int,
         deadline_seconds: float,
+        cached_content: str | None = None,
     ) -> ProviderResponse:
         self.calls += 1
         if self.behaviour == "timeout":

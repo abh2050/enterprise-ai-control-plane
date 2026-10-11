@@ -63,6 +63,8 @@ class ModelPrice:
     input: Fraction
     output: Fraction  # includes thinking tokens
     cached_input: Fraction
+    # Explicit context cache storage, USD per token per hour (0 when not priced).
+    cache_storage_per_token_hour: Fraction = Fraction(0)
 
     def cost_micros(self, input_tokens: int, output_tokens: int, cached_tokens: int = 0) -> int:
         uncached = max(0, input_tokens - cached_tokens)
@@ -70,10 +72,24 @@ class ModelPrice:
         exact += output_tokens * self.output
         return math.ceil(exact)
 
-    def reservation_micros(self, counted_input_tokens: int, output_cap: int) -> int:
-        """Section 7: input tokens plus 10 percent and the full output cap, rounded up."""
+    def reservation_micros(
+        self, counted_input_tokens: int, output_cap: int, cached_tokens: int = 0
+    ) -> int:
+        """Section 7: input tokens plus 10 percent and the full output cap, rounded up.
+
+        ``counted_input_tokens`` is the uncached part; a cached prefix is reserved at the
+        cached rate, also padded by 10 percent.
+        """
         padded_input = math.ceil(counted_input_tokens * Fraction(11, 10))
-        return math.ceil(padded_input * self.input + output_cap * self.output)
+        padded_cached = math.ceil(cached_tokens * Fraction(11, 10))
+        return math.ceil(
+            padded_input * self.input + padded_cached * self.cached_input + output_cap * self.output
+        )
+
+    def storage_micros(self, tokens: int, seconds: int) -> int:
+        return math.ceil(
+            tokens * Fraction(seconds, 3600) * self.cache_storage_per_token_hour * 1_000_000
+        )
 
 
 @dataclass(frozen=True)
@@ -219,6 +235,24 @@ def _vertex_section_prices(
     return price, evidence
 
 
+def _vertex_storage_price(text: str, model_id: str) -> tuple[Fraction, list[str]]:
+    """Context cache storage, USD per token-hour, <= 200K tier."""
+    display = VERTEX_DISPLAY_NAMES[model_id].replace("-", " ")
+    start = text.find("Context Cache Storage price for Explicit Caching")
+    if start < 0:
+        raise PriceCheckError("context cache storage table not found")
+    lines = text[start : start + 4000].splitlines()
+    for i, line in enumerate(lines):
+        names = [n.strip().replace("-", " ") for n in line.split(",")]
+        if display in names:
+            value = lines[i + 1]
+            m = re.fullmatch(r"\$(\d+(?:\.\d+)?)", value)
+            if not m:
+                raise PriceCheckError(f"{model_id}: storage price not parseable: {value!r}")
+            return Fraction(m.group(1)), [line, value]
+    raise PriceCheckError(f"{model_id}: no context cache storage price")
+
+
 def fetch_price_card(backend: str, model_ids: list[str], on: date | None = None) -> Path:
     if backend not in PRICING_URLS:
         raise PriceCheckError(f"no pricing source for backend {backend}")
@@ -244,6 +278,10 @@ def write_price_card(
             "cached_input_usd_per_million": str(price.cached_input),
             "page_evidence": evidence,
         }
+        if backend == "vertex":
+            storage, storage_evidence = _vertex_storage_price(text, model_id)
+            models[model_id]["cache_storage_usd_per_token_hour"] = str(storage)
+            models[model_id]["page_evidence"]["cache_storage"] = storage_evidence
     version = f"{on.isoformat()}_{backend}"
     card = {
         "version": version,
@@ -279,6 +317,7 @@ def load_price_card(version: str | None = None, backend: str = "gemini_api") -> 
             Fraction(v["input_usd_per_million"]),
             Fraction(v["output_usd_per_million"]),
             Fraction(v["cached_input_usd_per_million"]),
+            Fraction(v.get("cache_storage_usd_per_token_hour", "0")),
         )
         for m, v in data["models"].items()
     }

@@ -18,6 +18,7 @@ from typing import Any
 
 from control_plane.contracts import Provenance
 from control_plane.providers.base import (
+    CacheHandle,
     ProviderRejectedError,
     ProviderResponse,
     ProviderTimeoutError,
@@ -62,8 +63,20 @@ class GenAIProvider:
         else:
             raise ValueError(f"unknown backend {backend}")
 
-    def count_tokens(self, model_id: str, prompt: str) -> TokenCount:
-        resp = self._client.models.count_tokens(model=model_id, contents=prompt)
+    def count_tokens(
+        self, model_id: str, prompt: str, response_schema: dict[str, Any] | None = None
+    ) -> TokenCount:
+        config = None
+        if response_schema is not None and self.backend == "vertex":
+            # Counting with the schema gets closer to billed input. Structured output still
+            # adds a small fixed overhead the count omits; the output cap in each
+            # reservation covers it, and the pilot reports counted versus billed tokens.
+            config = self._types.CountTokensConfig(
+                generation_config=self._types.GenerationConfig(
+                    response_mime_type="application/json", response_json_schema=response_schema
+                )
+            )
+        resp = self._client.models.count_tokens(model=model_id, contents=prompt, config=config)
         return TokenCount(input_tokens=int(resp.total_tokens or 0))
 
     def generate_structured(
@@ -73,6 +86,7 @@ class GenAIProvider:
         response_schema: dict[str, Any],
         max_output_tokens: int,
         deadline_seconds: float,
+        cached_content: str | None = None,
     ) -> ProviderResponse:
         from google.genai import errors
 
@@ -83,6 +97,7 @@ class GenAIProvider:
             response_mime_type="application/json",
             response_json_schema=response_schema,
             thinking_config=types.ThinkingConfig(thinking_level=self.thinking_level),
+            cached_content=cached_content,
             http_options=types.HttpOptions(
                 timeout=int(deadline_seconds * 1000),
                 retry_options=types.HttpRetryOptions(attempts=1),
@@ -136,6 +151,26 @@ class GenAIProvider:
             thinking_tokens=thinking_tokens,
             finish_reason=finish,
         )
+
+
+def create_cache(
+    provider: GenAIProvider, model_id: str, prefix: str, ttl_seconds: int, label: str
+) -> CacheHandle:
+    """Store a fixed prompt prefix as an explicit context cache."""
+    types = provider._types
+    cache = provider._client.caches.create(
+        model=model_id,
+        config=types.CreateCachedContentConfig(
+            contents=[prefix], ttl=f"{ttl_seconds}s", display_name=label[:120]
+        ),
+    )
+    tokens = int(cache.usage_metadata.total_token_count or 0) if cache.usage_metadata else 0
+    expires = cache.expire_time.timestamp() if cache.expire_time else time.time() + ttl_seconds
+    return CacheHandle(str(cache.name), model_id, tokens, expires)
+
+
+def delete_cache(provider: GenAIProvider, name: str) -> None:
+    provider._client.caches.delete(name=name)
 
 
 def _is_timeout(exc: BaseException) -> bool:

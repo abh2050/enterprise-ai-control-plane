@@ -254,13 +254,17 @@ def preflight() -> None:
     if settings.provider_mode is ProviderMode.FIXTURE:
         typer.echo("Set PROVIDER_MODE=gemini_api or vertex first.", err=True)
         raise typer.Exit(code=1)
-    report = run_preflight(
-        [settings.vertex_low_cost_model, settings.vertex_high_capability_model],
-        provider=build_provider(settings),
-        store=_live_store(settings),
-        settings=settings,
-        thinking_level="minimal",
-    )
+    from control_plane.triage.evaluate import triage_settings
+
+    models = {}
+    for spec in triage_settings()["configs"].values():
+        if spec["kind"] == "llm":
+            model_id = getattr(settings, spec["model_setting"])
+            models[model_id] = (
+                build_provider(settings, spec["thinking_level"]),
+                spec["thinking_level"],
+            )
+    report = run_preflight(models, store=_live_store(settings), settings=settings)
     typer.echo(json.dumps(report, indent=2))
     if not report["passed"]:
         raise typer.Exit(code=1)

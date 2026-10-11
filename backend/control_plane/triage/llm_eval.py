@@ -9,16 +9,23 @@ same experiment from the cache. Experiment records name the backend and price ca
 from __future__ import annotations
 
 import json
+import logging
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Any
 
-from control_plane.budget import BudgetLimits, CallOutcome, Ledger, call_with_budget
+from control_plane.budget import (
+    BudgetLimits,
+    CallOutcome,
+    Ledger,
+    call_with_budget,
+    charge_cache_storage,
+)
 from control_plane.contracts import AttemptStatus, ConfigKind, Limits, Route
 from control_plane.pricing import PriceCard, load_price_card
-from control_plane.providers.base import Provider
+from control_plane.providers.base import CacheHandle, Provider
 from control_plane.settings import Settings
 from control_plane.store import Store
 from control_plane.triage import classifier as clf_mod
@@ -48,6 +55,7 @@ from control_plane.triage.llm import (
     ResponseCache,
     build_prompt,
     build_static_prompt,
+    build_suffix,
     cache_key,
     parse_intent,
     pick_examples,
@@ -58,6 +66,7 @@ from control_plane.triage.policy import route
 from control_plane.triage.scorecard import CaseResult, RiskResult, build_scorecard
 
 REJECTION_BACKOFF_SECONDS = 20.0
+log = logging.getLogger(__name__)
 
 
 class RunPausedError(RuntimeError):
@@ -131,6 +140,70 @@ class LLMCall:
     attempt_count: int
     finish_reason: str | None
     from_cache: bool
+    counted_input_tokens: int = 0
+
+
+class ContextCacheSession:
+    """One explicit context cache for the static prompt, renewed before it expires.
+
+    Storage is charged through the ledger for each cache's full TTL. The cache is
+    deleted when the run ends.
+    """
+
+    TTL_SECONDS = 3600
+    RENEW_MARGIN_SECONDS = 300
+
+    def __init__(
+        self, ctx: LLMContext, provider: Provider, price: Any, ledger: Ledger, experiment_id: str
+    ) -> None:
+        self._ctx = ctx
+        self._provider = provider
+        self._price = price
+        self._ledger = ledger
+        self._experiment_id = experiment_id
+        self.handle: CacheHandle | None = None
+        self.created: list[str] = []
+
+    def current(self) -> CacheHandle:
+        if self.handle and self.handle.expires_at - time.time() > self.RENEW_MARGIN_SECONDS:
+            return self.handle
+        from control_plane.providers.vertex import GenAIProvider, create_cache
+
+        if not isinstance(self._provider, GenAIProvider):
+            raise RuntimeError("context caching needs the Google GenAI provider")
+        provider = self._provider
+        expected = provider.count_tokens(self._ctx.model_id, self._ctx.static_prompt).input_tokens
+        self.close()
+        self.handle = charge_cache_storage(
+            self._ledger,
+            self._price,
+            app_id=APP_ID,
+            experiment_id=self._experiment_id,
+            model_id=self._ctx.model_id,
+            expected_tokens=expected,
+            ttl_seconds=self.TTL_SECONDS,
+            create=lambda: create_cache(
+                provider,
+                self._ctx.model_id,
+                self._ctx.static_prompt,
+                self.TTL_SECONDS,
+                f"{self._ctx.config_id}",
+            ),
+        )
+        self.created.append(self.handle.name)
+        return self.handle
+
+    def close(self) -> None:
+        if self.handle is None:
+            return
+        from control_plane.providers.vertex import GenAIProvider, delete_cache
+
+        if isinstance(self._provider, GenAIProvider):
+            try:
+                delete_cache(self._provider, self.handle.name)
+            except Exception as exc:  # expiry removes it anyway; storage was charged up front
+                log.warning("context cache delete failed: %s", type(exc).__name__)
+        self.handle = None
 
 
 def run_llm_calls(
@@ -144,44 +217,56 @@ def run_llm_calls(
     settings: Settings,
     progress: Callable[[int, int, LLMCall], None] | None = None,
 ) -> list[LLMCall]:
-    """Call the model once per case through the ledger, or reuse a cached response."""
+    """Call the model once per case through the ledger, or reuse a saved response."""
     ledger = _ledger(store, settings)
     price = price_card.price(ctx.model_id)
-    cache = ResponseCache()
+    saved = ResponseCache()
     limiter = RateLimiter(settings.llm_requests_per_minute)
+    use_context_cache = bool(ctx.spec.get("context_cache"))
     gen_settings = {
         "max_output_tokens": ctx.limits.max_output_tokens,
         "thinking_level": ctx.spec["thinking_level"],
         "temperature": 0,
+        "context_cache": use_context_cache,
     }
+    session = (
+        ContextCacheSession(ctx, provider, price, ledger, experiment_id)
+        if use_context_cache
+        else None
+    )
     calls: list[LLMCall] = []
-    for i, (case_id, text) in enumerate(cases):
-        prompt = build_prompt(ctx.static_prompt, text)
-        key = cache_key(provider.backend, ctx.model_id, prompt, ctx.schema, gen_settings)
-        cached = cache.get(key)
-        if cached is not None:
-            call = LLMCall(**{**cached["call"], "case_id": case_id, "from_cache": True})
-        else:
-            call = _fresh_call(
-                ctx, case_id, prompt, experiment_id, provider, price, ledger, limiter
-            )
-            if call.status == AttemptStatus.COMPLETED.value:
-                cache.put(key, {"call": {**call.__dict__}, "price_card": price_card.version})
-        calls.append(call)
-        if progress:
-            progress(i + 1, len(cases), call)
+    try:
+        for i, (case_id, text) in enumerate(cases):
+            prompt = build_prompt(ctx.static_prompt, text)
+            key = cache_key(provider.backend, ctx.model_id, prompt, ctx.schema, gen_settings)
+            hit = saved.get(key)
+            if hit is not None:
+                call = LLMCall(**{**hit["call"], "case_id": case_id, "from_cache": True})
+            else:
+                call = _fresh_call(
+                    ctx, case_id, text, experiment_id, provider, price, ledger, limiter, session
+                )
+                if call.status == AttemptStatus.COMPLETED.value:
+                    saved.put(key, {"call": {**call.__dict__}, "price_card": price_card.version})
+            calls.append(call)
+            if progress:
+                progress(i + 1, len(cases), call)
+    finally:
+        if session:
+            session.close()
     return calls
 
 
 def _fresh_call(
     ctx: LLMContext,
     case_id: str,
-    prompt: str,
+    text: str,
     experiment_id: str,
     provider: Provider,
     price: Any,
     ledger: Ledger,
     limiter: RateLimiter,
+    session: ContextCacheSession | None,
 ) -> LLMCall:
     outcome: CallOutcome | None = None
     attempts = 0
@@ -190,6 +275,7 @@ def _fresh_call(
             time.sleep(REJECTION_BACKOFF_SECONDS)
         limiter.wait()
         attempts += 1
+        handle = session.current() if session else None
         outcome = call_with_budget(
             ledger,
             provider,
@@ -199,17 +285,19 @@ def _fresh_call(
             experiment_id=experiment_id,
             case_id=case_id,
             model_id=ctx.model_id,
-            prompt=prompt,
+            # With a context cache, only the per-case suffix is sent.
+            prompt=build_suffix(text) if handle else build_prompt(ctx.static_prompt, text),
             response_schema=ctx.schema,
+            cache=handle,
         )
-        # Only a refusal before processing may be tried again. Unknown never retries.
+        # Only an error response (not billed) may be tried again. Unknown never retries.
         if outcome.status is not AttemptStatus.FAILED:
             break
     assert outcome is not None
     if outcome.status is AttemptStatus.FAILED:
         raise RunPausedError(
             f"{case_id}: refused twice ({outcome.failure_reason}). Re-run the same command "
-            "later; completed cases come from the cache."
+            "later; completed cases come from the saved responses."
         )
     resp = outcome.response
     return LLMCall(
@@ -225,6 +313,7 @@ def _fresh_call(
         attempt_count=attempts,
         finish_reason=resp.finish_reason if resp else None,
         from_cache=False,
+        counted_input_tokens=outcome.counted_input_tokens,
     )
 
 
@@ -247,7 +336,7 @@ def pilot(
 ) -> dict[str, Any]:
     """Run the first ``n`` tuning cases (dev only) and project the cost of the full plan."""
     ctx = llm_context(config_id, settings)
-    card = load_price_card()
+    card = load_price_card(backend=provider.backend)
     cases = [(c.case_id, c.text) for c in ctx.tuning_cases[:n]]
     calls = run_llm_calls(
         ctx,
@@ -263,7 +352,14 @@ def pilot(
     price = card.price(ctx.model_id)
     mean = {
         k: sum(getattr(c, k) for c in done) / max(1, len(done))
-        for k in ("input_tokens", "output_tokens", "thinking_tokens", "cached_tokens", "latency_ms")
+        for k in (
+            "counted_input_tokens",
+            "input_tokens",
+            "output_tokens",
+            "thinking_tokens",
+            "cached_tokens",
+            "latency_ms",
+        )
     }
     per_call_micros = price.cost_micros(
         round(mean["input_tokens"]), round(mean["output_tokens"]), round(mean["cached_tokens"])
@@ -295,7 +391,7 @@ def tune_and_freeze(
 ) -> dict[str, Any]:
     """Tune the agreement threshold on dev (examples excluded), then freeze."""
     ctx = llm_context(config_id, settings)
-    card = load_price_card()
+    card = load_price_card(backend=provider.backend)
     tuning = triage_settings()["policy_tuning"]
     calls = run_llm_calls(
         ctx,
@@ -371,7 +467,11 @@ def tune_and_freeze(
         "prompt_sha256": prompt_sha256(ctx.static_prompt),
         "policy_id": policy_id,
         "limits": ctx.limits.model_dump(),
-        "generation": {"temperature": 0, "thinking_level": ctx.spec["thinking_level"]},
+        "generation": {
+            "temperature": 0,
+            "thinking_level": ctx.spec["thinking_level"],
+            "context_cache": bool(ctx.spec.get("context_cache")),
+        },
         "price_card": card.version,
         "created_by": "cli",
         "created_at": now,

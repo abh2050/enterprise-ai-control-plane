@@ -31,14 +31,13 @@ PROBE_PROMPT = (
 
 
 def run_preflight(
-    model_ids: list[str],
+    models: dict[str, tuple[Provider, str]],  # model_id -> (provider, thinking level)
     *,
-    provider: Provider,
     store: Store,
     settings: Settings,
-    thinking_level: str,
 ) -> dict[str, Any]:
-    card = load_price_card()
+    backend = next(iter(models.values()))[0].backend
+    card = load_price_card(backend=backend)
     ledger = _ledger(store, settings)
     schema = {
         "type": "object",
@@ -50,14 +49,13 @@ def run_preflight(
     }
     stamp = datetime.now(UTC)
     report: dict[str, Any] = {
-        "backend": provider.backend,
+        "backend": backend,
         "checked_at": stamp.isoformat(),
         "price_card": card.version,
-        "thinking_level": thinking_level,
         "models": {},
     }
-    for model_id in model_ids:
-        result: dict[str, Any] = {"model_id": model_id}
+    for model_id, (provider, thinking_level) in models.items():
+        result: dict[str, Any] = {"model_id": model_id, "thinking_level": thinking_level}
         try:
             result["count_tokens"] = provider.count_tokens(model_id, PROBE_PROMPT).input_tokens
             outcome = call_with_budget(
@@ -76,6 +74,7 @@ def run_preflight(
             intent = parse_intent(resp.output, PROBE_LABELS) if resp else None
             result.update(
                 status=outcome.status.value,
+                failure_reason=outcome.failure_reason,
                 structured_output_valid=intent is not None,
                 intent=intent,
                 finish_reason=resp.finish_reason if resp else None,
@@ -96,7 +95,7 @@ def run_preflight(
         report["models"][model_id] = result
     report["passed"] = all(m["passed"] for m in report["models"].values())
     PREFLIGHT_DIR.mkdir(parents=True, exist_ok=True)
-    path = PREFLIGHT_DIR / f"{stamp:%Y%m%dT%H%M%SZ}_{provider.backend}.json"
+    path = PREFLIGHT_DIR / f"{stamp:%Y%m%dT%H%M%SZ}_{backend}.json"
     path.write_text(json.dumps(report, indent=2) + "\n")
     report["path"] = str(path)
     return report

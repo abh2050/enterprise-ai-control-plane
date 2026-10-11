@@ -1,0 +1,58 @@
+version: 2026-10-11_vertex
+backend: vertex
+tier: standard (not priority, flex, or batch); <= 200K input tokens; Global endpoint
+source_url: https://cloud.google.com/vertex-ai/generative-ai/pricing
+fetched_at: '2026-10-11T19:07:27.391384+00:00'
+effective_on: '2026-10-11'
+page_sha256: 587563bc7d47ea36aba8cb31e5e889d8b0799d82db5edafc2b150b42f1d5a44a
+provenance: MEASURED
+note: List prices. Promotional credits-back offers on the page are ignored, so costs
+  here are an upper bound on billed spend.
+models:
+  gemini-3.1-flash-lite:
+    input_usd_per_million: 1/4
+    output_usd_per_million: 3/2
+    cached_input_usd_per_million: 1/40
+    page_evidence:
+      block_header:
+      - Gemini 3.1 Flash-Lite
+      - Input (text, image, video)
+      region: Global
+      input_row:
+      - $0.25
+      - $0.25
+      - $0.025
+      - $0.025
+      output_row:
+      - $1.50
+      - $1.50
+      - N/A
+      - N/A
+      cache_storage:
+      - Gemini 3.5 Flash Lite, Gemini 3.1 Flash Lite
+      - $0.000001
+    cache_storage_usd_per_token_hour: 1/1000000
+  gemini-3.8-flash:
+    input_usd_per_million: 3/4
+    output_usd_per_million: 15/4
+    cached_input_usd_per_million: 3/40
+    page_evidence:
+      block_header:
+      - Gemini 3.8 Flash*
+      - through December 31, 2026
+      region: Global
+      input_row:
+      - $0.75
+      - $0.75
+      - $0.075
+      - $0.075
+      output_row:
+      - $3.75
+      - $3.75
+      - N/A
+      - N/A
+      cache_storage:
+      - Gemini 3.8 Flash Cyber, Gemini 3.8 Flash, Gemini 3.7 Flash, Gemini 3.6 Flash,
+        Gemini 3.5 Flash, Gemini 3 Flash
+      - $0.000001
+    cache_storage_usd_per_token_hour: 1/1000000
