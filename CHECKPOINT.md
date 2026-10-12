@@ -1,4 +1,14 @@
-# Checkpoint: M6 GCP and analytics complete (2026-10-12)
+# Checkpoint: M7 and M8 site complete (2026-10-12)
+
+Live site layout (GitHub Pages from main, root): `index.html` explainer at `/`, the interactive app at `/console/` (real backend in the browser, D38, D40). Next: README (owner will have Codex write it), push to GitHub and enable Pages, owner to-dos below.
+
+## Since M6
+- Interactive app: unchanged FastAPI backend in Pyodide; parity test 78 requests; runtime vendored with SHA-256 checks; warms from the explainer; first-visit guide.
+- Diagrams: 11 draw.io diagrams with draw.io's own GCP icons (`.claude/skills/gcp-architecture-diagram`, `docs/diagrams/`).
+- Videos (Codex, brag + Hyperframes): teaser 21 s, architecture overview 58 s, demo 4:00, README GIF; captions in `media/captions/`.
+- Explainer: `index.html` with Higgsfield atmosphere images (`configs/visual_assets.yaml`, `scripts/generate_assets.py`, about 0.04 USD).
+- Checks: 240 backend tests; 30 Playwright (6 demo, 10 scenarios, 14 visual).
+
 
 Plan: ~/.claude/plans/enterprise-ai-control-temporal-magpie.md. Console spec: docs/spec/console_spec.md. Next: M7 (GitHub Pages console with an interactive in-browser demo mode, final docs, provenance audit, snapshot test). LLM spend: about $6.60 of the $10 cap (smoke calls add $0.0001 each).
 
