@@ -203,8 +203,11 @@ def catalog(
     spend_min: float | None = None,
     spend_max: float | None = None,
     sort: str = "recent",
+    stalled: bool = False,
 ) -> list[dict[str, Any]]:
     cards = [card(a, ctx) for a in ctx.apps]
+    if stalled:
+        cards = [c for c in cards if c["stalled_vs_median"]]
     if q:
         needle = q.lower()
         cards = [

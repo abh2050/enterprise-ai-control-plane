@@ -225,7 +225,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
 
     @app.get("/api/apps")
     def list_apps(
-        _: ReadPortfolio,
+        user: ReadPortfolio,
         store: StoreDep,
         platform: str | None = None,
         q: str | None = None,
@@ -237,8 +237,10 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
         spend_min: float | None = None,
         spend_max: float | None = None,
         sort: str = "recent",
+        stalled: str | None = None,
+        include_moves: bool = False,
     ) -> list[dict[str, Any]]:
-        return portfolio.catalog(
+        cards = portfolio.catalog(
             ctx(store, platform, 90),
             q=q,
             stage=stage,
@@ -249,7 +251,36 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
             spend_min=spend_min,
             spend_max=spend_max,
             sort=sort,
+            stalled=bool(stalled),
         )
+        if include_moves and user.role is not Role.EXECUTIVE_VIEWER:
+            who = actor(user, store)
+            stages = registry.load_lifecycle().stages
+            apps = {a["app_id"]: a for a in store.list("apps")}
+            for c in cards:
+                moves = {}
+                for s in stages:
+                    check = registry.check_move(apps[c["app_id"]], s, who, "reason", now())
+                    if check.allowed or check.code not in (
+                        "same_stage",
+                        "not_allowed",
+                        "unknown_stage",
+                        "role",
+                        "not_owner",
+                        "managed_only",
+                        "retired",
+                        "paused_prior_only",
+                    ):
+                        moves[s] = {
+                            "allowed": check.allowed,
+                            "code": check.code,
+                            "message": check.message,
+                            "needs_reason": bool(
+                                check.transition and "reason" in check.transition["requires"]
+                            ),
+                        }
+                c["moves"] = moves
+        return cards
 
     @app.get("/api/export/catalog.csv")
     def export_csv(
@@ -330,6 +361,20 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
             body.reason,
             source=body.source,
             now=now(),
+        )
+        rescore(store)
+        return {"app": updated, "event": event}
+
+    class UndoBody(BaseModel):
+        event_id: str
+        expected_version: int
+
+    @app.post("/api/apps/{app_id}/undo")
+    def undo(
+        app_id: str, body: UndoBody, user: Annotated[Me, Depends(current_user)], store: StoreDep
+    ) -> dict[str, Any]:
+        updated, event = registry.undo_move(
+            store, app_id, body.event_id, actor(user, store), body.expected_version, now()
         )
         rescore(store)
         return {"app": updated, "event": event}

@@ -213,3 +213,44 @@ def test_flow_and_evidence_endpoints() -> None:
         "llm_low_cost_v1",
         "llm_high_capability_v1",
     }
+
+
+def test_pipeline_moves_and_undo() -> None:
+    c = client()
+    cards = c.get("/api/apps?include_moves=true&stage=intake", headers=OWNER).json()
+    mine = next(x for x in cards if x["app_id"] == "meeting-notes")
+    # The owner's intake app can target business_case, which still needs a business case.
+    assert mine["moves"]["business_case"]["code"] == "business_case_fields"
+    target = next(
+        x
+        for x in c.get("/api/apps?include_moves=true", headers=ADMIN).json()
+        if x["app_id"] == "sales-email-drafts"
+    )
+    assert target["moves"]["paused"]["needs_reason"] is True
+    moved = c.post(
+        "/api/apps/sales-email-drafts/move",
+        headers=ADMIN,
+        json={
+            "to_stage": "paused",
+            "expected_version": target["version"],
+            "reason": "drill",
+            "source": "keyboard",
+        },
+    ).json()
+    assert moved["event"]["source"] == "keyboard"
+    undone = c.post(
+        "/api/apps/sales-email-drafts/undo",
+        headers=ADMIN,
+        json={"event_id": moved["event"]["event_id"], "expected_version": moved["app"]["version"]},
+    )
+    assert undone.status_code == 200 and undone.json()["app"]["stage"] == "monitored"
+    kinds = [
+        e["kind"] for e in c.get("/api/apps/sales-email-drafts", headers=ADMIN).json()["events"]
+    ][-2:]
+    assert kinds == ["stage_change", "stage_change_undone"]
+
+
+def test_stalled_filter() -> None:
+    c = client()
+    stalled = c.get("/api/apps?stalled=1", headers=EXEC).json()
+    assert stalled and all(x["stalled_vs_median"] for x in stalled)

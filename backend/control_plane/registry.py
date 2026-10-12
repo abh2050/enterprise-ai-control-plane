@@ -216,6 +216,7 @@ def _event(
     reason: str,
     evidence_refs: list[str],
     now: datetime,
+    extra: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     event_id = uuid.uuid4().hex
     event: dict[str, Any] = {
@@ -229,6 +230,8 @@ def _event(
         "evidence_refs": evidence_refs,
         "created_at": now.isoformat(),
     }
+    if extra:
+        event.update(extra)
     tx.create(f"apps/{app_id}/events", event_id, event)
     return event
 
@@ -282,6 +285,68 @@ def move(
             actor.email,
             reason or f"moved via {source}",
             evidence_refs or [],
+            now,
+            extra={
+                "source": source,
+                "previous": {
+                    k: app.get(k)
+                    for k in ("stage", "stage_entered_at", "prior_stage", "paused", "submitted_by")
+                },
+            },
+        )
+        return {**app, **updates}, event
+
+    return store.run_transaction(go)
+
+
+UNDO_WINDOW = timedelta(seconds=15)  # 10 s in the UI plus network grace
+
+
+def undo_move(
+    store: Store,
+    app_id: str,
+    event_id: str,
+    actor: Actor,
+    expected_version: int,
+    now: datetime | None = None,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Reverse the caller's own latest move within the undo window. Writes a new event;
+    the original event stays in the append-only history."""
+    now = now or _now()
+
+    def go(tx: Transaction) -> tuple[dict[str, Any], dict[str, Any]]:
+        app = tx.get("apps", app_id)
+        if app is None:
+            raise NotFoundError(f"app {app_id} not found")
+        original = tx.get(f"apps/{app_id}/events", event_id)
+        if original is None or original.get("kind") != "stage_change":
+            raise NotFoundError("move not found")
+        if original["actor"] != actor.email:
+            raise ForbiddenError("Only the person who made a move can undo it")
+        if now - datetime.fromisoformat(original["created_at"]) > UNDO_WINDOW:
+            raise RegistryError("The undo window has passed")
+        if app.get("version", 1) != expected_version or app["stage"] != original["to_stage"]:
+            raise VersionConflictError(app)
+        prev = original.get("previous") or {}
+        updates = {
+            "stage": prev.get("stage", original["from_stage"]),
+            "stage_entered_at": prev.get("stage_entered_at", now.isoformat()),
+            "prior_stage": prev.get("prior_stage"),
+            "paused": bool(prev.get("paused")),
+            "submitted_by": prev.get("submitted_by"),
+            "version": app.get("version", 1) + 1,
+            "last_activity_at": now.isoformat(),
+        }
+        tx.update("apps", app_id, updates)
+        event = _event(
+            tx,
+            app_id,
+            "stage_change_undone",
+            original["to_stage"],
+            updates["stage"],
+            actor.email,
+            f"Undid move {event_id}",
+            [f"apps/{app_id}/events/{event_id}"],
             now,
         )
         return {**app, **updates}, event

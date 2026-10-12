@@ -1,0 +1,57 @@
+/* Midnight Graphite with Signal Blue (console spec Section 9A). Token names match the
+   spec exactly. Values follow the spec; any value changed for WCAG is noted inline. */
+:root {
+  --bg_canvas: #F6F8FB;
+  --bg_surface: #FFFFFF;
+  --bg_raised: #EEF2F7;
+  --bg_overlay: #FFFFFF;
+  --border: #D8DFEA;
+  --border_strong: #858C96; /* spec #C3CEDD: 1.42:1, below the 3:1 boundary minimum */
+  --text_primary: #111827;
+  --text_muted: #5B677A;
+  --accent: #1E6BD8; /* spec #1F6FE0: 4.24:1 on bg_raised */
+  --accent_strong: #1858BF;
+  --accent_soft: #E3EEFF;
+  --accent_contrast: #FFFFFF;
+  --focus: #1A5BBF;
+  --status_healthy: #0E7E57; /* spec #0F8A5F: 3.87:1 on bg_raised */
+  --status_warning: #966400; /* spec #9A6700: 4.33:1 on bg_raised */
+  --status_danger: #C23B3B;
+  --status_info: #2563EB;
+  --chart_1: #1F6FE0;
+  --chart_2: #0F9488;
+  --chart_3: #7C3AED;
+  --chart_4: #B7791F;
+  --chart_5: #64748B;
+  --hero_gradient_start: #F6F8FB;
+  --hero_gradient_end: #DCE8FB;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --bg_canvas: #0A0F1A;
+  --bg_surface: #111827;
+  --bg_raised: #182233;
+  --bg_overlay: #1E2A3F;
+  --border: #26324A;
+  --border_strong: #697388; /* spec #34425E: 1.43:1, below the 3:1 boundary minimum */
+  --text_primary: #EEF2F8;
+  --text_muted: #8C9AB0;
+  --accent: #5B9BFF;
+  --accent_strong: #3D7FF0;
+  --accent_soft: #16294A;
+  --accent_contrast: #0A0F1A;
+  --focus: #A8C8FF;
+  --status_healthy: #2FBF8F;
+  --status_warning: #F2B84B;
+  --status_danger: #F0625F;
+  --status_info: #7AB8FF;
+  --chart_1: #5B9BFF;
+  --chart_2: #2DD4BF;
+  --chart_3: #A78BFA;
+  --chart_4: #F2B84B;
+  --chart_5: #8C9AB0;
+  --hero_gradient_start: #0A0F1A;
+  --hero_gradient_end: #13233F;
+  color-scheme: dark;
+}
