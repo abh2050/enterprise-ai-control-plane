@@ -11,7 +11,7 @@
     "build:snapshot": "cd .. && uv run cp snapshot && cd frontend && tsc --noEmit && vite build --mode snapshot",
     "contrast": "node scripts/contrast.mjs",
     "e2e": "npm run build && npm run build:snapshot && npm run build:demo && if command -v caffeinate >/dev/null; then caffeinate -dimsu playwright test; else playwright test; fi",
-    "build:demo": "cd .. && uv run cp snapshot --out frontend/.demo-data && uv run python scripts/build_demo_bundle.py && cd frontend && node scripts/vendor_pyodide.mjs && tsc --noEmit && vite build --mode demo",
+    "build:demo": "cd .. && uv run cp snapshot --out frontend/.demo-data && uv run python scripts/build_demo_bundle.py && cd frontend && node scripts/vendor_pyodide.mjs && tsc --noEmit && vite build --mode demo && rm -f ../console/demo/pyodide/package.json ../console/demo/pyodide/vendor-stamp.json",
     "dev:demo": "vite --mode demo"
   },
   "dependencies": {

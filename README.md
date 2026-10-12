@@ -2,7 +2,7 @@
 
 The control plane helps an AI product owner decide which AI applications should advance, which should stop, and what evidence supports each decision.
 
-> Status: milestone M2. The full README arrives in M7. Console numbers are still FIXTURE placeholders; measured classifier results are in [docs/experiment_report.md](docs/experiment_report.md).
+> Live: [explainer](https://abh2050.github.io/enterprise-ai-control-plane/) · [interactive app](https://abh2050.github.io/enterprise-ai-control-plane/console/). Measured results: [docs/release_recommendation.md](docs/release_recommendation.md), [docs/experiment_report.md](docs/experiment_report.md).
 
 ## Local quick start (no cloud credentials)
 

@@ -53,3 +53,7 @@ brag-output*/
 
 # Higgsfield originals (about 4 MB each); the site uses assets/web/
 assets/generated/*.png
+
+# Internal session notes (kept locally)
+CHECKPOINT.md
+CODEX_VIDEO_PROMPT.md
