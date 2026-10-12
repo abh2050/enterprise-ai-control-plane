@@ -11,7 +11,7 @@ from typing import Any
 
 from control_plane.analytics.queries import run
 from control_plane.triage.business_model import load_assumptions
-from control_plane.triage.dataset import REPO_ROOT
+from control_plane.triage.dataset import REPO_ROOT, SENSITIVE_INTENTS
 
 REPORT = REPO_ROOT / "docs" / "executive_report.md"
 
@@ -35,7 +35,9 @@ def generate(project: str, now: datetime | None = None) -> str:
         review_minutes=a.review_minutes,
         labor_rate=a.loaded_labor_rate,
         misroute_cost=a.misroute_cost_standard,
+        misroute_cost_sensitive=a.misroute_cost_sensitive,
         infrastructure=a.infrastructure_monthly,
+        sensitive=sorted(SENSITIVE_INTENTS),
     )
     spend = run(project, "spend_value", end - timedelta(days=30), end)
     weekly = run(project, "weekly_flow", end - timedelta(days=90), end)
@@ -65,16 +67,23 @@ def generate(project: str, now: datetime | None = None) -> str:
         "## Does the deployment create value?",
         "",
     ]
-    if best:
+    kept = next((r for r in triage if r["config_id"] == "classifier_v1"), None)
+    if kept and best:
         lines.append(
-            f"Support Triage's best configuration, {best['config_id']}, would return "
-            f"{_usd(best['net_monthly_value'])} per month `ASSUMPTION` at "
-            f"{a.monthly_volume:,.0f} cases a month `ASSUMPTION`, using measured coverage "
-            f"{best['coverage']:.1%} and auto precision {best['auto_precision']:.3f} "
-            "`MEASURED`. That is the classifier the release decision kept in production; the "
-            "LLM candidates were withheld or rejected on measured release gates "
-            "(docs/release_recommendation.md)."
+            "Yes, under the stated assumptions. The configuration in production, classifier_v1, "
+            f"returns {_usd(kept['net_monthly_value'])} per month `ASSUMPTION` at "
+            f"{a.monthly_volume:,.0f} cases a month `ASSUMPTION`, from measured coverage "
+            f"{kept['coverage']:.1%} and auto precision {kept['auto_precision']:.3f} `MEASURED`."
         )
+        if best["config_id"] != kept["config_id"]:
+            lines.append("")
+            lines.append(
+                f"{best['config_id']} would return {_usd(best['net_monthly_value'])} "
+                f"`ASSUMPTION`, {_usd(best['net_monthly_value'] - kept['net_monthly_value'])} more, "
+                "but it was withheld because it fails the sensitive-intent recall and macro F1 "
+                "release gates `MEASURED` (docs/release_recommendation.md). The extra value "
+                "depends on assumed misroute costs; the gates do not."
+            )
     lines += [
         "",
         "| Config | Coverage | Auto precision | Model cost per case | Net monthly value |",

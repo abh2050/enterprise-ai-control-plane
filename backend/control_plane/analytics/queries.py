@@ -81,6 +81,7 @@ SELECT stage,
        COUNT(*) AS stays
 FROM intervals
 WHERE exited IS NOT NULL AND DATE(entered) BETWEEN @start AND @end
+  AND stage NOT IN ('monitored', 'paused', 'retired')
 GROUP BY stage ORDER BY median_days DESC
 """,
     # 3. Spend and value by app and platform, with provenance.
@@ -106,13 +107,16 @@ rates AS (
          COUNTIF(route = 'auto') / COUNT(*) AS coverage,
          SAFE_DIVIDE(COUNTIF(route = 'auto' AND correct), COUNTIF(route = 'auto')) AS auto_precision,
          COUNTIF(route = 'review') / COUNT(*) AS review_rate,
-         SUM(cost_micros) / COUNT(*) / 1e6 AS model_cost_per_case
+         SUM(cost_micros) / COUNT(*) / 1e6 AS model_cost_per_case,
+         SAFE_DIVIDE(COUNTIF(route = 'auto' AND NOT correct AND reference_label IN UNNEST(@sensitive)),
+                     COUNTIF(route = 'auto' AND NOT correct)) AS sensitive_share
   FROM `{p}.{d}.experiment_results` r JOIN latest USING (config_id, experiment_id)
   GROUP BY r.config_id
 )
-SELECT config_id, coverage, auto_precision, review_rate, model_cost_per_case,
+SELECT config_id, coverage, auto_precision, review_rate, model_cost_per_case, sensitive_share,
   @volume * coverage * auto_precision * (@manual_minutes / 60 * @labor_rate)
-  - @volume * coverage * (1 - auto_precision) * @misroute_cost
+  - @volume * coverage * (1 - auto_precision)
+      * ((1 - IFNULL(sensitive_share, 0)) * @misroute_cost + IFNULL(sensitive_share, 0) * @misroute_cost_sensitive)
   - @volume * review_rate * (@review_minutes / 60 * @labor_rate)
   - @volume * model_cost_per_case - @infrastructure AS net_monthly_value
 FROM rates ORDER BY net_monthly_value DESC
@@ -175,6 +179,9 @@ def run(
         bigquery.ScalarQueryParameter("platform", "STRING", platform),
     ]
     for key, value in extra.items():
+        if isinstance(value, list):
+            params.append(bigquery.ArrayQueryParameter(key, "STRING", value))
+            continue
         kind = "FLOAT64" if isinstance(value, float | int) else "STRING"
         params.append(bigquery.ScalarQueryParameter(key, kind, value))
     config = bigquery.QueryJobConfig(query_parameters=params, maximum_bytes_billed=MAX_BYTES)

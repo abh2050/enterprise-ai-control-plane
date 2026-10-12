@@ -30,11 +30,16 @@ log "1. Enable APIs"
 $G services enable run.googleapis.com artifactregistry.googleapis.com cloudbuild.googleapis.com \
   firestore.googleapis.com bigquery.googleapis.com storage.googleapis.com iap.googleapis.com \
   cloudscheduler.googleapis.com secretmanager.googleapis.com aiplatform.googleapis.com \
-  iam.googleapis.com iamcredentials.googleapis.com
+  iam.googleapis.com iamcredentials.googleapis.com cloudresourcemanager.googleapis.com
 
 log "2. Firestore (Native mode)"
 if ! $G firestore databases describe --database='(default)' >/dev/null 2>&1; then
-  $G firestore databases create --location="$REGION" --type=firestore-native
+  # A just-enabled API can take a few minutes to propagate.
+  for attempt in 1 2 3 4 5 6 7 8; do
+    $G firestore databases create --location="$REGION" --type=firestore-native && break
+    [ "$attempt" = 8 ] && exit 1
+    echo "Firestore API not ready yet; retrying in 30 s ($attempt/8)"; sleep 30
+  done
 fi
 
 log "3. Service accounts"
@@ -78,15 +83,18 @@ fi
 
 log "7. BigQuery dataset and tables (US)"
 bq --project_id="$PROJECT" query --use_legacy_sql=false < infra/bigquery.sql >/dev/null
-bq --project_id="$PROJECT" add-iam-policy-binding \
-  --member="serviceAccount:${SA_JOBS}" --role=roles/bigquery.dataEditor \
-  "${PROJECT}:control_plane" >/dev/null
-bq --project_id="$PROJECT" add-iam-policy-binding \
-  --member="serviceAccount:${SA_CONSOLE}" --role=roles/bigquery.dataViewer \
-  "${PROJECT}:control_plane" >/dev/null
+# Dataset-scoped grants through BigQuery DCL (bq add-iam-policy-binding needs allowlisting).
+bq --project_id="$PROJECT" query --use_legacy_sql=false \
+  "GRANT \`roles/bigquery.dataEditor\` ON SCHEMA \`${PROJECT}.control_plane\` TO \"serviceAccount:${SA_JOBS}\"" >/dev/null
+bq --project_id="$PROJECT" query --use_legacy_sql=false \
+  "GRANT \`roles/bigquery.dataViewer\` ON SCHEMA \`${PROJECT}.control_plane\` TO \"serviceAccount:${SA_CONSOLE}\"" >/dev/null
 
 log "8. Build the image with Cloud Build"
-$G builds submit --region="$REGION" --tag "$IMAGE" .
+if $G artifacts docker images describe "$IMAGE" >/dev/null 2>&1; then
+  echo "Image ${IMAGE} already exists; skipping the build."
+else
+  $G builds submit --region="$REGION" --tag "$IMAGE" .
+fi
 
 ENV_COMMON="STORE_BACKEND=firestore,GCP_PROJECT=${PROJECT},PROVIDER_MODE=vertex,VERTEX_LOCATION=global,ANALYTICS_BACKEND=bigquery,EXPORT_BUCKET=${BUCKET},MODEL_BUCKET=${BUCKET},IAP_AUDIENCE=${AUDIENCE},BUDGET_APP_DAILY_USD=6,BUDGET_EXPERIMENT_USD=10,BUDGET_EXPERIMENT_TOTAL_USD=10"
 
