@@ -79,3 +79,13 @@ Each entry records the decision, the alternatives considered, and the reason.
 - `cp ledger --reconcile` marks attempts left in `sent` by a crashed process as unknown. Their reservations stay held, because the call may have been billed.
 - A resumed run never calls a case again if an earlier attempt for it in the same experiment ended unknown. The case is recorded as unknown and routes to review (Section 7, rule 5).
 - Follow-up: a second dropped connection hit the free token-count call, which comes before any reservation. Token counts now retry up to three times. If they still fail, the run pauses cleanly and resumes from saved responses. Billed generate calls are still never retried after an unknown outcome.
+
+## D21. Two stall signals, each where the console spec places it (M4)
+- The spec defines stall two ways. The Pipeline card shows a warning after 30 days in a stage. The Portfolio "stalled apps" metric and the Governance Assist stage-stall signal use time in stage above 1.5 times that stage's median. Both rules live in configs/lifecycle.yaml, and each UI label names its rule.
+- Stage medians come from completed stays in each stage, from the app event history.
+
+## D22. Design system built from the console spec, without the frontend-design skill (M4)
+- The spec asks for the frontend-design skill, which is not installed in this environment. The console follows Section 9A directly (tokens, type scale, spacing, states, motion, responsive rules), which is specific enough to build from.
+
+## D23. Review rejection returns an app to business_case (M4)
+- Section 5 lists no backward move. A reviewer or admin can send an app from review_gates back to business_case with a reason, so a rejected submission can be revised instead of only retired.

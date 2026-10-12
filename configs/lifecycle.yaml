@@ -1,5 +1,7 @@
-# Lifecycle stages in order (Section 5). Transition rules, review gates per risk tier,
-# and portfolio health rules are added in M4.
+# Application lifecycle (Section 5), Pipeline move rules (console spec Section 9),
+# portfolio health rules, stall rules, and Governance Assist scoring.
+# The server validates every move against this file and the caller's role.
+
 stages:
   - intake
   - business_case
@@ -10,3 +12,80 @@ stages:
   - monitored
   - paused
   - retired
+
+# Stages that only managed apps (inference through the control plane) may enter.
+managed_only: [evaluation, shadow, controlled_activation]
+
+# Rule 1: an app enters intake with an owner and a business problem of 30 words or more.
+intake:
+  min_problem_words: 30
+
+# Review gates required by risk tier (rule 3). The submitter can never approve.
+review_gates:
+  low: [reviewer]
+  medium: [governance]
+  high: [governance, security]
+gate_approvers:
+  reviewer: [reviewer, governance_admin]
+  governance: [governance_admin]
+  security: [security_reviewer]   # a reviewer whose user record has security_reviewer: true
+approval_valid_days: 180
+
+# Allowed moves. "any" covers every stage except retired. Requirements are checked in
+# order and the first missing one is reported before any mutation.
+transitions:
+  - {from: intake, to: business_case, roles: [app_owner, governance_admin], requires: [business_case_fields]}
+  - {from: business_case, to: review_gates, roles: [app_owner, governance_admin], requires: [business_case_fields]}
+  - {from: review_gates, to: business_case, roles: [reviewer, governance_admin], requires: [reason]}
+  - {from: review_gates, to: evaluation, roles: [app_owner, governance_admin], requires: [gates_approved, managed_config]}
+  - {from: review_gates, to: monitored, roles: [governance_admin], requires: [gates_approved, external_app, reason]}
+  - {from: evaluation, to: shadow, roles: [app_owner, governance_admin], requires: [scorecard_passed]}
+  - {from: shadow, to: controlled_activation, roles: [governance_admin], requires: [release_decision]}
+  - {from: controlled_activation, to: monitored, roles: [governance_admin], requires: [activation]}
+  - {from: any, to: paused, roles: [governance_admin], requires: [reason]}
+  - {from: paused, to: prior_stage, roles: [governance_admin], requires: []}
+  - {from: any, to: retired, roles: [governance_admin], requires: [reason]}
+
+# What each requirement means, shown to the user when it is missing.
+requirement_messages:
+  business_case_fields: "A business case with monthly volume, a value hypothesis, and a cost estimate"
+  gates_approved: "Approvals for every review gate this risk tier requires"
+  managed_config: "A managed app with at least one config"
+  external_app: "Only external apps are published straight to monitored"
+  scorecard_passed: "A scorecard that passes every release gate"
+  release_decision: "A recorded release decision to activate a cohort or the full app"
+  activation: "An activated release"
+  reason: "A reason for this move"
+
+# Portfolio health (console spec Section 9). The first matching rule sets the status.
+health:
+  danger:
+    - {rule: open_incident, label: "Open incident"}
+    - {rule: over_budget, label: "Spend exceeds the monthly budget"}
+    - {rule: no_owner, label: "No active owner"}
+  warning:
+    - {rule: no_business_case, label: "No business case"}
+    - {rule: approvals_lapsed, label: "Approvals expired"}
+  healthy_label: "Owner, business case, current approvals, spend within budget, no open incident"
+
+# Two stall signals, each used where the spec places it (docs/decisions.md D21).
+stall:
+  card_warning_days: 30          # Pipeline card warning
+  median_multiple: 1.5           # Portfolio stalled metric and Governance Assist
+
+# Governance Assist (console spec Section 9): deterministic, points / 100, clamped 0 to 1.
+assist:
+  threshold: 0.65
+  signals:
+    stage_stall: {points: 30, label: "Time in stage exceeds 1.5x the stage median", action: "Ask the owner for a plan or move the app"}
+    missing_owner: {points: 35, label: "No active owner", action: "Assign an owner"}
+    open_incident: {points: 35, label: "Open incident", action: "Review the incident and decide on pause or rollback"}
+    budget_pressure: {points: 20, label: "Spend above 90% of the monthly budget", action: "Review spend or raise the budget"}
+    expiring_approval: {points: 15, label: "An approval expires within 14 days", action: "Schedule a review"}
+    dormant_app: {points: 15, label: "No usage for 30 days", action: "Confirm the app is still needed or retire it"}
+    recent_evidence: {points: -15, label: "Passing evaluation in the last 7 days", action: ""}
+  budget_pressure_ratio: 0.9
+  expiring_within_days: 14
+  dormant_days: 30
+  recent_evidence_days: 7
+  dismiss_suppress_days: 7

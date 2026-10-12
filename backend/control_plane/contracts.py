@@ -141,6 +141,24 @@ class BusinessCase(Record):
     monthly_cost_estimate_usd: AssumedValue
 
 
+class GateApproval(Record):
+    gate: str
+    approved_by: str
+    approved_at: datetime
+    expires_at: datetime
+    review_id: str
+
+
+class Evidence(Record):
+    """Pointers to evaluation and release evidence that move requirements check."""
+
+    scorecard_passed: bool = False
+    scorecard_ref: str | None = None
+    last_passing_eval_at: datetime | None = None
+    release_decision: str | None = None  # activate_cohort, activate_full, withhold, reject
+    release_ref: str | None = None
+
+
 class App(Record):
     app_id: str
     name: str
@@ -152,14 +170,22 @@ class App(Record):
     stage: Stage
     prior_stage: Stage | None = None
     paused: bool = False
+    version: int = 1
     active_config_id: str | None = None
     monthly_budget_micros: int = Field(ge=0)
     monthly_spend_micros: int = Field(default=0, ge=0)
+    monthly_volume: int | None = None
     active_users: int | None = None
     usage_series: list[int] = Field(default_factory=list)
+    last_usage_at: datetime | None = None
     business_case: BusinessCase | None = None
+    submitted_by: str | None = None
+    gates: dict[str, GateApproval] = Field(default_factory=dict)
+    evidence: Evidence = Field(default_factory=Evidence)
+    next_review_at: datetime | None = None
     approvals_expire_at: datetime | None = None
     last_decision: str | None = None
+    last_activity_at: datetime | None = None
     stage_entered_at: datetime
     created_at: datetime
     provenance: Provenance | DatasetLabel
