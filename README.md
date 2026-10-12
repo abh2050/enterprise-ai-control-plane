@@ -20,11 +20,12 @@
   <a href="https://abh2050.github.io/enterprise-ai-control-plane/"><b>Project site</b></a> ·
   <a href="https://abh2050.github.io/enterprise-ai-control-plane/console/"><b>Try the product</b></a> ·
   <a href="https://abh2050.github.io/enterprise-ai-control-plane/#watch"><b>4-minute demo</b></a> ·
+  <a href="#google-cloud-architecture"><b>Google Cloud architecture</b></a> ·
   <a href="#how-it-works">Workflow</a> ·
   <a href="#results">Results</a> ·
   <a href="#the-console">Console</a> ·
   <a href="#data-ontology">Data ontology</a> ·
-  <a href="#architecture">Architecture</a>
+  <a href="#tech-stack">Tech stack</a>
 </p>
 
 <p align="center">
@@ -33,6 +34,64 @@
 </p>
 
 ---
+
+## Google Cloud architecture
+
+Built and deployed on Google Cloud: **BigQuery, Firestore, Cloud Run (service and jobs), Identity-Aware Proxy, Vertex AI (Gemini), Cloud Storage, Cloud Scheduler, Cloud Build, Artifact Registry, and IAM** with least-privilege service accounts. It was deployed, smoke-tested through IAP, recorded, and torn down the same day; `scripts/deploy_gcp.sh` rebuilds it. Every diagram below is a draw.io file drawn with Google's official icons; click one for full size, or open the [`.drawio` sources](docs/diagrams/).
+
+### 1. The data: BigQuery schema
+
+Eight tables in the `control_plane` dataset, every column from [`infra/bigquery.sql`](infra/bigquery.sql). Each fact table is partitioned by `event_date`, clustered by `app_id`, and merged on `event_id`, so a nightly re-export never double-counts. Lines are the joins the analytics queries use: every table reaches the app dimension (`app_snapshots`) through `app_id`; experiment results join the budget ledger through `experiment_id`.
+
+<p align="center">
+  <a href="docs/diagrams/12_bigquery_schema.png"><img src="assets/web/diagrams/12_bigquery_schema.webp" alt="BigQuery schema: eight tables in the control_plane dataset with their columns, keys, partitioning, clustering, and joins" width="100%"></a>
+</p>
+
+### 2. Where the data comes from: lineage
+
+Five Firestore collections and two sets of committed evaluation artifacts feed BigQuery through one nightly Cloud Run job: JSONL to Cloud Storage, load into a `_staging` table, then `MERGE`. The right column shows what reads each table; users, releases, reviews, notes, and message text never leave Firestore.
+
+<p align="center">
+  <a href="docs/diagrams/13_data_lineage.png"><img src="assets/web/diagrams/13_data_lineage.webp" alt="Data lineage: Firestore collections and committed artifacts flow through the nightly export to BigQuery tables and the console and reports that read them" width="100%"></a>
+</p>
+
+### 3. The system on Google Cloud
+
+People reach the console only through Identity-Aware Proxy; the FastAPI service on Cloud Run re-verifies every signed assertion. Cloud Run jobs evaluate models on Vertex AI, replay shadow traffic, monitor, and export; Cloud Scheduler runs monitoring and export nightly.
+
+<p align="center">
+  <a href="docs/diagrams/01_system_overview.png"><img src="assets/web/diagrams/01_system_overview.webp" alt="Google Cloud system overview: IAP, the Cloud Run console and four jobs, Cloud Scheduler, Firestore, BigQuery, Cloud Storage, Vertex AI, and Secret Manager" width="100%"></a>
+</p>
+
+### 4. Request path, identity, and spend
+
+<table>
+  <tr>
+    <td width="50%"><a href="docs/diagrams/02_triage_request_path.png"><img src="assets/web/diagrams/02_triage_request_path.webp" alt="Triage request path: token count, budget reservation, three configurations, deterministic decision policy, and settlement" width="100%"></a><br><sub><b>Request path:</b> one customer message through the budget reservation, three model configurations, the deterministic routing policy, and settlement.</sub></td>
+    <td width="50%"><a href="docs/diagrams/04_identity_and_access.png"><img src="assets/web/diagrams/04_identity_and_access.webp" alt="Identity and access: IAP assertion checks, roles from Firestore, and each service account's grants" width="100%"></a><br><sub><b>Identity and access:</b> IAP JWT verification, roles read from Firestore, and the only grants each service account holds. No principal has project Editor.</sub></td>
+  </tr>
+  <tr>
+    <td><a href="docs/diagrams/05_budget_ledger.png"><img src="assets/web/diagrams/05_budget_ledger.webp" alt="Budget ledger states: reserve, send, settle, release, unknown hold, overrun pause, reconcile" width="100%"></a><br><sub><b>Budget ledger:</b> every paid Vertex AI call reserves money in a Firestore transaction first; lost responses are held, never retried.</sub></td>
+    <td><a href="docs/diagrams/07_analytics_pipeline.png"><img src="assets/web/diagrams/07_analytics_pipeline.webp" alt="Analytics pipeline: Firestore and evidence exported to Cloud Storage, staged, and merged into BigQuery" width="100%"></a><br><sub><b>Analytics pipeline:</b> the idempotent export and the parameterized queries (100 MB billing cap, 180-day range).</sub></td>
+  </tr>
+</table>
+
+### 5. Decisions, operations, and delivery
+
+<table>
+  <tr>
+    <td width="50%"><a href="docs/diagrams/06_experiment_to_release.png"><img src="assets/web/diagrams/06_experiment_to_release.webp" alt="Experiment to release: dev tuning, frozen evaluation, gates, shadow replay, and the recorded withhold decision" width="100%"></a><br><sub><b>Experiment to release:</b> how 1,540 frozen cases and the release gates produced the recorded decision.</sub></td>
+    <td width="50%"><a href="docs/diagrams/08_monitoring_and_incident.png"><img src="assets/web/diagrams/08_monitoring_and_incident.webp" alt="Monitoring and incident: daily signals, frozen alert policy, incident, pause, rollback, and resume" width="100%"></a><br><sub><b>Monitoring and incident:</b> the drift drill from detection on day 10 to recovery on day 13.</sub></td>
+  </tr>
+  <tr>
+    <td><a href="docs/diagrams/03_registry_lifecycle.png"><img src="assets/web/diagrams/03_registry_lifecycle.webp" alt="Registry lifecycle: nine stages, review gates by risk tier, and the managed versus external branch" width="100%"></a><br><sub><b>Registry lifecycle:</b> nine stages, gates by risk tier, and the managed versus external branch.</sub></td>
+    <td><a href="docs/diagrams/09_delivery.png"><img src="assets/web/diagrams/09_delivery.webp" alt="Delivery: GitHub Actions, Cloud Build, Artifact Registry, Cloud Run deploy, smoke checks, and teardown" width="100%"></a><br><sub><b>Delivery:</b> CI, Cloud Build and Artifact Registry, deploy behind IAP, smoke checks, and teardown.</sub></td>
+  </tr>
+  <tr>
+    <td><a href="docs/diagrams/11_public_demo.png"><img src="assets/web/diagrams/11_public_demo.webp" alt="Public demo: the unchanged FastAPI backend running in the browser through Pyodide" width="100%"></a><br><sub><b>Public demo:</b> the same backend runs in the visitor's browser (Pyodide), held to the server by a parity test.</sub></td>
+    <td><a href="docs/diagrams/10_local_development.png"><img src="assets/web/diagrams/10_local_development.webp" alt="Local development: fixture identity, store backends, the Firestore emulator, and the fixture provider" width="100%"></a><br><sub><b>Local development:</b> everything offline except paid model calls, which go through the ledger.</sub></td>
+  </tr>
+</table>
 
 ## Why
 
@@ -53,9 +112,8 @@ This control plane connects those decisions. The **portfolio layer** tracks owne
 | 5 | **Decide** | Test full-candidate and cohort release gates. A governance admin records the decision and rationale. Failed gates block activation. |
 | 6 | **Operate** | Replay shadow traffic, freeze alert thresholds, monitor the authoritative configuration, and record incident response, pause, rollback, and recovery. |
 
-<p align="center">
-  <a href="docs/diagrams/06_experiment_to_release.png"><img src="assets/web/diagrams/06_experiment_to_release.webp" alt="Experiment-to-release workflow: development tuning, frozen evaluation, gate results, shadow replay, and the recorded release decision" width="100%"></a>
-</p>
+The [experiment-to-release diagram](#5-decisions-operations-and-delivery) shows steps 4 and 5 end to end.
+
 
 <details>
 <summary><b>One release decision, step by step</b> — Support Triage / Gemini 3.8 Flash</summary>
@@ -226,17 +284,12 @@ Dataset labels such as `SYNTHETIC` and `AUTHORED` describe data origin separatel
 
 Firestore records and committed evaluation artifacts export as JSONL to Cloud Storage, load into BigQuery staging tables, and merge by stable `event_id`. Repeated exports do not inflate totals. The analytical tables retain application, configuration, experiment, and case IDs; raw message and note text are excluded.
 
-<p align="center">
-  <a href="docs/diagrams/13_data_lineage.png"><img src="assets/web/diagrams/13_data_lineage.webp" alt="Data lineage: operational collections and committed artifacts feed the export pipeline, BigQuery tables, and portfolio reports" width="100%"></a>
-</p>
+[Lineage diagram](#2-where-the-data-comes-from-lineage)
 
 Seven event-based tables are partitioned by `event_date` and clustered by `app_id`; `export_runs` records export history separately. Queries use named parameters, a 180-day range cap, and a 100 MB billing cap. [Physical schema](docs/diagrams/12_bigquery_schema.png) · [SQL](infra/bigquery.sql) · [Export code](backend/control_plane/analytics/export.py)
 
-## Architecture
+## Tech stack
 
-<p align="center">
-  <a href="docs/diagrams/01_system_overview.png"><img src="assets/web/diagrams/01_system_overview.webp" alt="Google Cloud architecture: IAP, Cloud Run API and jobs, Firestore, Vertex AI, Cloud Storage, Scheduler, and BigQuery" width="100%"></a>
-</p>
 
 | Layer | Implementation |
 |---|---|
