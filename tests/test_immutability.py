@@ -67,3 +67,10 @@ def test_event_subcollections_detected() -> None:
     assert is_immutable("apps/anything/events")
     assert not is_immutable("apps")
     assert not is_immutable("budgets")
+
+
+def test_collection_group_lists_nested_events(any_store: Store) -> None:
+    any_store.create("apps/a1/events", "e1", {"app_id": "a1"})
+    any_store.create("apps/a2/events", "e2", {"app_id": "a2"})
+    any_store.create("events_other", "x", {"app_id": "zz"})
+    assert sorted(d["app_id"] for d in any_store.list_group("events")) == ["a1", "a2"]

@@ -53,6 +53,9 @@ ignore = ["S101"]
 "tests/*" = ["S"]
 # Hand-written seed data (long prose lines) and a seeded, non-cryptographic generator.
 "scripts/gen_registry_seed.py" = ["E501", "S311", "B023"]
+# SQL text interpolates only fixed identifiers (project, dataset, table names from config);
+# every value is a named query parameter. Long lines are SQL.
+"backend/control_plane/analytics/*.py" = ["S608", "E501"]
 
 [tool.mypy]
 python_version = "3.12"
@@ -64,6 +67,11 @@ plugins = ["pydantic.mypy"]
 [[tool.mypy.overrides]]
 module = ["google.cloud.*", "sklearn.*"]
 ignore_missing_imports = true
+
+# google-auth ships without complete type hints.
+[[tool.mypy.overrides]]
+module = ["control_plane.iap"]
+disallow_untyped_calls = false
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

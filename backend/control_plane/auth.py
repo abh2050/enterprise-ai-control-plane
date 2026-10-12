@@ -5,7 +5,8 @@ The role always comes from the ``users`` collection, never from the request or a
 - Fixture mode reads the caller's email from ``X-Fixture-User``. Because a header is
   trivially forgeable, fixture mode only serves loopback clients and refuses to bind
   to any non-local interface (see ``settings.assert_safe_bind``).
-- IAP mode fails closed until the JWT verifier lands in M6.
+- IAP mode verifies ``x-goog-iap-jwt-assertion`` on every request (control_plane.iap):
+  signature, issuer, audience, and expiry. Missing or invalid assertions are rejected.
 """
 
 from collections.abc import Callable
@@ -85,17 +86,27 @@ def _unauthorized(detail: str) -> HTTPException:
 
 def resolve_user(request: Request, settings: Settings, store: Store) -> Me:
     if settings.identity_mode is IdentityMode.IAP:
-        # Fail closed. Signature, issuer, and audience verification arrive in M6.
-        raise _unauthorized("IAP assertion verification is not available yet")
+        from control_plane.iap import IapError, verify
+
+        cache = request.app.state.iap_keys
+        try:
+            claims = verify(request.headers.get(IAP_HEADER), settings.iap_audience, cache)
+        except IapError as exc:
+            raise _unauthorized(str(exc)) from exc
+        iap_email = str(claims["email"]).lower()
+        user = store.get("users", iap_email)
+        if user is None or not user.get("active", False):
+            raise _unauthorized("unknown or inactive user")
+        return Me(email=user["email"], role=Role(user["role"]))
 
     client_host = request.client.host if request.client else None
     if client_host not in LOCAL_HOSTS:
         raise _unauthorized("fixture identity only serves loopback clients")
 
-    email = request.headers.get(FIXTURE_HEADER)
-    if not email:
+    fixture_email = request.headers.get(FIXTURE_HEADER)
+    if not fixture_email:
         raise _unauthorized(f"missing {FIXTURE_HEADER} header")
-    user = store.get("users", email.strip().lower())
+    user = store.get("users", fixture_email.strip().lower())
     if user is None or not user.get("active", False):
         raise _unauthorized("unknown or inactive user")
     return Me(email=user["email"], role=Role(user["role"]))

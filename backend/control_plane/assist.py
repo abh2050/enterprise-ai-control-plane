@@ -155,7 +155,8 @@ def score_app(
 
 
 def all_events(store: Store, apps: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    return [e for a in apps for e in store.list(f"apps/{a['app_id']}/events")]
+    ids = {a["app_id"] for a in apps}
+    return [e for e in store.list_group("events") if e.get("app_id") in ids]
 
 
 def score_all(store: Store, now: datetime | None = None) -> list[dict[str, Any]]:

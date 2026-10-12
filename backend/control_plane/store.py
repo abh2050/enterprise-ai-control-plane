@@ -11,6 +11,7 @@ still alter these records; the guarantee covers application code paths only.
 
 from __future__ import annotations
 
+import builtins
 import copy
 import fcntl
 import json
@@ -71,6 +72,7 @@ class Transaction(Protocol):
 class Store(Protocol):
     def get(self, collection: str, doc_id: str) -> Doc | None: ...
     def list(self, collection: str) -> list[Doc]: ...
+    def list_group(self, leaf: str) -> builtins.list[Doc]: ...
     def create(self, collection: str, doc_id: str, data: Doc) -> None: ...
     def set(self, collection: str, doc_id: str, data: Doc) -> None: ...
     def update(self, collection: str, doc_id: str, fields: Doc) -> None: ...
@@ -131,6 +133,16 @@ class MemoryStore:
     def list(self, collection: str) -> list[Doc]:
         with self._lock:
             return [copy.deepcopy(d) for d in self._data.get(collection, {}).values()]
+
+    def list_group(self, leaf: str) -> builtins.list[Doc]:
+        """Every document in collections named ``leaf`` at any depth (collection group)."""
+        with self._lock:
+            return [
+                copy.deepcopy(d)
+                for name, docs in self._data.items()
+                if _leaf(name) == leaf
+                for d in docs.values()
+            ]
 
     def create(self, collection: str, doc_id: str, data: Doc) -> None:
         with self._lock:
@@ -218,6 +230,11 @@ class FileStore(MemoryStore):
             self._reload()
             return super().list(collection)
 
+    def list_group(self, leaf: str) -> builtins.list[Doc]:
+        with self._lock:
+            self._reload()
+            return super().list_group(leaf)
+
     def create(self, collection: str, doc_id: str, data: Doc) -> None:
         with self._exclusive():
             super().create(collection, doc_id, data)
@@ -297,6 +314,10 @@ class FirestoreStore:
 
     def list(self, collection: str) -> list[Doc]:
         snaps = self._client.collection(collection).stream()
+        return [d for s in snaps if (d := s.to_dict()) is not None]
+
+    def list_group(self, leaf: str) -> builtins.list[Doc]:
+        snaps = self._client.collection_group(leaf).stream()
         return [d for s in snaps if (d := s.to_dict()) is not None]
 
     def create(self, collection: str, doc_id: str, data: Doc) -> None:

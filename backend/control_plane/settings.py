@@ -50,6 +50,10 @@ class Settings(BaseSettings):
     file_store_dir: str = ".local/store"
 
     iap_audience: str | None = None
+    # Flow and reports read BigQuery when deployed; "local" uses the store directly.
+    analytics_backend: str = Field(default="local", pattern="^(local|bigquery)$")
+    export_bucket: str | None = None
+    model_bucket: str | None = None
     # Fixed clock for visual tests and the snapshot export (ISO 8601). Unset in normal use.
     fixed_now: datetime | None = None
 

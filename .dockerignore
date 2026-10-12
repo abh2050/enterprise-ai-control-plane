@@ -2,6 +2,13 @@
 .venv
 **/node_modules
 frontend/dist
+frontend/dist-snapshot
+frontend/.snapshot-data
+frontend/test-results
+frontend/e2e/baselines
 data/raw
+artifacts/models/*.pkl
 imports
 .env
+.local
+.cache

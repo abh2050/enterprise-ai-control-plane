@@ -124,3 +124,13 @@ Each entry records the decision, the alternatives considered, and the reason.
 
 ## D32. The drill detected drift by a narrow margin (M5)
 - Monitoring opened the incident on day 10, the first drift day, but the review rate cleared its frozen threshold by only 0.0006, and no other signal breached. The incident report states this, and it recommends a drift-specific signal (for example the out-of-scope rate) before relying on these alerts. The thresholds were not adjusted after the drill.
+
+## D33. Cloud Run with IAP enabled directly; smoke checks through IAP as service accounts (M6)
+- IAP is enabled on the Cloud Run service itself (`--iap`), not through a load balancer, which avoids load balancer cost. The backend still verifies every assertion: ES256 signature against Google's published keys, issuer, audience `/projects/NUMBER/locations/REGION/services/control-plane`, and expiry.
+- The project has no Google Cloud organization, so the first IAP enablement goes through the console (OAuth consent screen). The deploy script says so if gcloud cannot enable it.
+- Smoke checks authenticate through IAP as dedicated service accounts using self-signed JWTs (IAP's programmatic access for the Google-managed OAuth client). Their roles live in Firestore like any user's: executive_viewer, app_owner, governance_admin.
+- Secret Manager is enabled but holds nothing: every component authenticates with its service account, and no key is needed at runtime.
+
+## D34. Additions to the Section 8 BigQuery tables (M6)
+- `app_snapshots` (a daily snapshot of each app's stage, spend, and value with provenance) feeds the spend and value query and the Flow leaderboard. `product_events` holds the console analytics events. `export_runs` records each export for the "last export" time. Each target has a `_staging` twin for the MERGE.
+- Events are read with a Firestore collection-group query, so the Portfolio makes one events query instead of one per app.

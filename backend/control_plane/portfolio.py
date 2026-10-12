@@ -51,7 +51,7 @@ class Context:
 
     def __post_init__(self) -> None:
         all_apps = self.store.list("apps")
-        self.events = [e for a in all_apps for e in self.store.list(f"apps/{a['app_id']}/events")]
+        self.events = self.store.list_group("events")
         self.medians = stage_medians(self.events)
         self.apps = [
             a

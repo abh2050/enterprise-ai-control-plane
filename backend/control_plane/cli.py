@@ -75,6 +75,38 @@ def data_fetch() -> None:
     typer.echo("Headers, 77 labels, and sensitive intents verified.")
 
 
+model_app = typer.Typer(help="Frozen classifier binary", no_args_is_help=True)
+app.add_typer(model_app, name="model")
+
+
+@model_app.command("fetch")
+def model_fetch() -> None:
+    """Download the frozen classifier binary from MODEL_BUCKET and verify its hash."""
+    import hashlib
+    import importlib
+
+    from control_plane.triage.classifier import MODEL_DIR
+    from control_plane.triage.evaluate import _read
+
+    settings = get_settings()
+    if not settings.model_bucket:
+        typer.echo("Set MODEL_BUCKET.", err=True)
+        raise typer.Exit(code=1)
+    storage = importlib.import_module("google.cloud.storage")
+    blob = (
+        storage.Client(project=settings.gcp_project)
+        .bucket(settings.model_bucket)
+        .blob("models/classifier_v1.pkl")
+    )
+    data = blob.download_as_bytes()
+    expected = _read(MODEL_DIR / "classifier_v1.json")["model_sha256"]
+    if hashlib.sha256(data).hexdigest() != expected:
+        typer.echo("Model hash does not match the frozen record.", err=True)
+        raise typer.Exit(code=1)
+    (MODEL_DIR / "classifier_v1.pkl").write_bytes(data)
+    typer.echo("classifier_v1.pkl verified")
+
+
 @data_app.command("split")
 def data_split() -> None:
     """Create the development, training, frozen evaluation, and shadow splits."""
@@ -504,15 +536,135 @@ def release_report() -> None:
 
 
 @app.command()
-def export() -> None:
-    """Export events and results to BigQuery idempotently."""
-    _not_yet("M6")
+def export(
+    local: Annotated[str | None, typer.Option(help="Write JSONL here instead of BigQuery")] = None,
+) -> None:
+    """Export events and results to BigQuery idempotently (staging, then MERGE)."""
+    from pathlib import Path
+
+    from control_plane.analytics.export import export as run_export
+    from control_plane.analytics.export import write_local
+    from control_plane.store import build_store
+
+    settings = get_settings()
+    store = build_store(settings)
+    if local:
+        counts = write_local(store, Path(local))
+    else:
+        if not settings.export_bucket:
+            typer.echo("Set EXPORT_BUCKET.", err=True)
+            raise typer.Exit(code=1)
+        counts = run_export(store, settings.gcp_project, settings.export_bucket)
+    typer.echo(json.dumps(counts))
 
 
 @app.command()
 def report() -> None:
-    """Generate docs/executive_report.md from the analytics queries."""
-    _not_yet("M6")
+    """Generate docs/executive_report.md from the BigQuery analytics queries."""
+    from control_plane.analytics.report import REPORT, generate
+
+    generate(get_settings().gcp_project)
+    typer.echo(f"Wrote {REPORT}")
+
+
+@monitor_app.command("nightly")
+def monitor_nightly() -> None:
+    """Nightly job: re-score Governance Assist for every app."""
+    from control_plane.assist import score_all
+    from control_plane.store import build_store
+
+    scores = score_all(build_store(get_settings()))
+    flagged = sum(s["flagged"] for s in scores)
+    typer.echo(json.dumps({"scored": len(scores), "flagged": flagged}))
+
+
+smoke_app = typer.Typer(help="Deployment smoke checks (Section 10)", no_args_is_help=True)
+app.add_typer(smoke_app, name="smoke")
+
+
+@smoke_app.command("triage")
+def smoke_triage() -> None:
+    """One live triage call through the ledger; fails unless its cost settles."""
+    from control_plane.budget import call_with_budget
+    from control_plane.contracts import AttemptStatus, Limits
+    from control_plane.pricing import load_price_card
+    from control_plane.providers import build_provider
+    from control_plane.triage.llm_eval import _ledger
+    from control_plane.triage.preflight import PROBE_LABELS, PROBE_PROMPT
+
+    settings = get_settings()
+    store = _live_store(settings)
+    provider = build_provider(settings, "minimal")
+    model = settings.vertex_low_cost_model
+    schema = {
+        "type": "object",
+        "properties": {
+            "intent": {"type": "string", "enum": [*PROBE_LABELS, "out_of_scope"]},
+            "rationale": {"type": "string", "maxLength": 300},
+        },
+        "required": ["intent", "rationale"],
+    }
+    outcome = call_with_budget(
+        _ledger(store, settings),
+        provider,
+        load_price_card(backend=provider.backend).price(model),
+        Limits(max_output_tokens=256),
+        app_id="support-triage",
+        experiment_id="smoke",
+        case_id=f"smoke-{os.getpid()}",
+        model_id=model,
+        prompt=PROBE_PROMPT,
+        response_schema=schema,
+    )
+    attempt = store.get("attempts", outcome.attempt_id) or {}
+    settled = (
+        outcome.status is AttemptStatus.COMPLETED
+        and attempt.get("status") == "completed"
+        and attempt.get("actual_micros") is not None
+    )
+    typer.echo(
+        json.dumps(
+            {
+                "attempt": outcome.attempt_id,
+                "status": attempt.get("status"),
+                "actual_micros": attempt.get("actual_micros"),
+                "reserved_micros": attempt.get("reserved_micros"),
+                "settled": settled,
+            }
+        )
+    )
+    if not settled:
+        raise typer.Exit(code=1)
+
+
+@smoke_app.command("auth")
+def smoke_auth() -> None:
+    """In-container check: the deployed config rejects forged and missing IAP assertions."""
+    from fastapi.testclient import TestClient
+
+    from control_plane.api import create_app
+    from control_plane.auth import IAP_HEADER
+    from control_plane.settings import IdentityMode
+
+    settings = get_settings()
+    if settings.identity_mode is not IdentityMode.IAP or not settings.iap_audience:
+        typer.echo("Run with IDENTITY_MODE=iap and IAP_AUDIENCE set.", err=True)
+        raise typer.Exit(code=1)
+    client = TestClient(create_app(settings), client=("10.0.0.1", 443))
+    forged = (
+        "eyJhbGciOiJFUzI1NiIsImtpZCI6ImZvcmdlZCJ9."
+        "eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIn0.c2lnbmF0dXJl"
+    )
+    results = {
+        "missing": client.get("/api/me").status_code,
+        "forged": client.get("/api/me", headers={IAP_HEADER: forged}).status_code,
+        "fixture_header": client.get(
+            "/api/me", headers={"X-Fixture-User": "admin@example.com"}
+        ).status_code,
+    }
+    typer.echo(json.dumps(results))
+    if any(code != 401 for code in results.values()):
+        raise typer.Exit(code=1)
 
 
 @app.command()

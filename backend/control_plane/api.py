@@ -128,6 +128,9 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
     app = FastAPI(title="Enterprise AI Control Plane", lifespan=lifespan)
     app.state.settings = settings
     app.state.store = store if store is not None else build_store(settings)
+    from control_plane.iap import KeyCache
+
+    app.state.iap_keys = KeyCache()
     StoreDep = Annotated[Store, Depends(get_store)]
 
     @app.exception_handler(registry.RegistryError)
@@ -317,6 +320,10 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
         platform: str | None = None,
         range: int = Query(90, ge=7, le=180),
     ) -> dict[str, Any]:  # noqa: A002
+        if settings.analytics_backend == "bigquery":
+            from control_plane.analytics.queries import flow_from_bigquery
+
+            return flow_from_bigquery(settings.gcp_project, now(), range, platform or "")
         return portfolio.flow(ctx(store, platform, range))
 
     # App detail and moves
@@ -773,10 +780,12 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
         if body.event not in PRODUCT_EVENTS:
             raise HTTPException(status_code=400, detail="unknown event")
         ts = now()
+        event_id = uuid.uuid4().hex
         store.create(
             "product_events",
-            uuid.uuid4().hex,
+            event_id,
             {
+                "event_id": event_id,
                 "event": body.event,
                 "app_id": body.app_id,
                 "role": user.role.value,
