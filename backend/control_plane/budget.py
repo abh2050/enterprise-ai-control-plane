@@ -321,6 +321,27 @@ class Ledger:
             raise LedgerError(f"unknown attempt {attempt_id}")
         return attempt
 
+    def summary(self) -> dict[str, Any]:
+        """Settled spend by month and app, for artifacts/ledger_summary.json (MEASURED)."""
+        months: dict[str, dict[str, Any]] = {}
+        for a in self._store.list("attempts"):
+            month = a["created_at"][:7]
+            app = months.setdefault(month, {}).setdefault(
+                a["app_id"], {"committed_micros": 0, "attempts": 0, "unknown": 0, "held_micros": 0}
+            )
+            app["attempts"] += 1
+            if a["status"] == AttemptStatus.COMPLETED.value:
+                app["committed_micros"] += a.get("actual_micros") or 0
+            elif a["status"] == AttemptStatus.UNKNOWN.value:
+                app["unknown"] += 1
+                app["held_micros"] += a["reserved_micros"]
+        return {
+            "provenance": "MEASURED",
+            "pricing": "list prices from the versioned price card",
+            "exported_at": self._clock().isoformat(),
+            "months": months,
+        }
+
     def totals(self) -> dict[str, dict[str, Any]]:
         return {b["budget_id"]: b for b in self._store.list("budgets")}
 

@@ -50,19 +50,19 @@ def serve(
     )
 
 
-@app.command("seed-fixture")
-def seed_fixture_cmd() -> None:
-    """Load fixture users and FIXTURE apps into the configured store."""
-    from control_plane.fixtures import seed_fixture
+@app.command("seed-registry")
+def seed_registry_cmd() -> None:
+    """Load fixture users and the SYNTHETIC registry seed into the configured store."""
+    from control_plane.fixtures import seed_registry
     from control_plane.settings import StoreBackend
     from control_plane.store import build_store
 
     settings = get_settings()
     if settings.store_backend is StoreBackend.MEMORY:
-        typer.echo("Memory store seeds itself on startup; nothing to do.")
+        typer.echo("The memory store seeds itself on startup; nothing to do.")
         return
-    users, apps = seed_fixture(build_store(settings))
-    typer.echo(f"Seeded {users} fixture users and {apps} FIXTURE apps.")
+    counts = seed_registry(build_store(settings))
+    typer.echo(f"Seeded {counts}")
 
 
 @data_app.command("fetch")
@@ -228,6 +228,9 @@ def ledger(
     reconcile: Annotated[
         bool, typer.Option(help="Mark attempts stuck in 'sent' as unknown (after a crash)")
     ] = False,
+    export: Annotated[
+        bool, typer.Option(help="Write settled spend to artifacts/ledger_summary.json")
+    ] = False,
 ) -> None:
     """Show budget totals at list prices."""
     from control_plane.budget import Ledger
@@ -238,6 +241,11 @@ def ledger(
     if reconcile:
         marked = lg.reconcile_sent()
         typer.echo(f"Marked {len(marked)} attempt(s) unknown; their reservations stay held.")
+    if export:
+        from control_plane.fixtures import LEDGER_SUMMARY
+
+        LEDGER_SUMMARY.write_text(json.dumps(lg.summary(), indent=2) + "\n")
+        typer.echo(f"Wrote {LEDGER_SUMMARY}")
     for budget_id, b in sorted(lg.totals().items()):
         typer.echo(
             f"{budget_id}: committed ${b['committed_micros'] / 1e6:.4f}, reserved "

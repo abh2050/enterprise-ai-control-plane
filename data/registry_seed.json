@@ -1,0 +1,4948 @@
+{
+ "provenance": "SYNTHETIC",
+ "description": "40 synthetic AI applications for a fictional bank. Not real data.",
+ "reference_date": "2026-10-01T12:00:00+00:00",
+ "seed": 42,
+ "users": [
+  {
+   "email": "priya.raman@example.com",
+   "role": "app_owner",
+   "active": true,
+   "security_reviewer": false,
+   "created_at": "2026-03-15T12:00:00+00:00"
+  },
+  {
+   "email": "daniel.osei@example.com",
+   "role": "app_owner",
+   "active": true,
+   "security_reviewer": false,
+   "created_at": "2026-03-15T12:00:00+00:00"
+  },
+  {
+   "email": "lena.fischer@example.com",
+   "role": "app_owner",
+   "active": true,
+   "security_reviewer": false,
+   "created_at": "2026-03-15T12:00:00+00:00"
+  },
+  {
+   "email": "marco.silva@example.com",
+   "role": "app_owner",
+   "active": true,
+   "security_reviewer": false,
+   "created_at": "2026-03-15T12:00:00+00:00"
+  },
+  {
+   "email": "aisha.khan@example.com",
+   "role": "app_owner",
+   "active": true,
+   "security_reviewer": false,
+   "created_at": "2026-03-15T12:00:00+00:00"
+  },
+  {
+   "email": "sofia.marin@example.com",
+   "role": "app_owner",
+   "active": true,
+   "security_reviewer": false,
+   "created_at": "2026-03-15T12:00:00+00:00"
+  },
+  {
+   "email": "kenji.ito@example.com",
+   "role": "app_owner",
+   "active": true,
+   "security_reviewer": false,
+   "created_at": "2026-03-15T12:00:00+00:00"
+  },
+  {
+   "email": "tom.becker@example.com",
+   "role": "app_owner",
+   "active": false,
+   "security_reviewer": false,
+   "created_at": "2026-03-15T12:00:00+00:00"
+  }
+ ],
+ "apps": [
+  {
+   "app_id": "support-triage",
+   "name": "Support Triage",
+   "owner": "owner@example.com",
+   "business_unit": "Customer Operations",
+   "platform": "managed",
+   "business_problem": "Agents read every inbound banking support message to decide which queue owns it. Misrouted fraud and lost-card reports wait in the wrong queue, and routine requests consume time that specialists need for complex cases. We want routing recommendations that a person can trust or override.",
+   "risk_tier": "high",
+   "stage": "evaluation",
+   "prior_stage": null,
+   "paused": false,
+   "version": 7,
+   "active_config_id": "llm_low_cost_v1",
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": {
+    "monthly_volume": {
+     "value": 800,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 3400.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 500,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "owner@example.com",
+   "gates": {
+    "governance": {
+     "gate": "governance",
+     "approved_by": "admin@example.com",
+     "approved_at": "2026-09-14T02:03:02.547312+00:00",
+     "expires_at": "2027-03-13T02:03:02.547312+00:00",
+     "review_id": "reviews/support-triage-governance"
+    },
+    "security": {
+     "gate": "security",
+     "approved_by": "security@example.com",
+     "approved_at": "2026-09-14T23:49:32.136160+00:00",
+     "expires_at": "2027-03-13T23:49:32.136160+00:00",
+     "review_id": "reviews/support-triage-security"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": "2027-03-13T02:03:02.547312+00:00",
+   "last_decision": "Moved to evaluation",
+   "last_activity_at": "2026-09-17T18:16:14.686703+00:00",
+   "stage_entered_at": "2026-09-17T18:16:14.686703+00:00",
+   "created_at": "2026-08-22T11:20:53.873510+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "fraud-alert-summaries",
+   "name": "Fraud Alert Summaries",
+   "owner": "priya.raman@example.com",
+   "business_unit": "Risk",
+   "platform": "managed",
+   "business_problem": "Fraud analysts open five systems to understand one alert before deciding whether to block a card. A short evidence summary per alert could cut review time, but a wrong summary could hide a real fraud signal, so it must be shadowed before anyone relies on it.",
+   "risk_tier": "high",
+   "stage": "shadow",
+   "prior_stage": null,
+   "paused": false,
+   "version": 8,
+   "active_config_id": "fraud-alert-summaries_v1",
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": {
+    "monthly_volume": {
+     "value": 1500,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 1300.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 300,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "priya.raman@example.com",
+   "gates": {
+    "governance": {
+     "gate": "governance",
+     "approved_by": "admin@example.com",
+     "approved_at": "2026-09-04T06:29:30.543982+00:00",
+     "expires_at": "2027-03-03T06:29:30.543982+00:00",
+     "review_id": "reviews/fraud-alert-summaries-governance"
+    },
+    "security": {
+     "gate": "security",
+     "approved_by": "security@example.com",
+     "approved_at": "2026-09-07T07:09:33.831212+00:00",
+     "expires_at": "2027-03-06T07:09:33.831212+00:00",
+     "review_id": "reviews/fraud-alert-summaries-security"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": true,
+    "release_decision": null
+   },
+   "approvals_expire_at": "2027-03-03T06:29:30.543982+00:00",
+   "last_decision": "Moved to shadow",
+   "last_activity_at": "2026-09-22T02:27:44.514792+00:00",
+   "stage_entered_at": "2026-09-22T02:27:44.514792+00:00",
+   "created_at": "2026-08-05T01:54:14.755439+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "kyc-document-checker",
+   "name": "KYC Document Checker",
+   "owner": "daniel.osei@example.com",
+   "business_unit": "Compliance",
+   "platform": "managed",
+   "business_problem": "Onboarding staff check identity documents by hand against a long checklist, which delays account opening by two days on average. The checker flags missing or inconsistent fields so staff review only the exceptions, while every final approval stays with a person.",
+   "risk_tier": "high",
+   "stage": "controlled_activation",
+   "prior_stage": null,
+   "paused": false,
+   "version": 9,
+   "active_config_id": "kyc-document-checker_v1",
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": {
+    "monthly_volume": {
+     "value": 12000,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 9900.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 1200,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "daniel.osei@example.com",
+   "gates": {
+    "governance": {
+     "gate": "governance",
+     "approved_by": "admin@example.com",
+     "approved_at": "2026-08-23T12:20:54.626541+00:00",
+     "expires_at": "2027-02-19T12:20:54.626541+00:00",
+     "review_id": "reviews/kyc-document-checker-governance"
+    },
+    "security": {
+     "gate": "security",
+     "approved_by": "security@example.com",
+     "approved_at": "2026-08-18T10:33:37.021933+00:00",
+     "expires_at": "2027-02-14T10:33:37.021933+00:00",
+     "review_id": "reviews/kyc-document-checker-security"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": true,
+    "release_decision": "activate_cohort"
+   },
+   "approvals_expire_at": "2027-02-14T10:33:37.021933+00:00",
+   "last_decision": "Release decision: activate cohort",
+   "last_activity_at": "2026-09-25T16:26:27.536600+00:00",
+   "stage_entered_at": "2026-09-25T16:26:27.536600+00:00",
+   "created_at": "2026-07-29T10:26:13.229612+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "loan-memo-drafter",
+   "name": "Loan Memo Drafter",
+   "owner": "lena.fischer@example.com",
+   "business_unit": "Lending",
+   "platform": "managed",
+   "business_problem": "Credit officers spend hours turning application data into a standard credit memo. A first draft assembled from the application and bureau data could save most of that time, provided the officer edits and signs every memo and no figure is invented by the model.",
+   "risk_tier": "medium",
+   "stage": "evaluation",
+   "prior_stage": null,
+   "paused": false,
+   "version": 6,
+   "active_config_id": "loan-memo-drafter_v1",
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": {
+    "monthly_volume": {
+     "value": 12000,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 2000.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 300,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "lena.fischer@example.com",
+   "gates": {
+    "governance": {
+     "gate": "governance",
+     "approved_by": "admin@example.com",
+     "approved_at": "2026-07-18T05:55:51.565966+00:00",
+     "expires_at": "2027-01-14T05:55:51.565966+00:00",
+     "review_id": "reviews/loan-memo-drafter-governance"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": "2027-01-14T05:55:51.565966+00:00",
+   "last_decision": "Moved to evaluation",
+   "last_activity_at": "2026-07-23T13:39:17.022367+00:00",
+   "stage_entered_at": "2026-07-23T13:39:17.022367+00:00",
+   "created_at": "2026-06-28T02:34:05.607939+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "collections-call-notes",
+   "name": "Collections Call Notes",
+   "owner": "marco.silva@example.com",
+   "business_unit": "Collections",
+   "platform": "managed",
+   "business_problem": "Collections agents write call notes after every conversation, and notes vary so much that supervisors cannot audit hardship promises consistently. Structured notes generated from the call transcript give supervisors a consistent record that agents confirm.",
+   "risk_tier": "medium",
+   "stage": "monitored",
+   "prior_stage": null,
+   "paused": false,
+   "version": 9,
+   "active_config_id": "collections-call-notes_v1",
+   "monthly_budget_micros": 2500000000,
+   "monthly_spend_micros": 1850000000,
+   "monthly_volume": 22000,
+   "active_users": null,
+   "usage_series": [
+    4962,
+    4094,
+    4672,
+    6105,
+    5694,
+    4388,
+    4391,
+    5143,
+    4018,
+    5522,
+    5715,
+    6088
+   ],
+   "last_usage_at": "2026-10-01T12:00:00+00:00",
+   "business_case": {
+    "monthly_volume": {
+     "value": 22000,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 13900.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 2500,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "marco.silva@example.com",
+   "gates": {
+    "governance": {
+     "gate": "governance",
+     "approved_by": "admin@example.com",
+     "approved_at": "2026-08-02T17:32:09.119910+00:00",
+     "expires_at": "2027-01-29T17:32:09.119910+00:00",
+     "review_id": "reviews/collections-call-notes-governance"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": true,
+    "release_decision": "activate_cohort"
+   },
+   "approvals_expire_at": "2027-01-29T17:32:09.119910+00:00",
+   "last_decision": "Activation complete",
+   "last_activity_at": "2026-09-09T09:11:22.651107+00:00",
+   "stage_entered_at": "2026-09-09T09:11:22.651108+00:00",
+   "created_at": "2026-06-27T13:15:23.801084+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "complaint-classifier",
+   "name": "Complaint Classifier",
+   "owner": "aisha.khan@example.com",
+   "business_unit": "Customer Operations",
+   "platform": "managed",
+   "business_problem": "Regulated complaints must be identified and acknowledged within strict deadlines. Staff currently tag complaints by hand, and late tagging creates regulatory exposure. Automatic tagging with human confirmation could protect those deadlines across all channels.",
+   "risk_tier": "high",
+   "stage": "paused",
+   "prior_stage": "controlled_activation",
+   "paused": true,
+   "version": 10,
+   "active_config_id": "complaint-classifier_v1",
+   "monthly_budget_micros": 1200000000,
+   "monthly_spend_micros": 640000000,
+   "monthly_volume": 9000,
+   "active_users": null,
+   "usage_series": [
+    2026,
+    2077,
+    2251,
+    2400,
+    2112,
+    1798,
+    2015,
+    1953,
+    1658,
+    2190,
+    1903,
+    1956
+   ],
+   "last_usage_at": "2026-10-01T12:00:00+00:00",
+   "business_case": {
+    "monthly_volume": {
+     "value": 9000,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 9600.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 1200,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "aisha.khan@example.com",
+   "gates": {
+    "governance": {
+     "gate": "governance",
+     "approved_by": "admin@example.com",
+     "approved_at": "2026-08-12T00:03:39.862345+00:00",
+     "expires_at": "2027-02-08T00:03:39.862345+00:00",
+     "review_id": "reviews/complaint-classifier-governance"
+    },
+    "security": {
+     "gate": "security",
+     "approved_by": "security@example.com",
+     "approved_at": "2026-08-08T08:02:09.019876+00:00",
+     "expires_at": "2027-02-04T08:02:09.019876+00:00",
+     "review_id": "reviews/complaint-classifier-security"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": "2027-02-04T08:02:09.019876+00:00",
+   "last_decision": "Paused pending investigation",
+   "last_activity_at": "2026-09-15T12:16:29.448167+00:00",
+   "stage_entered_at": "2026-09-15T12:16:29.448167+00:00",
+   "created_at": "2026-07-07T09:58:04.585136+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "sales-email-drafts",
+   "name": "Sales Email Drafts",
+   "owner": "owner@example.com",
+   "business_unit": "Sales",
+   "platform": "copilot",
+   "business_problem": "Relationship managers write similar follow-up emails after every client meeting, repeating product details and next steps from their notes. Drafts generated from meeting notes save time while the manager reviews and sends every message personally.",
+   "risk_tier": "low",
+   "stage": "monitored",
+   "prior_stage": null,
+   "paused": false,
+   "version": 6,
+   "active_config_id": null,
+   "monthly_budget_micros": 900000000,
+   "monthly_spend_micros": 610000000,
+   "monthly_volume": 14000,
+   "active_users": 120,
+   "usage_series": [
+    0,
+    3625,
+    3695,
+    2585,
+    3397,
+    3233,
+    2463,
+    2578,
+    3545,
+    2788,
+    3037,
+    3147
+   ],
+   "last_usage_at": "2026-10-01T12:00:00+00:00",
+   "business_case": {
+    "monthly_volume": {
+     "value": 14000,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 7200.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 900,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "owner@example.com",
+   "gates": {
+    "reviewer": {
+     "gate": "reviewer",
+     "approved_by": "reviewer@example.com",
+     "approved_at": "2026-08-10T14:42:56.524417+00:00",
+     "expires_at": "2027-02-06T14:42:56.524417+00:00",
+     "review_id": "reviews/sales-email-drafts-reviewer"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": "2027-02-06T14:42:56.524417+00:00",
+   "last_decision": "Publish decision recorded",
+   "last_activity_at": "2026-08-18T10:07:33.126965+00:00",
+   "stage_entered_at": "2026-08-18T10:07:33.126965+00:00",
+   "created_at": "2026-07-11T04:13:52.999039+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "meeting-notes",
+   "name": "Meeting Notes",
+   "owner": "owner@example.com",
+   "business_unit": "Operations",
+   "platform": "copilot",
+   "business_problem": "Teams lose decisions and action items from internal meetings because nobody owns the notes. Automatic summaries with owners and due dates would make follow-up reliable and reduce the number of repeat meetings held only to recover what was already agreed.",
+   "risk_tier": "low",
+   "stage": "intake",
+   "prior_stage": null,
+   "paused": false,
+   "version": 2,
+   "active_config_id": null,
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": null,
+   "submitted_by": null,
+   "gates": {},
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": null,
+   "last_decision": "Registered at intake",
+   "last_activity_at": "2026-09-29T23:48:51.024478+00:00",
+   "stage_entered_at": "2026-09-29T23:48:51.024478+00:00",
+   "created_at": "2026-09-29T23:48:51.024478+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "policy-search-assistant",
+   "name": "Policy Search Assistant",
+   "owner": "sofia.marin@example.com",
+   "business_unit": "HR",
+   "platform": "copilot",
+   "business_problem": "Employees email HR with questions already answered in the policy handbook, and HR staff spend hours each week pasting links. A search assistant grounded in the handbook could answer routine questions and route anything unusual to a person.",
+   "risk_tier": "low",
+   "stage": "monitored",
+   "prior_stage": null,
+   "paused": false,
+   "version": 6,
+   "active_config_id": null,
+   "monthly_budget_micros": 600000000,
+   "monthly_spend_micros": 420000000,
+   "monthly_volume": 8000,
+   "active_users": 640,
+   "usage_series": [
+    0,
+    0,
+    1794,
+    2165,
+    1840,
+    1442,
+    1820,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": "2026-08-27T12:00:00+00:00",
+   "business_case": {
+    "monthly_volume": {
+     "value": 8000,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 5100.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 600,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "sofia.marin@example.com",
+   "gates": {
+    "reviewer": {
+     "gate": "reviewer",
+     "approved_by": "reviewer@example.com",
+     "approved_at": "2026-08-11T09:34:05.215934+00:00",
+     "expires_at": "2027-02-07T09:34:05.215934+00:00",
+     "review_id": "reviews/policy-search-assistant-reviewer"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": "2027-02-07T09:34:05.215934+00:00",
+   "last_decision": "Publish decision recorded",
+   "last_activity_at": "2026-08-16T03:40:52.234002+00:00",
+   "stage_entered_at": "2026-08-16T03:40:52.234003+00:00",
+   "created_at": "2026-07-22T19:14:54.390668+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "board-pack-summaries",
+   "name": "Board Pack Summaries",
+   "owner": "kenji.ito@example.com",
+   "business_unit": "Finance",
+   "platform": "copilot",
+   "business_problem": "Executives receive two hundred page board packs a few days before each meeting and struggle to find the decisions they must make. Summaries that list decisions, risks, and changes since the last pack would focus preparation without replacing the source papers.",
+   "risk_tier": "medium",
+   "stage": "review_gates",
+   "prior_stage": null,
+   "paused": false,
+   "version": 4,
+   "active_config_id": null,
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": {
+    "monthly_volume": {
+     "value": 3000,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 3100.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 1200,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "kenji.ito@example.com",
+   "gates": {},
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": null,
+   "last_decision": "Moved to review_gates",
+   "last_activity_at": "2026-08-19T09:17:36.970590+00:00",
+   "stage_entered_at": "2026-08-19T09:17:36.970590+00:00",
+   "created_at": "2026-08-08T02:18:09.530588+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "excel-variance-explainer",
+   "name": "Variance Explainer",
+   "owner": "kenji.ito@example.com",
+   "business_unit": "Finance",
+   "platform": "copilot",
+   "business_problem": "Finance analysts explain monthly budget variances line by line in spreadsheets, and the same explanations recur every month. Suggested explanations drafted from prior months and ledger detail could shorten close while analysts approve every line.",
+   "risk_tier": "low",
+   "stage": "monitored",
+   "prior_stage": null,
+   "paused": false,
+   "version": 6,
+   "active_config_id": null,
+   "monthly_budget_micros": 900000000,
+   "monthly_spend_micros": 980000000,
+   "monthly_volume": 3000,
+   "active_users": 85,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    693,
+    618,
+    832,
+    776,
+    689,
+    732,
+    697,
+    815
+   ],
+   "last_usage_at": "2026-10-01T12:00:00+00:00",
+   "business_case": {
+    "monthly_volume": {
+     "value": 3000,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 2100.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 900,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "kenji.ito@example.com",
+   "gates": {
+    "reviewer": {
+     "gate": "reviewer",
+     "approved_by": "reviewer@example.com",
+     "approved_at": "2026-09-03T09:42:33.720080+00:00",
+     "expires_at": "2027-03-02T09:42:33.720080+00:00",
+     "review_id": "reviews/excel-variance-explainer-reviewer"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": "2027-03-02T09:42:33.720080+00:00",
+   "last_decision": "Publish decision recorded",
+   "last_activity_at": "2026-09-16T01:56:21.503635+00:00",
+   "stage_entered_at": "2026-09-16T01:56:21.503634+00:00",
+   "created_at": "2026-08-04T20:14:02.135410+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "procurement-intake",
+   "name": "Procurement Intake",
+   "owner": "marco.silva@example.com",
+   "business_unit": "Procurement",
+   "platform": "copilot",
+   "business_problem": "Purchase requests arrive as free text emails and procurement staff rewrite each one into the request form. Converting requests into structured forms would cut handling time and reduce back and forth with requesters about missing details.",
+   "risk_tier": "low",
+   "stage": "business_case",
+   "prior_stage": null,
+   "paused": false,
+   "version": 3,
+   "active_config_id": null,
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": {
+    "monthly_volume": {
+     "value": 3000,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 3300.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 500,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": null,
+   "gates": {},
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": null,
+   "last_decision": "Moved to business_case",
+   "last_activity_at": "2026-09-20T21:21:40.892379+00:00",
+   "stage_entered_at": "2026-09-20T21:21:40.892379+00:00",
+   "created_at": "2026-09-17T01:58:53.402099+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "contract-clause-finder",
+   "name": "Contract Clause Finder",
+   "owner": "owner2@example.com",
+   "business_unit": "Legal",
+   "platform": "copilot",
+   "business_problem": "Lawyers search hundreds of supplier contracts for specific clauses during renewals and audits. A clause finder that cites the exact page would turn days of manual review into hours, while lawyers still confirm every clause before relying on it.",
+   "risk_tier": "medium",
+   "stage": "monitored",
+   "prior_stage": null,
+   "paused": false,
+   "version": 6,
+   "active_config_id": null,
+   "monthly_budget_micros": 1500000000,
+   "monthly_spend_micros": 1320000000,
+   "monthly_volume": 2500,
+   "active_users": 40,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    582,
+    465,
+    683,
+    616,
+    475,
+    445,
+    532
+   ],
+   "last_usage_at": "2026-10-01T12:00:00+00:00",
+   "business_case": {
+    "monthly_volume": {
+     "value": 2500,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 8500.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 1500,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "owner2@example.com",
+   "gates": {
+    "governance": {
+     "gate": "governance",
+     "approved_by": "admin@example.com",
+     "approved_at": "2026-09-01T01:28:55.513276+00:00",
+     "expires_at": "2026-10-10T12:00:00+00:00",
+     "review_id": "reviews/contract-clause-finder-governance"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": "2026-10-10T12:00:00+00:00",
+   "last_decision": "Publish decision recorded",
+   "last_activity_at": "2026-09-05T04:47:20.571952+00:00",
+   "stage_entered_at": "2026-09-05T04:47:20.571952+00:00",
+   "created_at": "2026-08-09T20:52:31.593958+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "it-ticket-summaries",
+   "name": "IT Ticket Summaries",
+   "owner": "tom.becker@example.com",
+   "business_unit": "Technology",
+   "platform": "copilot",
+   "business_problem": "Service desk engineers inherit long ticket threads and reread them before acting. A summary of symptoms, steps tried, and current status at the top of each ticket would shorten handovers between shifts and reduce repeated troubleshooting.",
+   "risk_tier": "low",
+   "stage": "monitored",
+   "prior_stage": null,
+   "paused": false,
+   "version": 6,
+   "active_config_id": null,
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 300000000,
+   "monthly_volume": 12000,
+   "active_users": 60,
+   "usage_series": [
+    0,
+    2297,
+    3097,
+    2315,
+    2610,
+    2318,
+    3254,
+    3075,
+    2610,
+    2934,
+    3016,
+    2404
+   ],
+   "last_usage_at": "2026-10-01T12:00:00+00:00",
+   "business_case": {
+    "monthly_volume": {
+     "value": 12000,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 1400.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 500,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "tom.becker@example.com",
+   "gates": {
+    "reviewer": {
+     "gate": "reviewer",
+     "approved_by": "reviewer@example.com",
+     "approved_at": "2026-08-03T00:51:28.030858+00:00",
+     "expires_at": "2026-10-09T12:00:00+00:00",
+     "review_id": "reviews/it-ticket-summaries-reviewer"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": "2026-10-09T12:00:00+00:00",
+   "last_decision": "Publish decision recorded",
+   "last_activity_at": "2026-08-03T18:01:40.921613+00:00",
+   "stage_entered_at": "2026-08-03T18:01:40.921613+00:00",
+   "created_at": "2026-07-12T19:54:42.188932+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "training-quiz-builder",
+   "name": "Training Quiz Builder",
+   "owner": "sofia.marin@example.com",
+   "business_unit": "HR",
+   "platform": "copilot",
+   "business_problem": "Learning teams write quiz questions for every compliance module by hand, which delays course releases. Drafting questions from course material would let them publish modules faster while subject experts review each question for accuracy.",
+   "risk_tier": "low",
+   "stage": "retired",
+   "prior_stage": null,
+   "paused": false,
+   "version": 7,
+   "active_config_id": null,
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": {
+    "monthly_volume": {
+     "value": 12000,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 6800.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 800,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "sofia.marin@example.com",
+   "gates": {
+    "reviewer": {
+     "gate": "reviewer",
+     "approved_by": "reviewer@example.com",
+     "approved_at": "2026-08-30T12:52:10.285989+00:00",
+     "expires_at": "2027-02-26T12:52:10.285989+00:00",
+     "review_id": "reviews/training-quiz-builder-reviewer"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": "2027-02-26T12:52:10.285989+00:00",
+   "last_decision": "Replaced by the learning platform's native tool",
+   "last_activity_at": "2026-09-18T03:28:32.407921+00:00",
+   "stage_entered_at": "2026-09-18T03:28:32.407920+00:00",
+   "created_at": "2026-08-02T14:24:30.276283+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "marketing-copy-variants",
+   "name": "Marketing Copy Variants",
+   "owner": "aisha.khan@example.com",
+   "business_unit": "Marketing",
+   "platform": "copilot",
+   "business_problem": "Marketing produces many variants of campaign copy for testing, and each variant needs compliance review for financial promotion rules. Generated variants could widen testing, but only if compliance review capacity keeps pace with the volume.",
+   "risk_tier": "medium",
+   "stage": "retired",
+   "prior_stage": null,
+   "paused": false,
+   "version": 6,
+   "active_config_id": null,
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": {
+    "monthly_volume": {
+     "value": 12000,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 2100.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 500,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "aisha.khan@example.com",
+   "gates": {},
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": null,
+   "last_decision": "Rejected at review: no approval path for financial promotions",
+   "last_activity_at": "2026-09-26T02:45:48.438254+00:00",
+   "stage_entered_at": "2026-09-26T02:45:48.438254+00:00",
+   "created_at": "2026-08-12T17:49:33.377393+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "branch-faq-bot",
+   "name": "Branch FAQ Bot",
+   "owner": "daniel.osei@example.com",
+   "business_unit": "Retail Banking",
+   "platform": "copilot",
+   "business_problem": "Branch staff call the central help line with product questions while customers wait at the counter. An internal assistant answering from approved product sheets would shorten those waits and leave unusual questions to the help line team.",
+   "risk_tier": "medium",
+   "stage": "review_gates",
+   "prior_stage": null,
+   "paused": false,
+   "version": 4,
+   "active_config_id": null,
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": {
+    "monthly_volume": {
+     "value": 1500,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 2400.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 500,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "daniel.osei@example.com",
+   "gates": {},
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": null,
+   "last_decision": "Moved to review_gates",
+   "last_activity_at": "2026-09-24T15:13:13.032034+00:00",
+   "stage_entered_at": "2026-09-24T15:13:13.032035+00:00",
+   "created_at": "2026-08-20T10:10:16.981026+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "translation-helper",
+   "name": "Translation Helper",
+   "owner": "lena.fischer@example.com",
+   "business_unit": "Customer Operations",
+   "platform": "copilot",
+   "business_problem": "Customers write in more than ten languages and messages wait for the few agents who speak them. Draft translations for agents could shorten waits, but the bank must decide how translated content is checked before anything reaches a customer.",
+   "risk_tier": "medium",
+   "stage": "intake",
+   "prior_stage": null,
+   "paused": false,
+   "version": 2,
+   "active_config_id": null,
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": null,
+   "submitted_by": null,
+   "gates": {},
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": null,
+   "last_decision": "Registered at intake",
+   "last_activity_at": "2026-07-25T04:04:32.207770+00:00",
+   "stage_entered_at": "2026-07-25T04:04:32.207770+00:00",
+   "created_at": "2026-07-25T04:04:32.207770+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "credit-risk-narratives",
+   "name": "Credit Risk Narratives",
+   "owner": "priya.raman@example.com",
+   "business_unit": "Risk",
+   "platform": "abacus",
+   "business_problem": "Risk analysts write quarterly narratives explaining movements in portfolio credit risk. Drafting the narrative from model outputs could save days each quarter, provided every number in the narrative traces back to the approved risk model.",
+   "risk_tier": "high",
+   "stage": "monitored",
+   "prior_stage": null,
+   "paused": false,
+   "version": 7,
+   "active_config_id": null,
+   "monthly_budget_micros": 2000000000,
+   "monthly_spend_micros": 2100000000,
+   "monthly_volume": 1800,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    468,
+    455,
+    440,
+    356,
+    351,
+    318,
+    360
+   ],
+   "last_usage_at": "2026-10-01T12:00:00+00:00",
+   "business_case": {
+    "monthly_volume": {
+     "value": 1800,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 10200.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 2000,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "priya.raman@example.com",
+   "gates": {
+    "governance": {
+     "gate": "governance",
+     "approved_by": "admin@example.com",
+     "approved_at": "2026-08-30T13:28:36.542413+00:00",
+     "expires_at": "2026-10-14T12:00:00+00:00",
+     "review_id": "reviews/credit-risk-narratives-governance"
+    },
+    "security": {
+     "gate": "security",
+     "approved_by": "security@example.com",
+     "approved_at": "2026-08-28T13:59:18.117009+00:00",
+     "expires_at": "2026-10-14T12:00:00+00:00",
+     "review_id": "reviews/credit-risk-narratives-security"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": "2026-10-14T12:00:00+00:00",
+   "last_decision": "Publish decision recorded",
+   "last_activity_at": "2026-09-03T14:07:59.468813+00:00",
+   "stage_entered_at": "2026-09-03T14:07:59.468814+00:00",
+   "created_at": "2026-08-10T10:55:45.877998+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "aml-case-assistant",
+   "name": "AML Case Assistant",
+   "owner": "daniel.osei@example.com",
+   "business_unit": "Compliance",
+   "platform": "abacus",
+   "business_problem": "Investigators assemble anti money laundering cases from transaction histories and customer records before filing reports. An assistant that gathers evidence and drafts a timeline could speed investigations while investigators make every filing decision.",
+   "risk_tier": "high",
+   "stage": "review_gates",
+   "prior_stage": null,
+   "paused": false,
+   "version": 4,
+   "active_config_id": null,
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": {
+    "monthly_volume": {
+     "value": 12000,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 2400.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 1200,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "daniel.osei@example.com",
+   "gates": {},
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": null,
+   "last_decision": "Moved to review_gates",
+   "last_activity_at": "2026-09-25T22:03:03.071578+00:00",
+   "stage_entered_at": "2026-09-25T22:03:03.071579+00:00",
+   "created_at": "2026-09-14T03:25:10.382369+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "pricing-scenario-explorer",
+   "name": "Pricing Scenario Explorer",
+   "owner": "marco.silva@example.com",
+   "business_unit": "Retail Banking",
+   "platform": "abacus",
+   "business_problem": "Product managers model savings rate changes in spreadsheets that take days to update. A scenario explorer could answer what if questions in minutes, but the team has not yet agreed how pricing decisions would use its outputs or who validates them.",
+   "risk_tier": "medium",
+   "stage": "business_case",
+   "prior_stage": null,
+   "paused": false,
+   "version": 3,
+   "active_config_id": null,
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": {
+    "monthly_volume": {
+     "value": 6000,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 900.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 1200,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": null,
+   "gates": {},
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": null,
+   "last_decision": "Moved to business_case",
+   "last_activity_at": "2026-08-07T17:15:27.551822+00:00",
+   "stage_entered_at": "2026-08-07T17:15:27.551823+00:00",
+   "created_at": "2026-08-01T16:37:20.210315+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "vendor-risk-questionnaires",
+   "name": "Vendor Risk Questionnaires",
+   "owner": "owner2@example.com",
+   "business_unit": "Procurement",
+   "platform": "abacus",
+   "business_problem": "Third party risk staff read long vendor security questionnaires and map answers to control requirements. Pre mapping answers to controls with citations could halve review time while staff confirm every finding before it enters the vendor record.",
+   "risk_tier": "medium",
+   "stage": "monitored",
+   "prior_stage": null,
+   "paused": false,
+   "version": 6,
+   "active_config_id": null,
+   "monthly_budget_micros": 1000000000,
+   "monthly_spend_micros": 760000000,
+   "monthly_volume": 900,
+   "active_users": 25,
+   "usage_series": [
+    0,
+    0,
+    207,
+    170,
+    178,
+    222,
+    223,
+    163,
+    195,
+    208,
+    196,
+    176
+   ],
+   "last_usage_at": "2026-10-01T12:00:00+00:00",
+   "business_case": {
+    "monthly_volume": {
+     "value": 900,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 4700.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 1000,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "owner2@example.com",
+   "gates": {
+    "governance": {
+     "gate": "governance",
+     "approved_by": "admin@example.com",
+     "approved_at": "2026-08-22T16:38:51.689083+00:00",
+     "expires_at": "2026-10-13T12:00:00+00:00",
+     "review_id": "reviews/vendor-risk-questionnaires-governance"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": "2026-10-13T12:00:00+00:00",
+   "last_decision": "Publish decision recorded",
+   "last_activity_at": "2026-08-26T03:21:05.789632+00:00",
+   "stage_entered_at": "2026-08-26T03:21:05.789632+00:00",
+   "created_at": "2026-07-16T23:49:24.622510+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "regulatory-change-tracker",
+   "name": "Regulatory Change Tracker",
+   "owner": "kenji.ito@example.com",
+   "business_unit": "Compliance",
+   "platform": "abacus",
+   "business_problem": "Compliance teams monitor regulator publications manually and often learn about relevant changes late. A tracker that summarizes new publications and maps them to affected policies would give owners more time to respond to each change.",
+   "risk_tier": "medium",
+   "stage": "monitored",
+   "prior_stage": null,
+   "paused": false,
+   "version": 6,
+   "active_config_id": null,
+   "monthly_budget_micros": 1200000000,
+   "monthly_spend_micros": 880000000,
+   "monthly_volume": 600,
+   "active_users": 30,
+   "usage_series": [
+    0,
+    0,
+    118,
+    132,
+    106,
+    125,
+    147,
+    130,
+    115,
+    133,
+    112,
+    143
+   ],
+   "last_usage_at": "2026-10-01T12:00:00+00:00",
+   "business_case": {
+    "monthly_volume": {
+     "value": 600,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 2200.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 1200,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "kenji.ito@example.com",
+   "gates": {
+    "governance": {
+     "gate": "governance",
+     "approved_by": "admin@example.com",
+     "approved_at": "2026-08-09T18:08:13.020696+00:00",
+     "expires_at": "2027-02-05T18:08:13.020696+00:00",
+     "review_id": "reviews/regulatory-change-tracker-governance"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": "2027-02-05T18:08:13.020696+00:00",
+   "last_decision": "Publish decision recorded",
+   "last_activity_at": "2026-08-13T01:09:28.288052+00:00",
+   "stage_entered_at": "2026-08-13T01:09:28.288053+00:00",
+   "created_at": "2026-07-18T04:03:15.894906+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "treasury-cash-forecast",
+   "name": "Treasury Cash Forecast Notes",
+   "owner": null,
+   "business_unit": "Finance",
+   "platform": "abacus",
+   "business_problem": "Treasury analysts write daily commentary on cash forecasts for senior management. Drafting the commentary from forecast movements would free analysts for investigation of unusual movements, which is where their judgment adds the most value.",
+   "risk_tier": "medium",
+   "stage": "monitored",
+   "prior_stage": null,
+   "paused": false,
+   "version": 6,
+   "active_config_id": null,
+   "monthly_budget_micros": 800000000,
+   "monthly_spend_micros": 760000000,
+   "monthly_volume": 400,
+   "active_users": 12,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    80,
+    73,
+    70,
+    92,
+    111,
+    84
+   ],
+   "last_usage_at": "2026-10-01T12:00:00+00:00",
+   "business_case": {
+    "monthly_volume": {
+     "value": 400,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 5100.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 800,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "tom.becker@example.com",
+   "gates": {
+    "governance": {
+     "gate": "governance",
+     "approved_by": "admin@example.com",
+     "approved_at": "2026-09-08T01:32:13.691411+00:00",
+     "expires_at": "2026-10-11T12:00:00+00:00",
+     "review_id": "reviews/treasury-cash-forecast-governance"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": "2026-10-11T12:00:00+00:00",
+   "last_decision": "Publish decision recorded",
+   "last_activity_at": "2026-09-15T06:43:47.243830+00:00",
+   "stage_entered_at": "2026-09-15T06:43:47.243829+00:00",
+   "created_at": "2026-08-20T04:04:24.466143+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "dispute-letter-drafts",
+   "name": "Dispute Letter Drafts",
+   "owner": "aisha.khan@example.com",
+   "business_unit": "Customer Operations",
+   "platform": "abacus",
+   "business_problem": "Card dispute teams send outcome letters that must cite the scheme rules applied. Drafted letters could reduce turnaround, but every letter is customer facing and legally significant, so the review path needs a legal approval step first.",
+   "risk_tier": "high",
+   "stage": "business_case",
+   "prior_stage": null,
+   "paused": false,
+   "version": 7,
+   "active_config_id": null,
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": {
+    "monthly_volume": {
+     "value": 800,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 2500.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 300,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "aisha.khan@example.com",
+   "gates": {
+    "governance": {
+     "gate": "governance",
+     "approved_by": "admin@example.com",
+     "approved_at": "2026-09-27T17:01:08.646670+00:00",
+     "expires_at": "2027-03-26T17:01:08.646670+00:00",
+     "review_id": "reviews/dispute-letter-drafts-governance"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": "2027-03-26T17:01:08.646670+00:00",
+   "last_decision": "Letters need legal sign-off workflow before review",
+   "last_activity_at": "2026-09-30T08:51:52.654253+00:00",
+   "stage_entered_at": "2026-09-30T08:51:52.654253+00:00",
+   "created_at": "2026-09-05T22:19:35.936684+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "esg-report-assistant",
+   "name": "ESG Report Assistant",
+   "owner": "sofia.marin@example.com",
+   "business_unit": "Strategy",
+   "platform": "abacus",
+   "business_problem": "The sustainability team compiles the annual ESG report from dozens of internal sources. An assistant that drafts sections from source data could shorten the reporting cycle while the team verifies every disclosed figure against its source.",
+   "risk_tier": "medium",
+   "stage": "retired",
+   "prior_stage": null,
+   "paused": false,
+   "version": 7,
+   "active_config_id": null,
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": {
+    "monthly_volume": {
+     "value": 800,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 9200.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 1200,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "sofia.marin@example.com",
+   "gates": {
+    "governance": {
+     "gate": "governance",
+     "approved_by": "admin@example.com",
+     "approved_at": "2026-08-21T15:20:14.608750+00:00",
+     "expires_at": "2027-02-17T15:20:14.608750+00:00",
+     "review_id": "reviews/esg-report-assistant-governance"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": "2027-02-17T15:20:14.608750+00:00",
+   "last_decision": "Annual report completed; no ongoing need",
+   "last_activity_at": "2026-09-15T11:22:20.385337+00:00",
+   "stage_entered_at": "2026-09-15T11:22:20.385336+00:00",
+   "created_at": "2026-08-08T01:23:52.178373+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "hr-case-summaries",
+   "name": "HR Case Summaries",
+   "owner": "lena.fischer@example.com",
+   "business_unit": "HR",
+   "platform": "abacus",
+   "business_problem": "Employee relations advisers summarize long case files before every meeting. Automated summaries could save preparation time, but the data is sensitive and the use of employee case data for model processing needs explicit approval first.",
+   "risk_tier": "high",
+   "stage": "retired",
+   "prior_stage": null,
+   "paused": false,
+   "version": 7,
+   "active_config_id": null,
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": {
+    "monthly_volume": {
+     "value": 6000,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 3600.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 500,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "lena.fischer@example.com",
+   "gates": {
+    "governance": {
+     "gate": "governance",
+     "approved_by": "admin@example.com",
+     "approved_at": "2026-09-05T12:09:57.047011+00:00",
+     "expires_at": "2027-03-04T12:09:57.047011+00:00",
+     "review_id": "reviews/hr-case-summaries-governance"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": "2027-03-04T12:09:57.047011+00:00",
+   "last_decision": "Rejected at review: employee data use not approved",
+   "last_activity_at": "2026-09-10T06:26:33.143247+00:00",
+   "stage_entered_at": "2026-09-10T06:26:33.143247+00:00",
+   "created_at": "2026-07-19T03:49:37.329103+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "churn-signal-explainer",
+   "name": "Churn Signal Explainer",
+   "owner": "sofia.marin@example.com",
+   "business_unit": "Retail Banking",
+   "platform": "abacus",
+   "business_problem": "Retention teams receive churn risk scores without any explanation, so they cannot tell which customers to call first or what to offer. Plain language explanations of the drivers behind each score would help them prioritize calls and choose suitable offers.",
+   "risk_tier": "medium",
+   "stage": "monitored",
+   "prior_stage": null,
+   "paused": false,
+   "version": 6,
+   "active_config_id": null,
+   "monthly_budget_micros": 1550000000,
+   "monthly_spend_micros": 1460000000,
+   "monthly_volume": 4000,
+   "active_users": 22,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    930,
+    798,
+    896,
+    995,
+    885,
+    704,
+    820
+   ],
+   "last_usage_at": "2026-10-01T12:00:00+00:00",
+   "business_case": {
+    "monthly_volume": {
+     "value": 4000,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 7100.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 1550,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "sofia.marin@example.com",
+   "gates": {
+    "governance": {
+     "gate": "governance",
+     "approved_by": "admin@example.com",
+     "approved_at": "2026-08-30T04:22:21.508383+00:00",
+     "expires_at": "2027-02-26T04:22:21.508383+00:00",
+     "review_id": "reviews/churn-signal-explainer-governance"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": "2027-02-26T04:22:21.508383+00:00",
+   "last_decision": "Publish decision recorded",
+   "last_activity_at": "2026-09-01T20:59:04.915249+00:00",
+   "stage_entered_at": "2026-09-01T20:59:04.915249+00:00",
+   "created_at": "2026-08-12T22:09:49.288626+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "branch-staffing-insights",
+   "name": "Branch Staffing Insights",
+   "owner": "owner@example.com",
+   "business_unit": "Retail Banking",
+   "platform": "abacus",
+   "business_problem": "Regional managers set branch staffing from last year's patterns and react late to changes in footfall. Plain language insights from visit and transaction data could help them plan rosters weeks ahead and reduce both overtime and long queues.",
+   "risk_tier": "low",
+   "stage": "intake",
+   "prior_stage": null,
+   "paused": false,
+   "version": 2,
+   "active_config_id": null,
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": null,
+   "submitted_by": null,
+   "gates": {},
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": null,
+   "last_decision": "Registered at intake",
+   "last_activity_at": "2026-09-28T00:22:26.476120+00:00",
+   "stage_entered_at": "2026-09-28T00:22:26.476120+00:00",
+   "created_at": "2026-09-28T00:22:26.476120+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "policy-qa",
+   "name": "Policy Q&A",
+   "owner": "owner2@example.com",
+   "business_unit": "HR",
+   "platform": "custom",
+   "business_problem": "Managers ask HR the same questions about leave, travel, and expenses every week. A question answering service grounded in current policies would answer most of them instantly and send the remainder to HR with the context already attached.",
+   "risk_tier": "medium",
+   "stage": "business_case",
+   "prior_stage": null,
+   "paused": false,
+   "version": 3,
+   "active_config_id": null,
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": {
+    "monthly_volume": {
+     "value": 1500,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 2100.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 300,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": null,
+   "gates": {},
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": null,
+   "last_decision": "Moved to business_case",
+   "last_activity_at": "2026-09-23T15:59:34.132648+00:00",
+   "stage_entered_at": "2026-09-23T15:59:34.132648+00:00",
+   "created_at": "2026-09-19T14:29:26.443805+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "contract-summarizer",
+   "name": "Contract Summarizer",
+   "owner": "owner2@example.com",
+   "business_unit": "Legal",
+   "platform": "custom",
+   "business_problem": "Commercial teams wait days for legal to summarize key terms in incoming contracts. A summarizer that extracts obligations, renewal dates, and liability caps would speed deals, with lawyers confirming any term that affects a signing decision.",
+   "risk_tier": "medium",
+   "stage": "review_gates",
+   "prior_stage": null,
+   "paused": false,
+   "version": 4,
+   "active_config_id": null,
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": {
+    "monthly_volume": {
+     "value": 800,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 1900.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 500,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "owner2@example.com",
+   "gates": {},
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": null,
+   "last_decision": "Moved to review_gates",
+   "last_activity_at": "2026-07-24T21:00:37.005896+00:00",
+   "stage_entered_at": "2026-07-24T21:00:37.005896+00:00",
+   "created_at": "2026-06-30T16:26:00.579515+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "invoice-extraction",
+   "name": "Invoice Extraction",
+   "owner": null,
+   "business_unit": "Finance",
+   "platform": "custom",
+   "business_problem": "Accounts payable staff key invoice fields into the ledger by hand, which causes late payments and duplicate entries. Extracting fields automatically with confidence checks could cut manual keying while staff handle every exception and approval.",
+   "risk_tier": "high",
+   "stage": "paused",
+   "prior_stage": "monitored",
+   "paused": true,
+   "version": 8,
+   "active_config_id": null,
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 120000000,
+   "monthly_volume": 5000,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    951,
+    1296,
+    1368,
+    916,
+    1001,
+    1164,
+    1089
+   ],
+   "last_usage_at": "2026-10-01T12:00:00+00:00",
+   "business_case": {
+    "monthly_volume": {
+     "value": 5000,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 3000.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 500,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "tom.becker@example.com",
+   "gates": {
+    "governance": {
+     "gate": "governance",
+     "approved_by": "admin@example.com",
+     "approved_at": "2026-09-08T00:07:56.757619+00:00",
+     "expires_at": "2027-03-07T00:07:56.757619+00:00",
+     "review_id": "reviews/invoice-extraction-governance"
+    },
+    "security": {
+     "gate": "security",
+     "approved_by": "security@example.com",
+     "approved_at": "2026-09-06T14:25:07.549088+00:00",
+     "expires_at": "2027-03-05T14:25:07.549088+00:00",
+     "review_id": "reviews/invoice-extraction-security"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": "2027-03-05T14:25:07.549088+00:00",
+   "last_decision": "Paused pending investigation",
+   "last_activity_at": "2026-09-27T18:15:24.521784+00:00",
+   "stage_entered_at": "2026-09-27T18:15:24.521783+00:00",
+   "created_at": "2026-08-13T10:03:18.845747+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "atm-incident-triage",
+   "name": "ATM Incident Triage",
+   "owner": "marco.silva@example.com",
+   "business_unit": "Technology",
+   "platform": "custom",
+   "business_problem": "Field engineers receive ATM fault alerts with little context and often travel without the right parts. Triage that links alerts to likely causes and parts lists could reduce repeat visits and shorten the time machines stay out of service.",
+   "risk_tier": "medium",
+   "stage": "monitored",
+   "prior_stage": null,
+   "paused": false,
+   "version": 6,
+   "active_config_id": null,
+   "monthly_budget_micros": 700000000,
+   "monthly_spend_micros": 450000000,
+   "monthly_volume": 7000,
+   "active_users": 18,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1280,
+    1396,
+    1625,
+    1335,
+    1520,
+    1725,
+    1565
+   ],
+   "last_usage_at": "2026-10-01T12:00:00+00:00",
+   "business_case": {
+    "monthly_volume": {
+     "value": 7000,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 1300.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 700,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "marco.silva@example.com",
+   "gates": {
+    "governance": {
+     "gate": "governance",
+     "approved_by": "admin@example.com",
+     "approved_at": "2026-08-29T20:57:33.644742+00:00",
+     "expires_at": "2027-02-25T20:57:33.644742+00:00",
+     "review_id": "reviews/atm-incident-triage-governance"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": "2027-02-25T20:57:33.644742+00:00",
+   "last_decision": "Publish decision recorded",
+   "last_activity_at": "2026-08-30T09:11:30.234343+00:00",
+   "stage_entered_at": "2026-08-30T09:11:30.234342+00:00",
+   "created_at": "2026-08-11T09:30:28.145389+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "mortgage-doc-qa",
+   "name": "Mortgage Document Q&A",
+   "owner": "priya.raman@example.com",
+   "business_unit": "Lending",
+   "platform": "custom",
+   "business_problem": "Mortgage underwriters search long application packs for specific facts such as income sources and existing commitments. Answers with exact page citations could speed underwriting while the underwriter remains responsible for every lending decision.",
+   "risk_tier": "high",
+   "stage": "review_gates",
+   "prior_stage": null,
+   "paused": false,
+   "version": 4,
+   "active_config_id": null,
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": {
+    "monthly_volume": {
+     "value": 800,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 3700.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 500,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "priya.raman@example.com",
+   "gates": {},
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": null,
+   "last_decision": "Moved to review_gates",
+   "last_activity_at": "2026-09-26T15:11:01.943652+00:00",
+   "stage_entered_at": "2026-09-26T15:11:01.943651+00:00",
+   "created_at": "2026-09-06T20:25:29.150519+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "social-sentiment-monitor",
+   "name": "Social Sentiment Monitor",
+   "owner": "kenji.ito@example.com",
+   "business_unit": "Marketing",
+   "platform": "custom",
+   "business_problem": "Communications staff discover service outages and complaints on social media hours after customers start posting. Monitoring public posts for spikes in negative sentiment would alert the team early enough to post updates before complaints escalate.",
+   "risk_tier": "low",
+   "stage": "monitored",
+   "prior_stage": null,
+   "paused": false,
+   "version": 6,
+   "active_config_id": null,
+   "monthly_budget_micros": 400000000,
+   "monthly_spend_micros": 260000000,
+   "monthly_volume": 30000,
+   "active_users": 15,
+   "usage_series": [
+    0,
+    0,
+    5313,
+    5951,
+    7349,
+    7934,
+    7075,
+    5297,
+    7633,
+    7811,
+    7041,
+    7628
+   ],
+   "last_usage_at": "2026-10-01T12:00:00+00:00",
+   "business_case": {
+    "monthly_volume": {
+     "value": 30000,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 1200.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 400,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "kenji.ito@example.com",
+   "gates": {
+    "reviewer": {
+     "gate": "reviewer",
+     "approved_by": "reviewer@example.com",
+     "approved_at": "2026-08-03T08:34:11.524658+00:00",
+     "expires_at": "2027-01-30T08:34:11.524658+00:00",
+     "review_id": "reviews/social-sentiment-monitor-reviewer"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": "2027-01-30T08:34:11.524658+00:00",
+   "last_decision": "Publish decision recorded",
+   "last_activity_at": "2026-08-06T01:06:43.447375+00:00",
+   "stage_entered_at": "2026-08-06T01:06:43.447374+00:00",
+   "created_at": "2026-07-19T07:32:02.538068+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "developer-code-review",
+   "name": "Developer Code Review Aid",
+   "owner": "tom.becker@example.com",
+   "business_unit": "Technology",
+   "platform": "custom",
+   "business_problem": "Engineering teams wait for scarce senior reviewers before merging changes. A review aid that flags common defects and policy violations would let reviewers focus on design, while every merge still requires an approving human reviewer.",
+   "risk_tier": "medium",
+   "stage": "business_case",
+   "prior_stage": null,
+   "paused": false,
+   "version": 3,
+   "active_config_id": null,
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": {
+    "monthly_volume": {
+     "value": 3000,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 2400.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 300,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": null,
+   "gates": {},
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": null,
+   "last_decision": "Moved to business_case",
+   "last_activity_at": "2026-09-08T16:33:46.628725+00:00",
+   "stage_entered_at": "2026-09-08T16:33:46.628725+00:00",
+   "created_at": "2026-09-04T02:35:03.172235+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "call-center-qa-scoring",
+   "name": "Call Center QA Scoring",
+   "owner": "aisha.khan@example.com",
+   "business_unit": "Customer Operations",
+   "platform": "custom",
+   "business_problem": "Quality teams score about two percent of calls by hand, so coaching relies on a small sample. Scoring every call against the quality rubric would show trends across all agents, with quality leads reviewing scores before any coaching conversation.",
+   "risk_tier": "medium",
+   "stage": "monitored",
+   "prior_stage": null,
+   "paused": false,
+   "version": 6,
+   "active_config_id": null,
+   "monthly_budget_micros": 1300000000,
+   "monthly_spend_micros": 1150000000,
+   "monthly_volume": 15000,
+   "active_users": 35,
+   "usage_series": [
+    0,
+    2910,
+    3184,
+    3803,
+    3598,
+    3809,
+    2935,
+    3478,
+    4072,
+    3304,
+    3712,
+    2806
+   ],
+   "last_usage_at": "2026-10-01T12:00:00+00:00",
+   "business_case": {
+    "monthly_volume": {
+     "value": 15000,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 11400.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 1300,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "aisha.khan@example.com",
+   "gates": {
+    "governance": {
+     "gate": "governance",
+     "approved_by": "admin@example.com",
+     "approved_at": "2026-08-07T22:48:51.933953+00:00",
+     "expires_at": "2027-02-03T22:48:51.933953+00:00",
+     "review_id": "reviews/call-center-qa-scoring-governance"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": "2027-02-03T22:48:51.933953+00:00",
+   "last_decision": "Publish decision recorded",
+   "last_activity_at": "2026-08-10T21:20:55.256939+00:00",
+   "stage_entered_at": "2026-08-10T21:20:55.256939+00:00",
+   "created_at": "2026-07-09T23:11:58.870276+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "data-catalog-descriptions",
+   "name": "Data Catalog Descriptions",
+   "owner": "daniel.osei@example.com",
+   "business_unit": "Data Office",
+   "platform": "custom",
+   "business_problem": "Thousands of tables in the data catalog have no descriptions, so analysts guess at meanings or ask around. Drafted descriptions from schemas and query history would make data easier to find, with data owners approving each description they publish.",
+   "risk_tier": "low",
+   "stage": "intake",
+   "prior_stage": null,
+   "paused": false,
+   "version": 2,
+   "active_config_id": null,
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": null,
+   "submitted_by": null,
+   "gates": {},
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": null,
+   "last_decision": "Registered at intake",
+   "last_activity_at": "2026-09-20T17:26:42.346681+00:00",
+   "stage_entered_at": "2026-09-20T17:26:42.346681+00:00",
+   "created_at": "2026-09-20T17:26:42.346681+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "travel-expense-checker",
+   "name": "Travel Expense Checker",
+   "owner": "lena.fischer@example.com",
+   "business_unit": "Finance",
+   "platform": "custom",
+   "business_problem": "Finance staff check expense claims against travel policy by hand and miss duplicate receipts. Automated checks that flag likely policy breaches would focus reviewers on the claims that matter, while approvers keep the final decision on every claim.",
+   "risk_tier": "low",
+   "stage": "retired",
+   "prior_stage": null,
+   "paused": false,
+   "version": 7,
+   "active_config_id": null,
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": {
+    "monthly_volume": {
+     "value": 1500,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 1100.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 300,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": "lena.fischer@example.com",
+   "gates": {
+    "reviewer": {
+     "gate": "reviewer",
+     "approved_by": "reviewer@example.com",
+     "approved_at": "2026-07-19T21:29:41.829529+00:00",
+     "expires_at": "2027-01-15T21:29:41.829529+00:00",
+     "review_id": "reviews/travel-expense-checker-reviewer"
+    }
+   },
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": "2027-01-15T21:29:41.829529+00:00",
+   "last_decision": "Low usage after policy simplification",
+   "last_activity_at": "2026-09-18T12:53:30.246213+00:00",
+   "stage_entered_at": "2026-09-18T12:53:30.246214+00:00",
+   "created_at": "2026-06-05T12:00:00+00:00",
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "app_id": "wealth-portfolio-letters",
+   "name": "Wealth Portfolio Letters",
+   "owner": "priya.raman@example.com",
+   "business_unit": "Wealth",
+   "platform": "custom",
+   "business_problem": "Advisers write quarterly portfolio letters for each client, explaining performance and market moves. Drafted letters could free advisers for client conversations, but any statement about performance must be accurate and approved before it is sent.",
+   "risk_tier": "high",
+   "stage": "business_case",
+   "prior_stage": null,
+   "paused": false,
+   "version": 3,
+   "active_config_id": null,
+   "monthly_budget_micros": 500000000,
+   "monthly_spend_micros": 0,
+   "monthly_volume": null,
+   "active_users": null,
+   "usage_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "last_usage_at": null,
+   "business_case": {
+    "monthly_volume": {
+     "value": 12000,
+     "unit": "cases per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate at intake (synthetic)."
+    },
+    "value_hypothesis": "Time saved for the team named in the business problem.",
+    "monthly_value_usd": {
+     "value": 9600.0,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of labor saved (synthetic)."
+    },
+    "monthly_cost_estimate_usd": {
+     "value": 1200,
+     "unit": "USD per month",
+     "provenance": "ASSUMPTION",
+     "justification": "Owner estimate of license and usage cost (synthetic)."
+    }
+   },
+   "submitted_by": null,
+   "gates": {},
+   "evidence": {
+    "scorecard_passed": false,
+    "release_decision": null
+   },
+   "approvals_expire_at": null,
+   "last_decision": "Moved to business_case",
+   "last_activity_at": "2026-09-21T21:51:45.918043+00:00",
+   "stage_entered_at": "2026-09-21T21:51:45.918043+00:00",
+   "created_at": "2026-09-08T21:07:27.735058+00:00",
+   "provenance": "SYNTHETIC"
+  }
+ ],
+ "events": [
+  {
+   "event_id": "8b9d2434e465e150bd9c66b3ad3c2d6d",
+   "app_id": "support-triage",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "owner@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-08-22T11:20:53.873510+00:00"
+  },
+  {
+   "event_id": "0822e8f36c031199972a846916419f82",
+   "app_id": "support-triage",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "owner@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-08-28T02:18:27.061883+00:00"
+  },
+  {
+   "event_id": "3b8faa1837f8a88b17fc695a07a0ca6e",
+   "app_id": "support-triage",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "owner@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-09-06T08:20:30.884594+00:00"
+  },
+  {
+   "event_id": "b74d0fb132e706298fadc1a606cb0fb3",
+   "app_id": "support-triage",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "admin@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/support-triage-governance"
+   ],
+   "created_at": "2026-09-14T02:03:02.547312+00:00"
+  },
+  {
+   "event_id": "72ff5d2a386ecbe06b65a6a48b8148f6",
+   "app_id": "support-triage",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "security@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/support-triage-security"
+   ],
+   "created_at": "2026-09-14T23:49:32.136160+00:00"
+  },
+  {
+   "event_id": "de8a774bcf36d58b4737819096da1dac",
+   "app_id": "support-triage",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "evaluation",
+   "actor": "owner@example.com",
+   "reason": "Moved to evaluation",
+   "evidence_refs": [],
+   "created_at": "2026-09-17T18:16:14.686703+00:00"
+  },
+  {
+   "event_id": "0b1f9163ce9ff57f43b7a3a69a8dca03",
+   "app_id": "fraud-alert-summaries",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "priya.raman@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-08-05T01:54:14.755439+00:00"
+  },
+  {
+   "event_id": "1ff49b7889463e85759cde66bacfb3d0",
+   "app_id": "fraud-alert-summaries",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "priya.raman@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-08-10T07:01:33.615599+00:00"
+  },
+  {
+   "event_id": "142c3fe860e7a113ec1b8ca1f91e1d4c",
+   "app_id": "fraud-alert-summaries",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "priya.raman@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-08-22T18:16:58.090594+00:00"
+  },
+  {
+   "event_id": "e2acf72f9e574f7aa0ee89aed453dd32",
+   "app_id": "fraud-alert-summaries",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "admin@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/fraud-alert-summaries-governance"
+   ],
+   "created_at": "2026-09-04T06:29:30.543982+00:00"
+  },
+  {
+   "event_id": "11ce5dd2b45ed1f03139d32c93cd59bf",
+   "app_id": "fraud-alert-summaries",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "security@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/fraud-alert-summaries-security"
+   ],
+   "created_at": "2026-09-07T07:09:33.831212+00:00"
+  },
+  {
+   "event_id": "c5e7ce8a3a578a8ea9488d990bbb2599",
+   "app_id": "fraud-alert-summaries",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "evaluation",
+   "actor": "priya.raman@example.com",
+   "reason": "Moved to evaluation",
+   "evidence_refs": [],
+   "created_at": "2026-09-09T12:56:41.786518+00:00"
+  },
+  {
+   "event_id": "daf61a26146d3f31fc377a4c4a15544d",
+   "app_id": "fraud-alert-summaries",
+   "kind": "stage_change",
+   "from_stage": "evaluation",
+   "to_stage": "shadow",
+   "actor": "priya.raman@example.com",
+   "reason": "Moved to shadow",
+   "evidence_refs": [],
+   "created_at": "2026-09-22T02:27:44.514792+00:00"
+  },
+  {
+   "event_id": "2bcfbe01a28defe39bf0027312476f57",
+   "app_id": "kyc-document-checker",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "daniel.osei@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-07-29T10:26:13.229612+00:00"
+  },
+  {
+   "event_id": "29d4beef3eabedcbbaa80dd488bd6407",
+   "app_id": "kyc-document-checker",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "daniel.osei@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-08-05T03:27:14.083149+00:00"
+  },
+  {
+   "event_id": "fd5166e6451b4cf36123fdf77656af72",
+   "app_id": "kyc-document-checker",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "daniel.osei@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-08-09T13:30:31.528030+00:00"
+  },
+  {
+   "event_id": "af42e12f3838b3268e944239b02b61c4",
+   "app_id": "kyc-document-checker",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "admin@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/kyc-document-checker-governance"
+   ],
+   "created_at": "2026-08-23T12:20:54.626541+00:00"
+  },
+  {
+   "event_id": "3aa2e4f90e51f30dc6a7ee39c4b032cc",
+   "app_id": "kyc-document-checker",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "security@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/kyc-document-checker-security"
+   ],
+   "created_at": "2026-08-18T10:33:37.021933+00:00"
+  },
+  {
+   "event_id": "50c187fcce177b4e0837b8a3d261a7ab",
+   "app_id": "kyc-document-checker",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "evaluation",
+   "actor": "daniel.osei@example.com",
+   "reason": "Moved to evaluation",
+   "evidence_refs": [],
+   "created_at": "2026-08-24T21:53:00.390958+00:00"
+  },
+  {
+   "event_id": "3602f8ac10f1bc81448aaa9e66b2bc5b",
+   "app_id": "kyc-document-checker",
+   "kind": "stage_change",
+   "from_stage": "evaluation",
+   "to_stage": "shadow",
+   "actor": "daniel.osei@example.com",
+   "reason": "Moved to shadow",
+   "evidence_refs": [],
+   "created_at": "2026-09-11T08:32:36.961866+00:00"
+  },
+  {
+   "event_id": "e059a0ee9132b63ef16287e4e9c349e0",
+   "app_id": "kyc-document-checker",
+   "kind": "stage_change",
+   "from_stage": "shadow",
+   "to_stage": "controlled_activation",
+   "actor": "admin@example.com",
+   "reason": "Release decision: activate cohort",
+   "evidence_refs": [],
+   "created_at": "2026-09-25T16:26:27.536600+00:00"
+  },
+  {
+   "event_id": "c17af08a1745d6d87e570ddf827050a8",
+   "app_id": "loan-memo-drafter",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "lena.fischer@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-06-28T02:34:05.607939+00:00"
+  },
+  {
+   "event_id": "27209bdf1c11f735dc713d960c0fd195",
+   "app_id": "loan-memo-drafter",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "lena.fischer@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-07-01T08:30:41.461556+00:00"
+  },
+  {
+   "event_id": "ae340454cac5b68c28f49481a0a04dc4",
+   "app_id": "loan-memo-drafter",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "lena.fischer@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-07-09T02:24:07.092366+00:00"
+  },
+  {
+   "event_id": "988c24c961b1cd2262801c4510435a10",
+   "app_id": "loan-memo-drafter",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "admin@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/loan-memo-drafter-governance"
+   ],
+   "created_at": "2026-07-18T05:55:51.565966+00:00"
+  },
+  {
+   "event_id": "405cacec877409a977d21e02ff01cf99",
+   "app_id": "loan-memo-drafter",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "evaluation",
+   "actor": "lena.fischer@example.com",
+   "reason": "Moved to evaluation",
+   "evidence_refs": [],
+   "created_at": "2026-07-23T13:39:17.022367+00:00"
+  },
+  {
+   "event_id": "e037e5edb8db0672f42d47cc00d4af59",
+   "app_id": "collections-call-notes",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "marco.silva@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-06-27T13:15:23.801084+00:00"
+  },
+  {
+   "event_id": "8026695ff8cda88b436d76e2b83cfe0b",
+   "app_id": "collections-call-notes",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "marco.silva@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-07-09T16:14:56.750375+00:00"
+  },
+  {
+   "event_id": "e9a1fa6f81f76d1c2dbc2134c30ff46e",
+   "app_id": "collections-call-notes",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "marco.silva@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-07-28T04:55:06.424071+00:00"
+  },
+  {
+   "event_id": "a39231a7d777a4774c66e0a8a013ac6e",
+   "app_id": "collections-call-notes",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "admin@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/collections-call-notes-governance"
+   ],
+   "created_at": "2026-08-02T17:32:09.119910+00:00"
+  },
+  {
+   "event_id": "2720797d32ebd6899be578c781f631d4",
+   "app_id": "collections-call-notes",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "evaluation",
+   "actor": "marco.silva@example.com",
+   "reason": "Moved to evaluation",
+   "evidence_refs": [],
+   "created_at": "2026-08-09T06:08:38.362448+00:00"
+  },
+  {
+   "event_id": "8a14be62295b4715c333e8615fb8d16c",
+   "app_id": "collections-call-notes",
+   "kind": "stage_change",
+   "from_stage": "evaluation",
+   "to_stage": "shadow",
+   "actor": "marco.silva@example.com",
+   "reason": "Moved to shadow",
+   "evidence_refs": [],
+   "created_at": "2026-08-15T17:43:56.883493+00:00"
+  },
+  {
+   "event_id": "87c5421eec24a3c5c754108ff4188f3f",
+   "app_id": "collections-call-notes",
+   "kind": "stage_change",
+   "from_stage": "shadow",
+   "to_stage": "controlled_activation",
+   "actor": "admin@example.com",
+   "reason": "Release decision: activate cohort",
+   "evidence_refs": [],
+   "created_at": "2026-08-23T21:57:49.546543+00:00"
+  },
+  {
+   "event_id": "52fbe43b99546eb400257ad1eb2263dd",
+   "app_id": "collections-call-notes",
+   "kind": "stage_change",
+   "from_stage": "controlled_activation",
+   "to_stage": "monitored",
+   "actor": "admin@example.com",
+   "reason": "Activation complete",
+   "evidence_refs": [],
+   "created_at": "2026-09-09T09:11:22.651107+00:00"
+  },
+  {
+   "event_id": "4fcca39ab683d2e6337ea2dfb09b2a5c",
+   "app_id": "complaint-classifier",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "aisha.khan@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-07-07T09:58:04.585136+00:00"
+  },
+  {
+   "event_id": "a65e688eabf3ad39fec21bbe66245bfa",
+   "app_id": "complaint-classifier",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "aisha.khan@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-07-16T23:13:04.092417+00:00"
+  },
+  {
+   "event_id": "847fd9b4e64d1bcb702753a15f987c71",
+   "app_id": "complaint-classifier",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "aisha.khan@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-08-01T23:00:39.032213+00:00"
+  },
+  {
+   "event_id": "568cc69b1064005c3985c3cf3f76be1d",
+   "app_id": "complaint-classifier",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "admin@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/complaint-classifier-governance"
+   ],
+   "created_at": "2026-08-12T00:03:39.862345+00:00"
+  },
+  {
+   "event_id": "38602ab696a402f23ae8cc938dcdcd03",
+   "app_id": "complaint-classifier",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "security@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/complaint-classifier-security"
+   ],
+   "created_at": "2026-08-08T08:02:09.019876+00:00"
+  },
+  {
+   "event_id": "a18ff6b6b535106e122c9a5601d74256",
+   "app_id": "complaint-classifier",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "evaluation",
+   "actor": "aisha.khan@example.com",
+   "reason": "Moved to evaluation",
+   "evidence_refs": [],
+   "created_at": "2026-08-17T10:49:11.402688+00:00"
+  },
+  {
+   "event_id": "e7c99b26114125c63a9bedd40f1259e0",
+   "app_id": "complaint-classifier",
+   "kind": "stage_change",
+   "from_stage": "evaluation",
+   "to_stage": "shadow",
+   "actor": "aisha.khan@example.com",
+   "reason": "Moved to shadow",
+   "evidence_refs": [],
+   "created_at": "2026-08-30T06:19:30.101490+00:00"
+  },
+  {
+   "event_id": "1223b5135496f63cdc1110c1080aadfb",
+   "app_id": "complaint-classifier",
+   "kind": "stage_change",
+   "from_stage": "shadow",
+   "to_stage": "controlled_activation",
+   "actor": "admin@example.com",
+   "reason": "Release decision: activate cohort",
+   "evidence_refs": [],
+   "created_at": "2026-09-04T17:19:45.088548+00:00"
+  },
+  {
+   "event_id": "ab4220a7474a493b3ceddf2d839fbc50",
+   "app_id": "complaint-classifier",
+   "kind": "stage_change",
+   "from_stage": "controlled_activation",
+   "to_stage": "paused",
+   "actor": "admin@example.com",
+   "reason": "Paused pending investigation",
+   "evidence_refs": [],
+   "created_at": "2026-09-15T12:16:29.448167+00:00"
+  },
+  {
+   "event_id": "56dc8907ba6c34ab6712303a0f844fef",
+   "app_id": "sales-email-drafts",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "owner@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-07-11T04:13:52.999039+00:00"
+  },
+  {
+   "event_id": "3fa7f1041bf90e27dc96925eccf3a171",
+   "app_id": "sales-email-drafts",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "owner@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-07-15T22:40:13.917971+00:00"
+  },
+  {
+   "event_id": "72d8567d894a05e430b187ef310c0c00",
+   "app_id": "sales-email-drafts",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "owner@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-08-03T11:43:13.149139+00:00"
+  },
+  {
+   "event_id": "3ff350bf766ecb15474ebc192ef91276",
+   "app_id": "sales-email-drafts",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "reviewer@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/sales-email-drafts-reviewer"
+   ],
+   "created_at": "2026-08-10T14:42:56.524417+00:00"
+  },
+  {
+   "event_id": "71710434134c6c92ec5b227cdfde4fbf",
+   "app_id": "sales-email-drafts",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "monitored",
+   "actor": "admin@example.com",
+   "reason": "Publish decision recorded",
+   "evidence_refs": [],
+   "created_at": "2026-08-18T10:07:33.126965+00:00"
+  },
+  {
+   "event_id": "c8b8d9c6ed3049cf43e458fc63f2ae24",
+   "app_id": "meeting-notes",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "owner@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-09-29T23:48:51.024478+00:00"
+  },
+  {
+   "event_id": "8e46d534c88a618efed4057dbb026576",
+   "app_id": "policy-search-assistant",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "sofia.marin@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-07-22T19:14:54.390668+00:00"
+  },
+  {
+   "event_id": "27a0c3d77c967f79b7e99acaa97065e1",
+   "app_id": "policy-search-assistant",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "sofia.marin@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-07-27T22:32:14.467558+00:00"
+  },
+  {
+   "event_id": "f7fd564637bb3eec4bf50b52309d258c",
+   "app_id": "policy-search-assistant",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "sofia.marin@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-08-07T18:43:09.248258+00:00"
+  },
+  {
+   "event_id": "bf7b539b0f9aea4b8acd4e10bc594585",
+   "app_id": "policy-search-assistant",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "reviewer@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/policy-search-assistant-reviewer"
+   ],
+   "created_at": "2026-08-11T09:34:05.215934+00:00"
+  },
+  {
+   "event_id": "958ca9ba0cd620c20ea2622b504867ba",
+   "app_id": "policy-search-assistant",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "monitored",
+   "actor": "admin@example.com",
+   "reason": "Publish decision recorded",
+   "evidence_refs": [],
+   "created_at": "2026-08-16T03:40:52.234002+00:00"
+  },
+  {
+   "event_id": "956b8c0ca8499b926b5252e314fcdd54",
+   "app_id": "board-pack-summaries",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "kenji.ito@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-08-08T02:18:09.530588+00:00"
+  },
+  {
+   "event_id": "ef48e8d550fd9d3f85d5169590b2b633",
+   "app_id": "board-pack-summaries",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "kenji.ito@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-08-11T14:33:04.109852+00:00"
+  },
+  {
+   "event_id": "b758588dab73295b344a54b842c18a62",
+   "app_id": "board-pack-summaries",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "kenji.ito@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-08-19T09:17:36.970590+00:00"
+  },
+  {
+   "event_id": "ff002d4d902059e4ff9ab5c29f044aed",
+   "app_id": "excel-variance-explainer",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "kenji.ito@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-08-04T20:14:02.135410+00:00"
+  },
+  {
+   "event_id": "369147eb89a2688b12c136e019985f15",
+   "app_id": "excel-variance-explainer",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "kenji.ito@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-08-09T06:31:16.907357+00:00"
+  },
+  {
+   "event_id": "eeea163e21e8ac6843e42caf8181a8cc",
+   "app_id": "excel-variance-explainer",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "kenji.ito@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-08-16T00:21:36.646039+00:00"
+  },
+  {
+   "event_id": "5e9953d23e896c64e117dac3119c4ea3",
+   "app_id": "excel-variance-explainer",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "reviewer@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/excel-variance-explainer-reviewer"
+   ],
+   "created_at": "2026-09-03T09:42:33.720080+00:00"
+  },
+  {
+   "event_id": "d5704f32702cdd20286218b848f4ef12",
+   "app_id": "excel-variance-explainer",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "monitored",
+   "actor": "admin@example.com",
+   "reason": "Publish decision recorded",
+   "evidence_refs": [],
+   "created_at": "2026-09-16T01:56:21.503635+00:00"
+  },
+  {
+   "event_id": "45b89cd927cb6f2a8da01097be0f051b",
+   "app_id": "procurement-intake",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "marco.silva@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-09-17T01:58:53.402099+00:00"
+  },
+  {
+   "event_id": "b7b56ea735ebd32d9ad620ab48212ddb",
+   "app_id": "procurement-intake",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "marco.silva@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-09-20T21:21:40.892379+00:00"
+  },
+  {
+   "event_id": "17a0df490d01280fd89a40c0e87d1c78",
+   "app_id": "contract-clause-finder",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "owner2@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-08-09T20:52:31.593958+00:00"
+  },
+  {
+   "event_id": "46d483f3d450281c6c6f7633a2607723",
+   "app_id": "contract-clause-finder",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "owner2@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-08-14T13:38:48.606779+00:00"
+  },
+  {
+   "event_id": "c56811cd5563f61600e85ece0b49452d",
+   "app_id": "contract-clause-finder",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "owner2@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-08-28T08:43:30.727500+00:00"
+  },
+  {
+   "event_id": "bdc14f1f295d6fbf430f801dfad409e2",
+   "app_id": "contract-clause-finder",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "admin@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/contract-clause-finder-governance"
+   ],
+   "created_at": "2026-09-01T01:28:55.513276+00:00"
+  },
+  {
+   "event_id": "6d7ce3c9b4a69f3c8d3aed99711c21c9",
+   "app_id": "contract-clause-finder",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "monitored",
+   "actor": "admin@example.com",
+   "reason": "Publish decision recorded",
+   "evidence_refs": [],
+   "created_at": "2026-09-05T04:47:20.571952+00:00"
+  },
+  {
+   "event_id": "35c7936c5b9962c6e61fecc00a368ce7",
+   "app_id": "it-ticket-summaries",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "tom.becker@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-07-12T19:54:42.188932+00:00"
+  },
+  {
+   "event_id": "1a50aec3aabc25fa3fe12e47ae9bec36",
+   "app_id": "it-ticket-summaries",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "tom.becker@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-07-18T03:45:42.873490+00:00"
+  },
+  {
+   "event_id": "e256a6dc8f5486b7c7b5b2bc5a8aaeca",
+   "app_id": "it-ticket-summaries",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "tom.becker@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-07-28T17:37:42.982302+00:00"
+  },
+  {
+   "event_id": "2790cebdbfddc3d99ee3ac2af94d6204",
+   "app_id": "it-ticket-summaries",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "reviewer@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/it-ticket-summaries-reviewer"
+   ],
+   "created_at": "2026-08-03T00:51:28.030858+00:00"
+  },
+  {
+   "event_id": "dd56cc943c9ad14cee0caeb5ecfedb99",
+   "app_id": "it-ticket-summaries",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "monitored",
+   "actor": "admin@example.com",
+   "reason": "Publish decision recorded",
+   "evidence_refs": [],
+   "created_at": "2026-08-03T18:01:40.921613+00:00"
+  },
+  {
+   "event_id": "75d66ed4eb1fa9f2d10bd1d033173470",
+   "app_id": "training-quiz-builder",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "sofia.marin@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-08-02T14:24:30.276283+00:00"
+  },
+  {
+   "event_id": "cb9bc326d20eac174e20fd1a598336e3",
+   "app_id": "training-quiz-builder",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "sofia.marin@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-08-15T18:36:10.621460+00:00"
+  },
+  {
+   "event_id": "060edf5b391184973a43b2badf0f06cb",
+   "app_id": "training-quiz-builder",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "sofia.marin@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-08-24T12:40:42.005399+00:00"
+  },
+  {
+   "event_id": "dd463c09475287aa5408f9ac6601ddd0",
+   "app_id": "training-quiz-builder",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "reviewer@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/training-quiz-builder-reviewer"
+   ],
+   "created_at": "2026-08-30T12:52:10.285989+00:00"
+  },
+  {
+   "event_id": "4774bc58c5f8bc16f7860b5011c58ef0",
+   "app_id": "training-quiz-builder",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "monitored",
+   "actor": "admin@example.com",
+   "reason": "Publish decision recorded",
+   "evidence_refs": [],
+   "created_at": "2026-09-01T09:39:11.133316+00:00"
+  },
+  {
+   "event_id": "6651529e8268690ba43825b559e4b671",
+   "app_id": "training-quiz-builder",
+   "kind": "stage_change",
+   "from_stage": "monitored",
+   "to_stage": "retired",
+   "actor": "admin@example.com",
+   "reason": "Replaced by the learning platform's native tool",
+   "evidence_refs": [],
+   "created_at": "2026-09-18T03:28:32.407921+00:00"
+  },
+  {
+   "event_id": "c9535b63ba81edd9587ef3446f3f920c",
+   "app_id": "marketing-copy-variants",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "aisha.khan@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-08-12T17:49:33.377393+00:00"
+  },
+  {
+   "event_id": "fbf6e16f9b3080d56fb78271504d281f",
+   "app_id": "marketing-copy-variants",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "aisha.khan@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-08-27T09:51:47.802618+00:00"
+  },
+  {
+   "event_id": "e645f129629c2ae31d9af65982ec9f2d",
+   "app_id": "marketing-copy-variants",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "aisha.khan@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-09-18T11:28:54.206995+00:00"
+  },
+  {
+   "event_id": "6fa17735b572f3d00b5cea6a41357e8c",
+   "app_id": "marketing-copy-variants",
+   "kind": "gate_reject",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "admin@example.com",
+   "reason": "Requirements not met",
+   "evidence_refs": [
+    "reviews/marketing-copy-variants-governance"
+   ],
+   "created_at": "2026-09-23T22:55:02.447669+00:00"
+  },
+  {
+   "event_id": "ce777f00ecf27e7685197ff4006ed6e3",
+   "app_id": "marketing-copy-variants",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "retired",
+   "actor": "admin@example.com",
+   "reason": "Rejected at review: no approval path for financial promotions",
+   "evidence_refs": [],
+   "created_at": "2026-09-26T02:45:48.438254+00:00"
+  },
+  {
+   "event_id": "1fe771d6d9178793a9d3c2e6505cc686",
+   "app_id": "branch-faq-bot",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "daniel.osei@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-08-20T10:10:16.981026+00:00"
+  },
+  {
+   "event_id": "81d2c7de4ce1eb90e6697833b841d0a0",
+   "app_id": "branch-faq-bot",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "daniel.osei@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-09-06T09:12:38.725392+00:00"
+  },
+  {
+   "event_id": "5380b904688c7015aab97e494f2d4796",
+   "app_id": "branch-faq-bot",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "daniel.osei@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-09-24T15:13:13.032034+00:00"
+  },
+  {
+   "event_id": "2c8d0e44e71e43a6bf85bf0ead64b56c",
+   "app_id": "translation-helper",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "lena.fischer@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-07-25T04:04:32.207770+00:00"
+  },
+  {
+   "event_id": "9b4e2c249479e1e6c9277d9b6e0d2648",
+   "app_id": "credit-risk-narratives",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "priya.raman@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-08-10T10:55:45.877998+00:00"
+  },
+  {
+   "event_id": "7118e36477097749527eecfaa79ac9aa",
+   "app_id": "credit-risk-narratives",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "priya.raman@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-08-14T23:14:19.928945+00:00"
+  },
+  {
+   "event_id": "82dc4c8e36b5229aacf5e81e71316269",
+   "app_id": "credit-risk-narratives",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "priya.raman@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-08-22T17:38:18.786729+00:00"
+  },
+  {
+   "event_id": "bc67f831cbc84759f5b78cc7e6b3c944",
+   "app_id": "credit-risk-narratives",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "admin@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/credit-risk-narratives-governance"
+   ],
+   "created_at": "2026-08-30T13:28:36.542413+00:00"
+  },
+  {
+   "event_id": "a9f2533683f4a9a948a639d015b52908",
+   "app_id": "credit-risk-narratives",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "security@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/credit-risk-narratives-security"
+   ],
+   "created_at": "2026-08-28T13:59:18.117009+00:00"
+  },
+  {
+   "event_id": "17e8392a55cee5db9e87e04ca2086977",
+   "app_id": "credit-risk-narratives",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "monitored",
+   "actor": "admin@example.com",
+   "reason": "Publish decision recorded",
+   "evidence_refs": [],
+   "created_at": "2026-09-03T14:07:59.468813+00:00"
+  },
+  {
+   "event_id": "664fa6637e8f8095624c69b6b24445a7",
+   "app_id": "aml-case-assistant",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "daniel.osei@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-09-14T03:25:10.382369+00:00"
+  },
+  {
+   "event_id": "b00805cca7f36ae925c73c443e75c3b4",
+   "app_id": "aml-case-assistant",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "daniel.osei@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-09-20T02:52:22.008277+00:00"
+  },
+  {
+   "event_id": "dc45d539c03f3538e4855aa1016b6287",
+   "app_id": "aml-case-assistant",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "daniel.osei@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-09-25T22:03:03.071578+00:00"
+  },
+  {
+   "event_id": "87f8424daae65fc176f2dbfecd29a36f",
+   "app_id": "pricing-scenario-explorer",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "marco.silva@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-08-01T16:37:20.210315+00:00"
+  },
+  {
+   "event_id": "513a7052986f90258f15ba58fce68504",
+   "app_id": "pricing-scenario-explorer",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "marco.silva@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-08-07T17:15:27.551822+00:00"
+  },
+  {
+   "event_id": "d701410d3f4b1a70c074718e425a609f",
+   "app_id": "vendor-risk-questionnaires",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "owner2@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-07-16T23:49:24.622510+00:00"
+  },
+  {
+   "event_id": "c715b2b9c40c5d9146fde062a33dc7af",
+   "app_id": "vendor-risk-questionnaires",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "owner2@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-07-31T08:54:38.062576+00:00"
+  },
+  {
+   "event_id": "3d3f3799a07295e97c0e8cd88573e793",
+   "app_id": "vendor-risk-questionnaires",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "owner2@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-08-18T11:08:38.654276+00:00"
+  },
+  {
+   "event_id": "3c07c57449257af1b6aae05b13d5f2f7",
+   "app_id": "vendor-risk-questionnaires",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "admin@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/vendor-risk-questionnaires-governance"
+   ],
+   "created_at": "2026-08-22T16:38:51.689083+00:00"
+  },
+  {
+   "event_id": "e49d681d51d87c6455fa1ab8458f1f19",
+   "app_id": "vendor-risk-questionnaires",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "monitored",
+   "actor": "admin@example.com",
+   "reason": "Publish decision recorded",
+   "evidence_refs": [],
+   "created_at": "2026-08-26T03:21:05.789632+00:00"
+  },
+  {
+   "event_id": "f1578470018267c47a1b58066160a6b4",
+   "app_id": "regulatory-change-tracker",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "kenji.ito@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-07-18T04:03:15.894906+00:00"
+  },
+  {
+   "event_id": "63d62a39c0e3befd4c71e0fe5a0cdd7c",
+   "app_id": "regulatory-change-tracker",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "kenji.ito@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-07-27T23:43:55.334473+00:00"
+  },
+  {
+   "event_id": "d5f25073f41402b1e4429ebbda7b9095",
+   "app_id": "regulatory-change-tracker",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "kenji.ito@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-08-04T03:19:15.601387+00:00"
+  },
+  {
+   "event_id": "ccc429038bcf53a1bc10fa52bf5d2fdf",
+   "app_id": "regulatory-change-tracker",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "admin@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/regulatory-change-tracker-governance"
+   ],
+   "created_at": "2026-08-09T18:08:13.020696+00:00"
+  },
+  {
+   "event_id": "7cfc9b793875394ce5d6f6e69a6ec2f5",
+   "app_id": "regulatory-change-tracker",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "monitored",
+   "actor": "admin@example.com",
+   "reason": "Publish decision recorded",
+   "evidence_refs": [],
+   "created_at": "2026-08-13T01:09:28.288052+00:00"
+  },
+  {
+   "event_id": "dde9f86322bd33886db99102a48b3dbe",
+   "app_id": "treasury-cash-forecast",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "tom.becker@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-08-20T04:04:24.466143+00:00"
+  },
+  {
+   "event_id": "42999aa40cdf742b2e85cb217631de9d",
+   "app_id": "treasury-cash-forecast",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "tom.becker@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-08-22T18:30:43.374511+00:00"
+  },
+  {
+   "event_id": "74672cd9362f5e5c53cd6268610cf373",
+   "app_id": "treasury-cash-forecast",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "tom.becker@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-08-29T02:35:48.258736+00:00"
+  },
+  {
+   "event_id": "473bd358610e6a64e1301617c2dff335",
+   "app_id": "treasury-cash-forecast",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "admin@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/treasury-cash-forecast-governance"
+   ],
+   "created_at": "2026-09-08T01:32:13.691411+00:00"
+  },
+  {
+   "event_id": "6bebac31d4f8fd72f3821cfdc083b73a",
+   "app_id": "treasury-cash-forecast",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "monitored",
+   "actor": "admin@example.com",
+   "reason": "Publish decision recorded",
+   "evidence_refs": [],
+   "created_at": "2026-09-15T06:43:47.243830+00:00"
+  },
+  {
+   "event_id": "3d1148022702878b9f0fda8d05379ff6",
+   "app_id": "dispute-letter-drafts",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "aisha.khan@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-09-05T22:19:35.936684+00:00"
+  },
+  {
+   "event_id": "1d48a071ab61a7b1793b4c3220500494",
+   "app_id": "dispute-letter-drafts",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "aisha.khan@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-09-12T17:53:58.585856+00:00"
+  },
+  {
+   "event_id": "770c779837cc863bf2a0345990604f62",
+   "app_id": "dispute-letter-drafts",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "aisha.khan@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-09-18T00:18:51.932988+00:00"
+  },
+  {
+   "event_id": "9b1bc8952af43ab75e6fea07c4536f1d",
+   "app_id": "dispute-letter-drafts",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "admin@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/dispute-letter-drafts-governance"
+   ],
+   "created_at": "2026-09-27T17:01:08.646670+00:00"
+  },
+  {
+   "event_id": "c71d5e601d5206abb7e6427cbf780e3f",
+   "app_id": "dispute-letter-drafts",
+   "kind": "gate_reject",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "security@example.com",
+   "reason": "Requirements not met",
+   "evidence_refs": [
+    "reviews/dispute-letter-drafts-security"
+   ],
+   "created_at": "2026-09-27T01:58:41.366127+00:00"
+  },
+  {
+   "event_id": "4fa03f26f6f7f0cc29ec8e49d1bdb8c0",
+   "app_id": "dispute-letter-drafts",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "business_case",
+   "actor": "admin@example.com",
+   "reason": "Letters need legal sign-off workflow before review",
+   "evidence_refs": [],
+   "created_at": "2026-09-30T08:51:52.654253+00:00"
+  },
+  {
+   "event_id": "1a16342c3e2b6091a092f52ad4a057a7",
+   "app_id": "esg-report-assistant",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "sofia.marin@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-08-08T01:23:52.178373+00:00"
+  },
+  {
+   "event_id": "d9acd1584d3485c5c5c14eb4b27b3d90",
+   "app_id": "esg-report-assistant",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "sofia.marin@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-08-10T13:30:19.130813+00:00"
+  },
+  {
+   "event_id": "1efd76e9ce3714af99b49350af2b99b4",
+   "app_id": "esg-report-assistant",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "sofia.marin@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-08-16T22:25:52.686293+00:00"
+  },
+  {
+   "event_id": "58e258880a8381bec85aca4690e0f4a0",
+   "app_id": "esg-report-assistant",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "admin@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/esg-report-assistant-governance"
+   ],
+   "created_at": "2026-08-21T15:20:14.608750+00:00"
+  },
+  {
+   "event_id": "5eddbbbfa95976636daa2e688861fe18",
+   "app_id": "esg-report-assistant",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "monitored",
+   "actor": "admin@example.com",
+   "reason": "Publish decision recorded",
+   "evidence_refs": [],
+   "created_at": "2026-08-22T13:10:34.212004+00:00"
+  },
+  {
+   "event_id": "575aed2ca5c5650c8186a57611a72609",
+   "app_id": "esg-report-assistant",
+   "kind": "stage_change",
+   "from_stage": "monitored",
+   "to_stage": "retired",
+   "actor": "admin@example.com",
+   "reason": "Annual report completed; no ongoing need",
+   "evidence_refs": [],
+   "created_at": "2026-09-15T11:22:20.385337+00:00"
+  },
+  {
+   "event_id": "2d174fc96f7c15ea272a6d8eb5122df8",
+   "app_id": "hr-case-summaries",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "lena.fischer@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-07-19T03:49:37.329103+00:00"
+  },
+  {
+   "event_id": "a6846099f7294951859131d2bbda0242",
+   "app_id": "hr-case-summaries",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "lena.fischer@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-07-31T22:42:35.858823+00:00"
+  },
+  {
+   "event_id": "eb6c1016cee624d09dac6e8345241ea6",
+   "app_id": "hr-case-summaries",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "lena.fischer@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-08-25T14:32:18.329693+00:00"
+  },
+  {
+   "event_id": "d36357b66f81cf4f7701f7bb7bc67e1f",
+   "app_id": "hr-case-summaries",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "admin@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/hr-case-summaries-governance"
+   ],
+   "created_at": "2026-09-05T12:09:57.047011+00:00"
+  },
+  {
+   "event_id": "3ed8c56cda09dfa052828d8044b591f7",
+   "app_id": "hr-case-summaries",
+   "kind": "gate_reject",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "security@example.com",
+   "reason": "Requirements not met",
+   "evidence_refs": [
+    "reviews/hr-case-summaries-security"
+   ],
+   "created_at": "2026-09-07T04:02:15.863953+00:00"
+  },
+  {
+   "event_id": "4767d76c162f8a24ef43613cd4aac9a3",
+   "app_id": "hr-case-summaries",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "retired",
+   "actor": "admin@example.com",
+   "reason": "Rejected at review: employee data use not approved",
+   "evidence_refs": [],
+   "created_at": "2026-09-10T06:26:33.143247+00:00"
+  },
+  {
+   "event_id": "cc3ebdde5ad5cf06364d7c877cd0129d",
+   "app_id": "churn-signal-explainer",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "sofia.marin@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-08-12T22:09:49.288626+00:00"
+  },
+  {
+   "event_id": "e15ca6664797b2c9572072464223623b",
+   "app_id": "churn-signal-explainer",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "sofia.marin@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-08-16T04:47:32.448806+00:00"
+  },
+  {
+   "event_id": "46b98991e14eb70db380c73a989d9d4a",
+   "app_id": "churn-signal-explainer",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "sofia.marin@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-08-23T17:27:03.461984+00:00"
+  },
+  {
+   "event_id": "15eabb2730e912f2f2b43abf8441aefd",
+   "app_id": "churn-signal-explainer",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "admin@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/churn-signal-explainer-governance"
+   ],
+   "created_at": "2026-08-30T04:22:21.508383+00:00"
+  },
+  {
+   "event_id": "7d137018680bac63b856d0353dc98290",
+   "app_id": "churn-signal-explainer",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "monitored",
+   "actor": "admin@example.com",
+   "reason": "Publish decision recorded",
+   "evidence_refs": [],
+   "created_at": "2026-09-01T20:59:04.915249+00:00"
+  },
+  {
+   "event_id": "792799735e781fd794e0d3baa9f948b2",
+   "app_id": "branch-staffing-insights",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "owner@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-09-28T00:22:26.476120+00:00"
+  },
+  {
+   "event_id": "b3ee4d3b5a10412954aebd1b8ce6424d",
+   "app_id": "policy-qa",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "owner2@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-09-19T14:29:26.443805+00:00"
+  },
+  {
+   "event_id": "405bfdc94e7ed827455ac7627428a656",
+   "app_id": "policy-qa",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "owner2@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-09-23T15:59:34.132648+00:00"
+  },
+  {
+   "event_id": "3764fbda3108d4482f65fafab0ae8f08",
+   "app_id": "contract-summarizer",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "owner2@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-06-30T16:26:00.579515+00:00"
+  },
+  {
+   "event_id": "b97e670346c8adfe7bf47042bd1531c8",
+   "app_id": "contract-summarizer",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "owner2@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-07-05T03:26:34.945399+00:00"
+  },
+  {
+   "event_id": "864e9a13c29cfc0cfa02eaec96ef2ad6",
+   "app_id": "contract-summarizer",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "owner2@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-07-24T21:00:37.005896+00:00"
+  },
+  {
+   "event_id": "de53790aa34b6cf62053da42f1afdb65",
+   "app_id": "invoice-extraction",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "tom.becker@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-08-13T10:03:18.845747+00:00"
+  },
+  {
+   "event_id": "df6a8f931a432f0a7daa39f0c0b6fce2",
+   "app_id": "invoice-extraction",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "tom.becker@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-08-18T02:45:56.887313+00:00"
+  },
+  {
+   "event_id": "782a65e048ca765192f5df7b0323d342",
+   "app_id": "invoice-extraction",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "tom.becker@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-08-31T12:24:58.391739+00:00"
+  },
+  {
+   "event_id": "0d270659f72ada9b2f32751e5738811d",
+   "app_id": "invoice-extraction",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "admin@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/invoice-extraction-governance"
+   ],
+   "created_at": "2026-09-08T00:07:56.757619+00:00"
+  },
+  {
+   "event_id": "d2762bdc1d34d08e7a4c75d4dc99e04c",
+   "app_id": "invoice-extraction",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "security@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/invoice-extraction-security"
+   ],
+   "created_at": "2026-09-06T14:25:07.549088+00:00"
+  },
+  {
+   "event_id": "12f70c977de31a516694c34310ba58e3",
+   "app_id": "invoice-extraction",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "monitored",
+   "actor": "admin@example.com",
+   "reason": "Publish decision recorded",
+   "evidence_refs": [],
+   "created_at": "2026-09-11T19:21:42.242811+00:00"
+  },
+  {
+   "event_id": "0db95301afbb411aa1235a8c93b7a886",
+   "app_id": "invoice-extraction",
+   "kind": "stage_change",
+   "from_stage": "monitored",
+   "to_stage": "paused",
+   "actor": "admin@example.com",
+   "reason": "Paused pending investigation",
+   "evidence_refs": [],
+   "created_at": "2026-09-27T18:15:24.521784+00:00"
+  },
+  {
+   "event_id": "dc33e1f94c1f55ab715629eee893be3d",
+   "app_id": "atm-incident-triage",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "marco.silva@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-08-11T09:30:28.145389+00:00"
+  },
+  {
+   "event_id": "4e2d66456dc7cac7fd72b05096a9954f",
+   "app_id": "atm-incident-triage",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "marco.silva@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-08-17T15:45:40.567138+00:00"
+  },
+  {
+   "event_id": "9c10c5720f6b40d09efba58b9191b363",
+   "app_id": "atm-incident-triage",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "marco.silva@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-08-23T07:09:22.293522+00:00"
+  },
+  {
+   "event_id": "3531968dc342bd2bf295456e19675f06",
+   "app_id": "atm-incident-triage",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "admin@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/atm-incident-triage-governance"
+   ],
+   "created_at": "2026-08-29T20:57:33.644742+00:00"
+  },
+  {
+   "event_id": "a911d19243bfd9313605bf54a021c0ca",
+   "app_id": "atm-incident-triage",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "monitored",
+   "actor": "admin@example.com",
+   "reason": "Publish decision recorded",
+   "evidence_refs": [],
+   "created_at": "2026-08-30T09:11:30.234343+00:00"
+  },
+  {
+   "event_id": "a003cd28ca8f3653c9af18f843b9da13",
+   "app_id": "mortgage-doc-qa",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "priya.raman@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-09-06T20:25:29.150519+00:00"
+  },
+  {
+   "event_id": "ef04e57dcdccc33aa9434aa096fc734d",
+   "app_id": "mortgage-doc-qa",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "priya.raman@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-09-12T08:25:37.576924+00:00"
+  },
+  {
+   "event_id": "8b6870b51d61fac36cd5e85932a447b2",
+   "app_id": "mortgage-doc-qa",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "priya.raman@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-09-26T15:11:01.943652+00:00"
+  },
+  {
+   "event_id": "b04d337677fc97031fd5a423706c5c56",
+   "app_id": "social-sentiment-monitor",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "kenji.ito@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-07-19T07:32:02.538068+00:00"
+  },
+  {
+   "event_id": "f1533ae8670acc5cb321bf214dd8eb85",
+   "app_id": "social-sentiment-monitor",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "kenji.ito@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-07-24T13:32:08.702796+00:00"
+  },
+  {
+   "event_id": "7e695d0d8a3c3b5e801ef1da45b1ed25",
+   "app_id": "social-sentiment-monitor",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "kenji.ito@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-07-29T13:26:42.721262+00:00"
+  },
+  {
+   "event_id": "6e996e3ee3b137fc0a3450fc9918ee46",
+   "app_id": "social-sentiment-monitor",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "reviewer@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/social-sentiment-monitor-reviewer"
+   ],
+   "created_at": "2026-08-03T08:34:11.524658+00:00"
+  },
+  {
+   "event_id": "40181c6e9a8cfa3c5283aac7bc0a6a5d",
+   "app_id": "social-sentiment-monitor",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "monitored",
+   "actor": "admin@example.com",
+   "reason": "Publish decision recorded",
+   "evidence_refs": [],
+   "created_at": "2026-08-06T01:06:43.447375+00:00"
+  },
+  {
+   "event_id": "175ba98df81401027de1bdfed0725b5c",
+   "app_id": "developer-code-review",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "tom.becker@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-09-04T02:35:03.172235+00:00"
+  },
+  {
+   "event_id": "5553b2fe6889803e5913f9d3785299f4",
+   "app_id": "developer-code-review",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "tom.becker@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-09-08T16:33:46.628725+00:00"
+  },
+  {
+   "event_id": "168b1625746f78910964fbbf8cd321b0",
+   "app_id": "call-center-qa-scoring",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "aisha.khan@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-07-09T23:11:58.870276+00:00"
+  },
+  {
+   "event_id": "1dad09b252c21221409d360250843242",
+   "app_id": "call-center-qa-scoring",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "aisha.khan@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-07-14T06:26:33.973898+00:00"
+  },
+  {
+   "event_id": "dd6ac7b86778043bc5c5b37af85e06a1",
+   "app_id": "call-center-qa-scoring",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "aisha.khan@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-08-01T14:49:24.706531+00:00"
+  },
+  {
+   "event_id": "de8ede0ba85c6e4a004b6fabfcf56188",
+   "app_id": "call-center-qa-scoring",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "admin@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/call-center-qa-scoring-governance"
+   ],
+   "created_at": "2026-08-07T22:48:51.933953+00:00"
+  },
+  {
+   "event_id": "0de051a669ca97d2764414fd8ae769ed",
+   "app_id": "call-center-qa-scoring",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "monitored",
+   "actor": "admin@example.com",
+   "reason": "Publish decision recorded",
+   "evidence_refs": [],
+   "created_at": "2026-08-10T21:20:55.256939+00:00"
+  },
+  {
+   "event_id": "4f8d5238288b78b5b5b453ca3d42993c",
+   "app_id": "data-catalog-descriptions",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "daniel.osei@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-09-20T17:26:42.346681+00:00"
+  },
+  {
+   "event_id": "276aa6ced50755d9a5d04d531e1242e3",
+   "app_id": "travel-expense-checker",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "lena.fischer@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-06-05T12:00:00+00:00"
+  },
+  {
+   "event_id": "4ab7706eb77350caeec259dc7f95897c",
+   "app_id": "travel-expense-checker",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "lena.fischer@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-06-08T22:34:37.705475+00:00"
+  },
+  {
+   "event_id": "6a5d932b45ff2c83b495db4e82456fb4",
+   "app_id": "travel-expense-checker",
+   "kind": "stage_change",
+   "from_stage": "business_case",
+   "to_stage": "review_gates",
+   "actor": "lena.fischer@example.com",
+   "reason": "Moved to review_gates",
+   "evidence_refs": [],
+   "created_at": "2026-06-17T04:19:51.695174+00:00"
+  },
+  {
+   "event_id": "74eff5453e65260378e3654bfaf14ff0",
+   "app_id": "travel-expense-checker",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "reviewer@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/travel-expense-checker-reviewer"
+   ],
+   "created_at": "2026-07-19T21:29:41.829529+00:00"
+  },
+  {
+   "event_id": "30cbd7556232b17a250741818d1fb540",
+   "app_id": "travel-expense-checker",
+   "kind": "stage_change",
+   "from_stage": "review_gates",
+   "to_stage": "monitored",
+   "actor": "admin@example.com",
+   "reason": "Publish decision recorded",
+   "evidence_refs": [],
+   "created_at": "2026-07-25T06:16:14.625180+00:00"
+  },
+  {
+   "event_id": "bf0d073d821c13369970cf60ebff8d15",
+   "app_id": "travel-expense-checker",
+   "kind": "stage_change",
+   "from_stage": "monitored",
+   "to_stage": "retired",
+   "actor": "admin@example.com",
+   "reason": "Low usage after policy simplification",
+   "evidence_refs": [],
+   "created_at": "2026-09-18T12:53:30.246213+00:00"
+  },
+  {
+   "event_id": "00a81de9d20f87d044656d6b81fb18b3",
+   "app_id": "wealth-portfolio-letters",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "priya.raman@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-09-08T21:07:27.735058+00:00"
+  },
+  {
+   "event_id": "d664d2644c6e27ffb9de7a3a486822b9",
+   "app_id": "wealth-portfolio-letters",
+   "kind": "stage_change",
+   "from_stage": "intake",
+   "to_stage": "business_case",
+   "actor": "priya.raman@example.com",
+   "reason": "Moved to business_case",
+   "evidence_refs": [],
+   "created_at": "2026-09-21T21:51:45.918043+00:00"
+  }
+ ],
+ "incidents": [
+  {
+   "incident_id": "seed-credit-risk-narratives",
+   "app_id": "credit-risk-narratives",
+   "signal": "cost_per_case",
+   "threshold": 0.25,
+   "observed": 0.32,
+   "status": "open",
+   "actions": [
+    "owner notified"
+   ],
+   "opened_at": "2026-09-27T22:49:07.989553+00:00",
+   "closed_at": null,
+   "provenance": "SYNTHETIC"
+  },
+  {
+   "incident_id": "seed-social-sentiment-monitor",
+   "app_id": "social-sentiment-monitor",
+   "signal": "review_rate",
+   "threshold": 0.25,
+   "observed": 0.36,
+   "status": "open",
+   "actions": [
+    "owner notified"
+   ],
+   "opened_at": "2026-09-28T22:38:04.572416+00:00",
+   "closed_at": null,
+   "provenance": "SYNTHETIC"
+  }
+ ]
+}

@@ -17,6 +17,8 @@ from control_plane.registry import ForbiddenError, Lifecycle, RegistryError, loa
 from control_plane.store import Store, Transaction
 
 TERMINAL = {"retired"}
+# Steady states are not queues, so time spent there is never a stall.
+STALL_EXEMPT = {"monitored", "paused", "retired"}
 
 
 def _parse(ts: str | None) -> datetime | None:
@@ -51,7 +53,7 @@ def days_in_stage(app: dict[str, Any], now: datetime) -> float:
 def is_stalled(
     app: dict[str, Any], medians: dict[str, float], lc: Lifecycle, now: datetime
 ) -> bool:
-    if app["stage"] in TERMINAL or app["stage"] not in medians:
+    if app["stage"] in STALL_EXEMPT or app["stage"] not in medians:
         return False
     multiple = float(lc.raw["stall"]["median_multiple"])
     return days_in_stage(app, now) > multiple * medians[app["stage"]]

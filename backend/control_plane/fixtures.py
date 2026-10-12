@@ -1,14 +1,23 @@
-"""Fixture identities and a small FIXTURE app list for local development.
+"""Local identities, the SYNTHETIC registry seed, and measured ledger spend.
 
-These records exist so the console renders before real data arrives. Every app is
-labeled FIXTURE. The 40-app SYNTHETIC registry seed replaces them in M4.
+- Fixture users cover all four roles for local sign-in.
+- data/registry_seed.json holds 40 SYNTHETIC apps with 120 days of history.
+- artifacts/ledger_summary.json holds MEASURED model spend exported from the ledger.
 """
 
-from datetime import UTC, datetime, timedelta
+from __future__ import annotations
 
-from control_plane.contracts import App, Platform, Provenance, RiskTier, Role, Stage, User
-from control_plane.settings import MICROS_PER_USD
+import json
+from datetime import UTC, datetime, timedelta
+from pathlib import Path
+from typing import Any
+
+from control_plane.contracts import Role, User
 from control_plane.store import Store
+
+ROOT = Path(__file__).resolve().parents[2]
+SEED_PATH = ROOT / "data" / "registry_seed.json"
+LEDGER_SUMMARY = ROOT / "artifacts" / "ledger_summary.json"
 
 FIXTURE_USERS: list[tuple[str, Role, bool]] = [
     ("owner@example.com", Role.APP_OWNER, False),
@@ -19,89 +28,6 @@ FIXTURE_USERS: list[tuple[str, Role, bool]] = [
     ("exec@example.com", Role.EXECUTIVE_VIEWER, False),
 ]
 
-# (app_id, name, owner, business unit, platform, risk, stage, days in stage,
-#  monthly budget usd, monthly spend usd)
-_FIXTURE_APPS: list[tuple[str, str, str | None, str, Platform, RiskTier, Stage, int, int, int]] = [
-    (
-        "support-triage",
-        "Support Triage",
-        "owner@example.com",
-        "Customer Operations",
-        Platform.MANAGED,
-        RiskTier.HIGH,
-        Stage.EVALUATION,
-        12,
-        150,
-        0,
-    ),
-    (
-        "contract-summarizer",
-        "Contract Summarizer",
-        "owner2@example.com",
-        "Legal",
-        Platform.ABACUS,
-        RiskTier.MEDIUM,
-        Stage.REVIEW_GATES,
-        41,
-        400,
-        0,
-    ),
-    (
-        "sales-email-drafts",
-        "Sales Email Drafts",
-        "owner@example.com",
-        "Sales",
-        Platform.COPILOT,
-        RiskTier.LOW,
-        Stage.MONITORED,
-        63,
-        900,
-        610,
-    ),
-    (
-        "policy-qa",
-        "Policy Q&A",
-        "owner2@example.com",
-        "HR",
-        Platform.CUSTOM,
-        RiskTier.MEDIUM,
-        Stage.BUSINESS_CASE,
-        5,
-        300,
-        0,
-    ),
-    (
-        "invoice-extraction",
-        "Invoice Extraction",
-        None,
-        "Finance",
-        Platform.CUSTOM,
-        RiskTier.HIGH,
-        Stage.PAUSED,
-        20,
-        500,
-        120,
-    ),
-    (
-        "meeting-notes",
-        "Meeting Notes",
-        "owner@example.com",
-        "Operations",
-        Platform.COPILOT,
-        RiskTier.LOW,
-        Stage.INTAKE,
-        2,
-        100,
-        0,
-    ),
-]
-
-_PROBLEM = (
-    "Teams spend significant manual effort on this task today. This fixture record "
-    "stands in for a real business problem statement so the console can render before "
-    "the synthetic registry seed is loaded in a later milestone of the build."
-)
-
 
 def fixture_users(now: datetime) -> list[User]:
     return [
@@ -110,39 +36,68 @@ def fixture_users(now: datetime) -> list[User]:
     ]
 
 
-def fixture_apps(now: datetime) -> list[App]:
-    apps = []
-    for app_id, name, owner, bu, platform, risk, stage, days, budget, spend in _FIXTURE_APPS:
-        entered = now - timedelta(days=days)
-        apps.append(
-            App(
-                app_id=app_id,
-                name=name,
-                owner=owner,
-                business_unit=bu,
-                platform=platform,
-                business_problem=_PROBLEM,
-                risk_tier=risk,
-                stage=stage,
-                prior_stage=Stage.MONITORED if stage is Stage.PAUSED else None,
-                paused=stage is Stage.PAUSED,
-                monthly_budget_micros=budget * MICROS_PER_USD,
-                monthly_spend_micros=spend * MICROS_PER_USD,
-                stage_entered_at=entered,
-                created_at=entered - timedelta(days=30),
-                provenance=Provenance.FIXTURE,
-            )
-        )
-    return apps
+def load_seed(path: Path = SEED_PATH) -> dict[str, Any]:
+    data: dict[str, Any] = json.loads(path.read_text())
+    return data
 
 
-def seed_fixture(store: Store, now: datetime | None = None) -> tuple[int, int]:
-    """Write fixture users and apps. Safe to run repeatedly; it overwrites them."""
+def ledger_summary() -> dict[str, Any]:
+    if not LEDGER_SUMMARY.exists():
+        return {"months": {}}
+    data: dict[str, Any] = json.loads(LEDGER_SUMMARY.read_text())
+    return data
+
+
+def _shift(node: Any, delta: timedelta) -> Any:
+    """Shift every ISO timestamp under keys ending in ``_at`` by ``delta``."""
+    if isinstance(node, dict):
+        out = {}
+        for key, value in node.items():
+            if key.endswith("_at") and isinstance(value, str):
+                out[key] = (datetime.fromisoformat(value) + delta).isoformat()
+            else:
+                out[key] = _shift(value, delta)
+        return out
+    if isinstance(node, list):
+        return [_shift(v, delta) for v in node]
+    return node
+
+
+def seed_registry(store: Store, now: datetime | None = None) -> dict[str, int]:
+    """Load users, SYNTHETIC apps, events, and incidents. Overwrites mutable records.
+
+    Seed history ends on its reference date. Timestamps are shifted so the history ends
+    at ``now``, which keeps days in stage, stalls, and expiring approvals stable no
+    matter when the console is opened.
+    """
     now = now or datetime.now(UTC)
-    users = fixture_users(now)
-    apps = fixture_apps(now)
-    for user in users:
+    raw = load_seed()
+    seed = _shift(raw, now - datetime.fromisoformat(raw["reference_date"]))
+    for user in fixture_users(now):
         store.set("users", user.email, user.model_dump(mode="json"))
-    for app in apps:
-        store.set("apps", app.app_id, app.model_dump(mode="json"))
-    return len(users), len(apps)
+    for user in seed["users"]:
+        store.set("users", user["email"], user)
+    for app in seed["apps"]:
+        store.set("apps", app["app_id"], app)
+    loaded_events = 0
+    for event in seed["events"]:
+        collection = f"apps/{event['app_id']}/events"
+        if store.get(collection, event["event_id"]) is None:
+            store.create(collection, event["event_id"], event)
+            loaded_events += 1
+    for incident in seed["incidents"]:
+        store.set("incidents", incident["incident_id"], incident)
+    from control_plane.assist import score_all
+
+    score_all(store, now)
+    return {
+        "users": len(FIXTURE_USERS) + len(seed["users"]),
+        "apps": len(seed["apps"]),
+        "events": loaded_events,
+        "incidents": len(seed["incidents"]),
+    }
+
+
+# Kept for callers that only need identities.
+def seed_fixture(store: Store, now: datetime | None = None) -> dict[str, int]:
+    return seed_registry(store, now)

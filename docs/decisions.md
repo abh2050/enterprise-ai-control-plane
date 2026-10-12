@@ -89,3 +89,11 @@ Each entry records the decision, the alternatives considered, and the reason.
 
 ## D23. Review rejection returns an app to business_case (M4)
 - Section 5 lists no backward move. A reviewer or admin can send an app from review_gates back to business_case with a reason, so a rejected submission can be revised instead of only retired.
+
+## D24. Provenance of registry figures (M4)
+- Numbers derived from the SYNTHETIC registry seed carry FIXTURE, under a page-level SYNTHETIC banner. Estimated value always carries ASSUMPTION. Model spend from settled ledger attempts carries MEASURED. A figure that mixes sources takes the weakest label.
+- The "Monthly model spend" KPI follows the spec literally: settled attempt cost this month (MEASURED, from artifacts/ledger_summary.json). Spend imported from external platforms appears separately, labeled FIXTURE.
+
+## D25. Seed timestamps are anchored to load time (M4)
+- The seed history ends on its reference date (2026-10-01). On load, every timestamp shifts so the history ends at the current time, so days in stage, stalls, and expiring approvals look the same whenever the console is opened. The snapshot and visual tests use a fixed clock.
+- Production, paused, and retired are steady states, so time spent in them never counts as a stall.

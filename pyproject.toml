@@ -51,6 +51,8 @@ ignore = ["S101"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S"]
+# Hand-written seed data (long prose lines) and a seeded, non-cryptographic generator.
+"scripts/gen_registry_seed.py" = ["E501", "S311", "B023"]
 
 [tool.mypy]
 python_version = "3.12"

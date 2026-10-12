@@ -75,8 +75,18 @@ def test_expiring_approval_cleared_by_scheduled_review() -> None:
 
 
 def test_dormant_only_for_live_stages() -> None:
-    assert score(app(last_usage_at=None))["reasons"][0]["code"] == "dormant_app"
+    assert score(app(stage="monitored", last_usage_at=None))["reasons"][0]["code"] == "dormant_app"
     assert score(app(stage="intake", last_usage_at=None))["reasons"] == []
+
+
+def test_production_time_is_never_a_stall() -> None:
+    long_ago = (NOW - timedelta(days=200)).isoformat()
+    assert (
+        score(app(stage="monitored", stage_entered_at=long_ago), medians={"monitored": 10.0})[
+            "reasons"
+        ]
+        == []
+    )
 
 
 def test_actions_audit_and_suppress() -> None:
