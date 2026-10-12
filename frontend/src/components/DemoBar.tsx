@@ -101,7 +101,7 @@ export function DemoBar() {
         </div>
       </div>
       {tips && (
-        <ul className="t-body mt-2 grid list-disc gap-1 pl-5 text-muted min-[1280px]:grid-cols-2">
+        <ul className="t-body mt-2 grid list-disc gap-x-12 gap-y-1 pl-5 text-muted min-[1280px]:grid-cols-2">
           {TRY.map((t) => (
             <li key={t}>{t}</li>
           ))}
