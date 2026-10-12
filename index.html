@@ -427,7 +427,7 @@ footer p { color: var(--muted); margin-top: 10px; }
   <div class="wrap">
     <p class="kicker">Architecture</p>
     <h2>Google Cloud, least privilege, and a budget on every call.</h2>
-    <p class="intro">Cloud Run behind Identity-Aware Proxy, Firestore for the registry and the ledger, BigQuery for analytics, Cloud Run jobs on a schedule, and Vertex AI for the models. It was deployed, smoke-tested, recorded, and torn down the same day. Eleven diagrams, each drawn with Google's official icons; select one to enlarge it.</p>
+    <p class="intro">Cloud Run behind Identity-Aware Proxy, Firestore for the registry and the ledger, BigQuery for analytics, Cloud Run jobs on a schedule, and Vertex AI for the models. It was deployed, smoke-tested, recorded, and torn down the same day. Thirteen diagrams, drawn with Google's official icons, including the BigQuery schema and data lineage; select one to enlarge it.</p>
     <div class="gallery" id="gallery"></div>
   </div>
 </section>
@@ -647,6 +647,8 @@ footer p { color: var(--muted); margin-top: 10px; }
     ["09_delivery", "Delivery", "CI, image, deploy, smoke checks, teardown"],
     ["10_local_development", "Local development", "Offline except paid model calls"],
     ["11_public_demo", "Public demo", "The real backend in the visitor's browser"],
+    ["12_bigquery_schema", "BigQuery schema", "Eight tables, their keys, and the joins"],
+    ["13_data_lineage", "Data lineage", "Where each table comes from and what reads it"],
   ];
   const gallery = document.getElementById("gallery"), lb = document.getElementById("lightbox");
   diagrams.forEach(([file, name, sub], i) => {

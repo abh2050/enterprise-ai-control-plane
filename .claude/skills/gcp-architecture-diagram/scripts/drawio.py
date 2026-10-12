@@ -126,11 +126,19 @@ class Page:
         return key
 
     def _vertex(
-        self, key: str | None, value: str, style: str, x: float, y: float, w: float, h: float
+        self,
+        key: str | None,
+        value: str,
+        style: str,
+        x: float,
+        y: float,
+        w: float,
+        h: float,
+        parent: str = "1",
     ) -> str:
         cid = self._id(key)
         self.cells.append(
-            f'<mxCell id="{cid}" value={quoteattr(value)} style={quoteattr(style)} vertex="1" parent="1">'
+            f'<mxCell id="{cid}" value={quoteattr(value)} style={quoteattr(style)} vertex="1" parent="{parent}">'
             f'<mxGeometry x="{x:g}" y="{y:g}" width="{w:g}" height="{h:g}" as="geometry"/></mxCell>'
         )
         return cid
@@ -200,6 +208,99 @@ class Page:
         if kind == "muted":
             style += "fillColor=#F8F9FA;fontColor=#5F6368;dashed=1;"
         return self._vertex(key, text(label), style, x, y, w, h)
+
+    def table(
+        self,
+        key: str,
+        title: str,
+        fields: list[tuple[str, str, str]],
+        x: float,
+        y: float,
+        w: float = 330,
+        header: str = "#4284F3",
+        subtitle: str = "",
+    ) -> dict[str, str]:
+        """An entity table: a header and one row per field (name, type, tags).
+
+        Tags: "PK" (MERGE key, bold), "FK" (join column, italic), "PART" (partition),
+        "CLUSTER" (cluster), space separated. Returns {field name: row cell id} so
+        relations can attach to a specific column.
+        """
+        row_h, head_h = 24, (48 if subtitle else 32)
+        title_html = f"<b>{escape(title)}</b>"
+        if subtitle:
+            title_html += (
+                f'<br><span style="font-size:11px;font-weight:normal">{escape(subtitle)}</span>'
+            )
+        style = (
+            "swimlane;html=1;whiteSpace=wrap;container=1;collapsible=0;"
+            f"horizontal=1;startSize={head_h};"
+            f"fillColor={header};strokeColor={header};fontColor=#FFFFFF;fontSize=14;align=center;"
+            "rounded=1;arcSize=6;absoluteArcSize=1;swimlaneFillColor=#FFFFFF;shadow=1;"
+        )
+        tid = self._vertex(key, title_html, style, x, y, w, head_h + row_h * len(fields))
+        rows: dict[str, str] = {}
+        for i, (name, typ, tags) in enumerate(fields):
+            shown = escape(name)
+            if "PK" in tags.split():
+                shown = f"<b>{shown}</b>"
+            if "FK" in tags.split():
+                shown = f"<i>{shown}</i>"
+            if tags:
+                shown += f' <font style="font-size:10px" color="#1A73E8">{escape(tags)}</font>'
+            keyed = bool({"PK", "FK", "KEY"} & set(tags.split()))
+            fill = "#EEF4FE" if keyed else "#FFFFFF"
+            row_style = (
+                f"text;html=1;strokeColor=#E8EAED;fillColor={fill};align=left;verticalAlign=middle;"
+                "spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;fontSize=12;"
+                f"fontColor={INK};whiteSpace=wrap;"
+            )
+            row = self._vertex(
+                f"{key}.{name}", shown, row_style, 0, head_h + i * row_h, w, row_h, parent=tid
+            )
+            type_style = (
+                "text;html=1;strokeColor=none;fillColor=none;align=right;verticalAlign=middle;"
+                "spacingRight=10;fontSize=11;fontColor=#80868B;"
+            )
+            self._vertex(None, escape(typ), type_style, w - 110, 0, 110, row_h, parent=row)
+            rows[name] = row
+        return rows
+
+    def relation(
+        self,
+        src: str,
+        dst: str,
+        out: str = "R",
+        into: str = "L",
+        points: list[tuple[float, float]] | None = None,
+        label: str = "",
+        label_pos: float | None = None,
+    ) -> str:
+        """A many-to-one join between two table rows: crow's foot at the many end."""
+        cid = self._id(None)
+        ex, ey = port(out)
+        nx, ny = port(into)
+        style = (
+            "edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeWidth=1.5;strokeColor=#5F6368;"
+            "startArrow=ERmany;startFill=0;endArrow=ERmandOne;endFill=0;startSize=12;endSize=12;"
+            f"exitX={ex:g};exitY={ey:g};exitDx=0;exitDy=0;entryX={nx:g};entryY={ny:g};"
+            f"entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;fontSize=11;fontColor={INK};"
+        )
+        value = f" value={quoteattr(text(label))}" if label else ""
+        pts = ""
+        if points:
+            pts = (
+                '<Array as="points">'
+                + "".join(f'<mxPoint x="{px:g}" y="{py:g}"/>' for px, py in points)
+                + "</Array>"
+            )
+        self.cells.append(
+            f'<mxCell id="{cid}"{value} style={quoteattr(style)} edge="1" parent="1" '
+            f'source="{src}" target="{dst}"><mxGeometry relative="1"'
+            + (f' x="{label_pos:g}"' if label_pos is not None else "")
+            + f' as="geometry">{pts}</mxGeometry></mxCell>'
+        )
+        return cid
 
     def note(self, key: str | None, label: str, x: float, y: float, w: float, h: float) -> str:
         style = (

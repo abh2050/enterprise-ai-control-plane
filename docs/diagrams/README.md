@@ -1,6 +1,6 @@
 # Architecture diagrams
 
-Eleven draw.io diagrams with Google's official Google Cloud icons, built from the Python
+Thirteen draw.io diagrams with Google's official Google Cloud icons, built from the Python
 sources in `src/` by `python3 docs/diagrams/build.py` and checked by the
 `gcp-architecture-diagram` skill's validator (`tests/test_gcp_diagrams.py`). Each `.drawio`
 opens in draw.io; each `.png` is the 2x export. Edit the source, not the `.drawio`.
@@ -18,3 +18,5 @@ opens in draw.io; each `.png` is the 2x export. Edit the source, not the `.drawi
 | 09 | [Delivery](09_delivery.png) | CI checks, Cloud Build, Artifact Registry, deploy, smoke checks, teardown, GitHub Pages | Smoke checks: `scripts/smoke_gcp.sh` |
 | 10 | [Local development](10_local_development.png) | Fixture identity, store backends, the Firestore emulator, the fixture provider | none |
 | 11 | [Public demo](11_public_demo.png) | The GitHub Pages console running the unchanged backend in the browser | 78 requests: `tests/fixtures/demo_parity.json`, docs/decisions.md D38 |
+| 12 | [BigQuery schema](12_bigquery_schema.png) | The eight tables in the `control_plane` dataset with every column, keys, partitioning, and the joins the analytics queries use | Columns: `infra/bigquery.sql`; joins: `backend/control_plane/analytics/queries.py` |
+| 13 | [Data lineage](13_data_lineage.png) | Which Firestore collection or committed artifact feeds each table, the nightly export path, what reads each table, and what is never exported | `backend/control_plane/analytics/export.py`, `backend/control_plane/analytics/queries.py` |

@@ -36,8 +36,8 @@ def test_icon_references_match_the_pinned_drawio_source() -> None:
     assert extract_icons.extract(data) == committed
 
 
-def test_there_are_eleven_diagrams() -> None:
-    assert [p.stem[:2] for p in DIAGRAMS] == [f"{i:02d}" for i in range(1, 12)]
+def test_diagrams_are_numbered_without_gaps() -> None:
+    assert [p.stem[:2] for p in DIAGRAMS] == [f"{i:02d}" for i in range(1, 14)]
 
 
 @pytest.mark.parametrize("path", DIAGRAMS, ids=lambda p: p.stem)
