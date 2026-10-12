@@ -134,3 +134,18 @@ Each entry records the decision, the alternatives considered, and the reason.
 ## D34. Additions to the Section 8 BigQuery tables (M6)
 - `app_snapshots` (a daily snapshot of each app's stage, spend, and value with provenance) feeds the spend and value query and the Flow leaderboard. `product_events` holds the console analytics events. `export_runs` records each export for the "last export" time. Each target has a `_staging` twin for the MERGE.
 - Events are read with a Firestore collection-group query, so the Portfolio makes one events query instead of one per app.
+
+## D35. IAP uses a custom OAuth client in a project without an organization (M6)
+- With no organization, the Google-managed OAuth client is unavailable for browser sign-in: IAP answered 502 "Empty Google Account OAuth client ID(s)/secret(s)". The owner created a Web application OAuth client (External audience, Testing status, owner as test user) and `scripts/iap_oauth.sh` attaches it with `gcloud iap settings set`, writing the secret only to a mode-600 temporary file that is deleted on exit.
+- The client's redirect URI must be `https://iap.googleapis.com/v1/oauth/clientIds/CLIENT_ID:handleRedirect`; without it Google returns `redirect_uri_mismatch`.
+- With the client attached, unauthenticated and forged requests are stopped at the edge with a 302 to Google sign-in.
+
+## D36. GCP is torn down after verification; the public demo is a browser-only sandbox (M6)
+- Kept running, the deployment would cost under $1 a month (Cloud Run scales to zero; Firestore, BigQuery, Scheduler and IAP sit in free tiers; the only charge is image storage above 0.5 GB). It was still torn down the same day: IAP admits only allow-listed test users, so hiring managers could not open it, and live LLM calls cannot be offered to the public.
+- The public console is the GitHub Pages build. It adds an interactive demo mode (M7): writes apply to an in-browser copy of the SYNTHETIC data, governed by rule tables generated from the same YAML the backend reads, with a test that runs identical lifecycle cases against both implementations. Changes stay in the visitor's browser and reset on demand.
+- Vercel with a hosted database was rejected: it needs a new store backend, public writes need abuse protection and resets, and visitors would see the same behavior with more moving parts.
+- Live footage (1080p captures through IAP and the owner's screen recording) was taken before teardown for the M8 videos.
+
+## D37. Smoke checks are safe to repeat (M6)
+- The triage smoke case ID is unique per run; it was the container PID, which is always the same, so the ledger correctly refused a third attempt on one case. The gate check accepts an app already in review_gates from an earlier run.
+- An export check that saw 6,398 then 6,400 rows was traced to two pipeline moves made in the console during the check; a repeat with no concurrent writes held at 6,400 rows on both runs.

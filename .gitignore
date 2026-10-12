@@ -36,3 +36,12 @@ frontend/.snapshot-data/
 frontend/dist-snapshot/
 frontend/test-results/
 frontend/playwright-report/
+
+# OAuth client downloads (secrets)
+client_secret_*.json
+
+# Raw screen footage (M8 cuts the published videos from these)
+video/
+media/live/
+media/claude-browser/
+.DS_Store

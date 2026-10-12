@@ -2,6 +2,7 @@
 
 import json
 import os
+import uuid
 from typing import Annotated, NoReturn
 
 import typer
@@ -611,7 +612,7 @@ def smoke_triage() -> None:
         Limits(max_output_tokens=256),
         app_id="support-triage",
         experiment_id="smoke",
-        case_id=f"smoke-{os.getpid()}",
+        case_id=f"smoke-{uuid.uuid4().hex[:12]}",
         model_id=model,
         prompt=PROBE_PROMPT,
         response_schema=schema,

@@ -52,7 +52,8 @@ c=$(code -X POST -H "Authorization: Bearer $EXEC" -H "Content-Type: application/
 v=$(curl -s -H "Authorization: Bearer $ADMIN" "$URL/api/apps/policy-qa" | python3 -c 'import json,sys; print(json.load(sys.stdin)["app"]["version"])')
 c=$(code -X POST -H "Authorization: Bearer $ADMIN" -H "Content-Type: application/json" \
   -d "{\"to_stage\":\"review_gates\",\"expected_version\":${v},\"source\":\"api\"}" "$URL/api/apps/policy-qa/move")
-[[ "$c" == 200 ]] || bad "admin submit got $c $(cat "$TMP/body")"
+# A repeat run finds the app already submitted (same_stage), which is the state this check needs.
+[[ "$c" == 200 ]] || grep -q same_stage "$TMP/body" || bad "admin submit got $c $(cat "$TMP/body")"
 c=$(code -X POST -H "Authorization: Bearer $ADMIN" -H "Content-Type: application/json" \
   -d '{"decision":"approve","reason":"smoke"}' "$URL/api/apps/policy-qa/gates/governance")
 [[ "$c" == 403 ]] && grep -q "different person" "$TMP/body" && ok "submitter cannot approve own gate (403)" || bad "self-approve got $c $(cat "$TMP/body")"
