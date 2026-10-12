@@ -47,3 +47,35 @@ assets:
     prompt: >-
       dawn-like soft cool glow rising over a dark minimal landscape of thin lines, open and
       hopeful, lots of empty space
+  - id: prism-control
+    use: New landing page hero, sculptural control threshold
+    takes: 1
+    prompt: >-
+      Architectural editorial photograph of a monumental smoked glass rectangular portal
+      standing on a polished black basalt plinth, a brilliant narrow electric blue light
+      plane precisely bisecting the glass, beautiful physical refraction and caustics,
+      thick visible glass edges, centered sculptural object filling the right two thirds
+      of the composition, left third empty ink black, low camera angle, vast black studio,
+      luxury industrial design campaign, tactile materials, exquisite physically based
+      rendering, dramatic chiaroscuro, sharp sculptural silhouette, not a tunnel
+  - id: ontology-crystal
+    use: New ontology section artwork, related objects and shared structure
+    takes: 1
+    prompt: >-
+      Museum quality product photograph of an exploded architectural glass sculpture,
+      six substantial translucent smoked crystal rectangular blocks floating in an exact
+      ordered vertical stack, hairline blue luminous filaments connecting the blocks,
+      brushed titanium central spine, each block visibly distinct, reflections on a black
+      obsidian base, three quarter camera view, sculpture centered with ample breathing
+      room, hard rim light and rich black negative space, sophisticated Swiss industrial
+      design aesthetic, photoreal materials and exquisite detail, no diagram
+  - id: release-barrier
+    use: New decision section artwork, a deliberate release boundary
+    takes: 1
+    prompt: >-
+      Extreme close up architectural photograph of a single thick vertical smoked glass
+      slab on black stone, an intense thin horizontal beam of icy blue light strikes the
+      glass and refracts downward into a beautiful contained pool of light, precise hard
+      edges and subtle fine surface detail, asymmetrical composition, strong visual
+      tension at the point where the beam meets glass, luxury editorial still life,
+      black background, physically plausible optical caustics, minimal monumental sculpture

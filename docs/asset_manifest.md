@@ -442,3 +442,50 @@ Terms checked 2026-10-12: Higgsfield's help center says users own their generati
 | `assets/web/architecture.webp` | `assets/generated/architecture-2.png` | Background band for the architecture gallery | layered translucent planes stacked in depth like floors of a building, connected by thin vertical light threads, dark navy space, cinematic, calm, minimal, deep navy and graphite palette, one cool blue accent glow, soft volumetric light, subtle film grain, no text, no letters, no numbers, no people, no faces, no logos, no user interface, no screens |
 | `assets/web/incident.webp` | `assets/generated/incident-2.png` | Background band for the incident drill section | a calm dark horizon with one faint ripple of disturbance in the light, a soft pulse of cool light being contained by thin parallel lines, cinematic, calm, minimal, deep navy and graphite palette, one cool blue accent glow, soft volumetric light, subtle film grain, no text, no letters, no numbers, no people, no faces, no logos, no user interface, no screens |
 | `assets/web/closing.webp` | `assets/generated/closing-2.png` | Background for the author and links section | dawn-like soft cool glow rising over a dark minimal landscape of thin lines, open and hopeful, lots of empty space, cinematic, calm, minimal, deep navy and graphite palette, one cool blue accent glow, soft volumetric light, subtle film grain, no text, no letters, no numbers, no people, no faces, no logos, no user interface, no screens |
+
+
+## Landing page redesign: new sculptural imagery (2026-10-12)
+
+Replaces the earlier atmosphere images on `index.html` with three new Higgsfield API generations. Art direction: monumental smoked glass, graphite, a precise blue light boundary, and a layered ontology sculpture. These are visual metaphors; the product captures and architecture diagrams remain implementation evidence.
+
+- Provider / model: Higgsfield, `higgsfield-ai/soul/v2/standard`.
+- API: `POST https://api.higgsfield.ai/higgsfield-ai/soul/v2/standard`; polled the returned status URL and downloaded the completed images.
+- Inputs: 16:9, requested 1080p, one take per new asset. Returned originals: 2048 × 1152.
+- Review: all three inspected visually; approved for this redesign. No people, logos, text, or fabricated interfaces.
+- Web delivery: 1920 × 1080 WebP (quality 86) plus 960 × 540 (quality 82), responsive sources. Originals remain ignored; prompts, request IDs, and timestamps are tracked.
+- Rights: [Higgsfield ownership and commercial-use guidance](https://higgsfield.ai/creator-hub/help-center/account/who-owns-my-generations-and-can-i-use-them-commercially), checked 2026-10-12.
+- Reproduction: `uv run python scripts/generate_assets.py prism-control ontology-crystal release-barrier`. Completed takes are skipped. Credentials are read server-side from the environment or `.env`, never included in website assets.
+
+### `prism-control`
+
+- Web: `assets/web/prism-control.webp` and `assets/web/prism-control-960.webp`.
+- Original: `assets/generated/prism-control-1.png`.
+- Use: New landing page hero, sculptural control threshold.
+- Request ID: `2acb1061-2cfd-4e37-9090-856be3401be9`.
+- Generated: `2026-10-12T21:04:44+00:00`.
+- Prompt: Architectural editorial photograph of a monumental smoked glass rectangular portal standing on a polished black basalt plinth, a brilliant narrow electric blue light plane precisely bisecting the glass, beautiful physical refraction and caustics, thick visible glass edges, centered sculptural object filling the right two thirds of the composition, left third empty ink black, low camera angle, vast black studio, luxury industrial design campaign, tactile materials, exquisite physically based rendering, dramatic chiaroscuro, sharp sculptural silhouette, not a tunnel, cinematic, calm, minimal, deep navy and graphite palette, one cool blue accent glow, soft volumetric light, subtle film grain, no text, no letters, no numbers, no people, no faces, no logos, no user interface, no screens
+
+### `ontology-crystal`
+
+- Web: `assets/web/ontology-crystal.webp` and `assets/web/ontology-crystal-960.webp`.
+- Original: `assets/generated/ontology-crystal-1.png`.
+- Use: New ontology section artwork, related objects and shared structure.
+- Request ID: `13590b21-0d52-475b-8210-50afd05e3115`.
+- Generated: `2026-10-12T21:05:16+00:00`.
+- Prompt: Museum quality product photograph of an exploded architectural glass sculpture, six substantial translucent smoked crystal rectangular blocks floating in an exact ordered vertical stack, hairline blue luminous filaments connecting the blocks, brushed titanium central spine, each block visibly distinct, reflections on a black obsidian base, three quarter camera view, sculpture centered with ample breathing room, hard rim light and rich black negative space, sophisticated Swiss industrial design aesthetic, photoreal materials and exquisite detail, no diagram, cinematic, calm, minimal, deep navy and graphite palette, one cool blue accent glow, soft volumetric light, subtle film grain, no text, no letters, no numbers, no people, no faces, no logos, no user interface, no screens
+
+### `release-barrier`
+
+- Web: `assets/web/release-barrier.webp` and `assets/web/release-barrier-960.webp`.
+- Original: `assets/generated/release-barrier-1.png`.
+- Use: New decision section artwork, a deliberate release boundary.
+- Request ID: `f3ecefbd-b5cc-4331-bcc9-4eb6933efdab`.
+- Generated: `2026-10-12T21:05:48+00:00`.
+- Prompt: Extreme close up architectural photograph of a single thick vertical smoked glass slab on black stone, an intense thin horizontal beam of icy blue light strikes the glass and refracts downward into a beautiful contained pool of light, precise hard edges and subtle fine surface detail, asymmetrical composition, strong visual tension at the point where the beam meets glass, luxury editorial still life, black background, physically plausible optical caustics, minimal monumental sculpture, cinematic, calm, minimal, deep navy and graphite palette, one cool blue accent glow, soft volumetric light, subtle film grain, no text, no letters, no numbers, no people, no faces, no logos, no user interface, no screens
+
+### Additional presentation artifacts
+
+- `assets/web/project-cover.webp`: browser capture of the redesigned local landing page, 1440 × 900, optimized as WebP for the README. Contains the new Higgsfield hero in its page context.
+- `media/captions/control_plane_demo.vtt`: WebVTT conversion of the existing SRT captions for native HTML video accessibility. The four-minute film is unchanged.
+
+Validation: all 9 product tabs, 7 ontology entities, and 13 diagram dialogs exercised in Chromium; keyboard tab navigation and Escape checked; 320, 390, 768, 1024, and 1440 px layouts have no page overflow. Video decoded with a 240.008-second duration and 31 caption cues. No page errors or failed local resource requests during the check.

@@ -130,5 +130,38 @@
   "resolution": "1080p",
   "request_id": "7c78dcaa-27a6-4489-9175-dd677f1cf783",
   "generated_at": "2026-10-12T19:51:45+00:00"
+ },
+ {
+  "file": "prism-control-1.png",
+  "asset": "prism-control",
+  "use": "New landing page hero, sculptural control threshold",
+  "model": "higgsfield-ai/soul/v2/standard",
+  "prompt": "Architectural editorial photograph of a monumental smoked glass rectangular portal standing on a polished black basalt plinth, a brilliant narrow electric blue light plane precisely bisecting the glass, beautiful physical refraction and caustics, thick visible glass edges, centered sculptural object filling the right two thirds of the composition, left third empty ink black, low camera angle, vast black studio, luxury industrial design campaign, tactile materials, exquisite physically based rendering, dramatic chiaroscuro, sharp sculptural silhouette, not a tunnel, cinematic, calm, minimal, deep navy and graphite palette, one cool blue accent glow, soft volumetric light, subtle film grain, no text, no letters, no numbers, no people, no faces, no logos, no user interface, no screens",
+  "aspect_ratio": "16:9",
+  "resolution": "1080p",
+  "request_id": "2acb1061-2cfd-4e37-9090-856be3401be9",
+  "generated_at": "2026-10-12T21:04:44+00:00"
+ },
+ {
+  "file": "ontology-crystal-1.png",
+  "asset": "ontology-crystal",
+  "use": "New ontology section artwork, related objects and shared structure",
+  "model": "higgsfield-ai/soul/v2/standard",
+  "prompt": "Museum quality product photograph of an exploded architectural glass sculpture, six substantial translucent smoked crystal rectangular blocks floating in an exact ordered vertical stack, hairline blue luminous filaments connecting the blocks, brushed titanium central spine, each block visibly distinct, reflections on a black obsidian base, three quarter camera view, sculpture centered with ample breathing room, hard rim light and rich black negative space, sophisticated Swiss industrial design aesthetic, photoreal materials and exquisite detail, no diagram, cinematic, calm, minimal, deep navy and graphite palette, one cool blue accent glow, soft volumetric light, subtle film grain, no text, no letters, no numbers, no people, no faces, no logos, no user interface, no screens",
+  "aspect_ratio": "16:9",
+  "resolution": "1080p",
+  "request_id": "13590b21-0d52-475b-8210-50afd05e3115",
+  "generated_at": "2026-10-12T21:05:16+00:00"
+ },
+ {
+  "file": "release-barrier-1.png",
+  "asset": "release-barrier",
+  "use": "New decision section artwork, a deliberate release boundary",
+  "model": "higgsfield-ai/soul/v2/standard",
+  "prompt": "Extreme close up architectural photograph of a single thick vertical smoked glass slab on black stone, an intense thin horizontal beam of icy blue light strikes the glass and refracts downward into a beautiful contained pool of light, precise hard edges and subtle fine surface detail, asymmetrical composition, strong visual tension at the point where the beam meets glass, luxury editorial still life, black background, physically plausible optical caustics, minimal monumental sculpture, cinematic, calm, minimal, deep navy and graphite palette, one cool blue accent glow, soft volumetric light, subtle film grain, no text, no letters, no numbers, no people, no faces, no logos, no user interface, no screens",
+  "aspect_ratio": "16:9",
+  "resolution": "1080p",
+  "request_id": "f3ecefbd-b5cc-4331-bcc9-4eb6933efdab",
+  "generated_at": "2026-10-12T21:05:48+00:00"
  }
 ]
