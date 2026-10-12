@@ -1,9 +1,9 @@
 // Reviews (console spec Section 9): pending gate approvals and routed cases.
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Lock } from "lucide-react";
 import { useState } from "react";
 import { useSession } from "../components/Shell";
-import { Button, Card, EmptyState, HeaderBand, Input, ModuleError, Skeleton, StatusText, useToast } from "../components/ui";
+import { Button, Card, EmptyState, HeaderBand, Input, ModuleError, ProvenanceBadge, Skeleton, StatusText, useToast } from "../components/ui";
 import { api } from "../lib/api";
 import { label } from "../lib/format";
 import { useApplyAppEvent } from "../lib/state";
@@ -83,8 +83,48 @@ function GateCard({ item }: { item: GateItem }) {
   );
 }
 
+interface RoutedCase {
+  case_id: string;
+  day: number;
+  text: string | null;
+  suggested_label: string;
+  shadow_llm_label: string | null;
+}
+
+function CaseCard({ item }: { item: RoutedCase }) {
+  const { readOnly } = useSession();
+  const toast = useToast();
+  const qc = useQueryClient();
+  const [reason, setReason] = useState("");
+  const [labelOverride, setLabelOverride] = useState("");
+  const decide = useMutation({
+    mutationFn: (decision: "approve" | "reject") => api.post(`/reviews/cases/${item.case_id}`, { decision, reason, label: labelOverride || null }),
+    onSuccess: (_, decision) => {
+      void qc.invalidateQueries({ queryKey: ["reviews"] });
+      toast({ kind: "success", message: `Case ${decision === "approve" ? "routed as suggested" : "corrected"}` });
+    },
+    onError: (e: Error) => toast({ kind: "error", message: e.message }),
+  });
+  return (
+    <li className="rounded-xl border border-line bg-surface p-5">
+      <p className="t-body">{item.text ?? "Case text is not shown in this view."}</p>
+      <p className="t-label mt-2 text-muted">
+        Simulated day {item.day} · suggested <span className="text-ink">{item.suggested_label}</span>
+        {item.shadow_llm_label && ` · shadow LLM said ${item.shadow_llm_label}`} · routed to review by the policy
+      </p>
+      <div className="mt-3 flex flex-wrap items-end gap-2">
+        <Input aria-label="Correct label (optional)" placeholder="Correct label (optional)" value={labelOverride} disabled={readOnly} onChange={(e) => setLabelOverride(e.target.value)} />
+        <Input aria-label="Reason" placeholder="Reason" value={reason} disabled={readOnly} onChange={(e) => setReason(e.target.value)} className="min-w-60 flex-1" />
+        <Button variant="primary" disabled={readOnly || !reason.trim()} loading={decide.isPending} onClick={() => decide.mutate(labelOverride ? "reject" : "approve")}>
+          {labelOverride ? "Correct and route" : "Route as suggested"}
+        </Button>
+      </div>
+    </li>
+  );
+}
+
 export default function Reviews() {
-  const data = useQuery({ queryKey: ["reviews"], queryFn: () => api.get<{ gates: GateItem[]; cases: unknown[] }>("/reviews/pending") });
+  const data = useQuery({ queryKey: ["reviews"], queryFn: () => api.get<{ gates: GateItem[]; cases: RoutedCase[] }>("/reviews/pending") });
   return (
     <>
       <HeaderBand page="reviews" title="Reviews" summary="Pending gate approvals and routed cases. The person who submitted an item can never approve it." />
@@ -109,10 +149,18 @@ export default function Reviews() {
             )}
           </section>
           <section aria-labelledby="cases-h">
-            <h2 id="cases-h" className="t-card mb-3">
-              Routed cases
+            <h2 id="cases-h" className="t-card mb-3 flex items-center gap-2">
+              Routed cases ({data.data?.cases.length ?? 0}) <ProvenanceBadge label="SIMULATED" />
             </h2>
-            <EmptyState illustration="no-reviews" title="No routed cases yet" missing="Support Triage cases routed to review appear here once shadow replay runs (milestone M5)." />
+            {data.data?.cases.length ? (
+              <ul className="flex flex-col gap-3">
+                {data.data.cases.map((c) => (
+                  <CaseCard key={c.case_id} item={c} />
+                ))}
+              </ul>
+            ) : (
+              <EmptyState illustration="no-reviews" title="No routed cases waiting" missing="Support Triage cases that the policy routes to review appear here from the latest simulated day." />
+            )}
           </section>
         </div>
       )}

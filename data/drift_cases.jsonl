@@ -1,0 +1,40 @@
+{"case_id": "drift-sens-01", "category": "sensitive_paraphrase", "text": "The receipt from the corner shop shows a payment I never tapped for.", "reference_label": "card_payment_not_recognised", "expected_route": "review"}
+{"case_id": "drift-sens-02", "category": "sensitive_paraphrase", "text": "I woke up to a notification about a purchase in another currency that wasn't me.", "reference_label": "card_payment_not_recognised", "expected_route": "review"}
+{"case_id": "drift-sens-03", "category": "sensitive_paraphrase", "text": "There are three small charges from an app store I don't use.", "reference_label": "card_payment_not_recognised", "expected_route": "review"}
+{"case_id": "drift-sens-04", "category": "sensitive_paraphrase", "text": "A transaction for concert tickets appeared and I haven't bought any.", "reference_label": "card_payment_not_recognised", "expected_route": "review"}
+{"case_id": "drift-sens-05", "category": "sensitive_paraphrase", "text": "Money came out of an ATM across town while my card was in my pocket.", "reference_label": "cash_withdrawal_not_recognised", "expected_route": "review"}
+{"case_id": "drift-sens-06", "category": "sensitive_paraphrase", "text": "My statement lists a cash machine withdrawal at 3am that wasn't mine.", "reference_label": "cash_withdrawal_not_recognised", "expected_route": "review"}
+{"case_id": "drift-sens-07", "category": "sensitive_paraphrase", "text": "Somebody took out cash at an airport I've never flown from.", "reference_label": "cash_withdrawal_not_recognised", "expected_route": "review"}
+{"case_id": "drift-sens-08", "category": "sensitive_paraphrase", "text": "I think a skimmer at the cafe grabbed my card number.", "reference_label": "compromised_card", "expected_route": "review"}
+{"case_id": "drift-sens-09", "category": "sensitive_paraphrase", "text": "My card details were in a data breach email I just received.", "reference_label": "compromised_card", "expected_route": "review"}
+{"case_id": "drift-sens-10", "category": "sensitive_paraphrase", "text": "I shared a photo of my card online by mistake and it's still up.", "reference_label": "compromised_card", "expected_route": "review"}
+{"case_id": "drift-sens-11", "category": "sensitive_paraphrase", "text": "Someone on the phone pretending to be you got my security code.", "reference_label": "compromised_card", "expected_route": "review"}
+{"case_id": "drift-sens-12", "category": "sensitive_paraphrase", "text": "A monthly collection from a streaming service I cancelled ages ago is still running.", "reference_label": "direct_debit_payment_not_recognised", "expected_route": "review"}
+{"case_id": "drift-sens-13", "category": "sensitive_paraphrase", "text": "There's a mandate on my account for an insurance company I never contacted.", "reference_label": "direct_debit_payment_not_recognised", "expected_route": "review"}
+{"case_id": "drift-sens-14", "category": "sensitive_paraphrase", "text": "A utility firm I don't use has started collecting from my account.", "reference_label": "direct_debit_payment_not_recognised", "expected_route": "review"}
+{"case_id": "drift-sens-15", "category": "sensitive_paraphrase", "text": "I dropped my wallet somewhere between the bus and the office.", "reference_label": "lost_or_stolen_card", "expected_route": "review"}
+{"case_id": "drift-sens-16", "category": "sensitive_paraphrase", "text": "My bag was taken from the gym locker with my debit card in it.", "reference_label": "lost_or_stolen_card", "expected_route": "review"}
+{"case_id": "drift-sens-17", "category": "sensitive_paraphrase", "text": "The card fell out of my coat on the ski lift.", "reference_label": "lost_or_stolen_card", "expected_route": "review"}
+{"case_id": "drift-sens-18", "category": "sensitive_paraphrase", "text": "My phone was pickpocketed on the metro and it has the banking app.", "reference_label": "lost_or_stolen_phone", "expected_route": "review"}
+{"case_id": "drift-sens-19", "category": "sensitive_paraphrase", "text": "I left my phone in a taxi and can't get it back.", "reference_label": "lost_or_stolen_phone", "expected_route": "review"}
+{"case_id": "drift-sens-20", "category": "sensitive_paraphrase", "text": "Thieves broke into my car and took my phone from the glovebox.", "reference_label": "lost_or_stolen_phone", "expected_route": "review"}
+{"case_id": "drift-ood-01", "category": "out_of_domain", "text": "What's a good stretch for lower back pain after sitting all day?", "reference_label": "out_of_scope", "expected_route": "abstain"}
+{"case_id": "drift-ood-02", "category": "out_of_domain", "text": "Can you suggest a name for my new puppy?", "reference_label": "out_of_scope", "expected_route": "abstain"}
+{"case_id": "drift-ood-03", "category": "out_of_domain", "text": "Which train goes to the airport fastest on Sundays?", "reference_label": "out_of_scope", "expected_route": "abstain"}
+{"case_id": "drift-ood-04", "category": "out_of_domain", "text": "How do I get red wine out of a carpet?", "reference_label": "out_of_scope", "expected_route": "abstain"}
+{"case_id": "drift-ood-05", "category": "out_of_domain", "text": "Is the museum free on the first Friday of the month?", "reference_label": "out_of_scope", "expected_route": "abstain"}
+{"case_id": "drift-ood-06", "category": "out_of_domain", "text": "What's the plural of cactus?", "reference_label": "out_of_scope", "expected_route": "abstain"}
+{"case_id": "drift-ood-07", "category": "out_of_domain", "text": "Recommend a podcast about ancient history.", "reference_label": "out_of_scope", "expected_route": "abstain"}
+{"case_id": "drift-ood-08", "category": "out_of_domain", "text": "How long should I boil pasta for it to be al dente?", "reference_label": "out_of_scope", "expected_route": "abstain"}
+{"case_id": "drift-ood-09", "category": "out_of_domain", "text": "My laptop fan is very loud, is that normal?", "reference_label": "out_of_scope", "expected_route": "abstain"}
+{"case_id": "drift-ood-10", "category": "out_of_domain", "text": "What's the dress code for a winter wedding?", "reference_label": "out_of_scope", "expected_route": "abstain"}
+{"case_id": "drift-ood-11", "category": "out_of_domain", "text": "How many players are on a volleyball team?", "reference_label": "out_of_scope", "expected_route": "abstain"}
+{"case_id": "drift-ood-12", "category": "out_of_domain", "text": "Can you summarize the plot of a famous detective novel?", "reference_label": "out_of_scope", "expected_route": "abstain"}
+{"case_id": "drift-ood-13", "category": "out_of_domain", "text": "What should I pack for a weekend camping trip?", "reference_label": "out_of_scope", "expected_route": "abstain"}
+{"case_id": "drift-ood-14", "category": "out_of_domain", "text": "Why does my bread not rise in the oven?", "reference_label": "out_of_scope", "expected_route": "abstain"}
+{"case_id": "drift-ood-15", "category": "out_of_domain", "text": "Give me ideas for a team building activity at work.", "reference_label": "out_of_scope", "expected_route": "abstain"}
+{"case_id": "drift-ood-16", "category": "out_of_domain", "text": "How do I change the time on my microwave?", "reference_label": "out_of_scope", "expected_route": "abstain"}
+{"case_id": "drift-ood-17", "category": "out_of_domain", "text": "What's the best way to learn to swim as an adult?", "reference_label": "out_of_scope", "expected_route": "abstain"}
+{"case_id": "drift-ood-18", "category": "out_of_domain", "text": "Which houseplants are safe for cats?", "reference_label": "out_of_scope", "expected_route": "abstain"}
+{"case_id": "drift-ood-19", "category": "out_of_domain", "text": "How do I write a polite complaint to my landlord about noise?", "reference_label": "out_of_scope", "expected_route": "abstain"}
+{"case_id": "drift-ood-20", "category": "out_of_domain", "text": "What's the difference between a crocodile and an alligator?", "reference_label": "out_of_scope", "expected_route": "abstain"}

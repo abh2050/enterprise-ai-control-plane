@@ -360,15 +360,147 @@ def users_set_role(
 
 
 @app.command()
-def shadow() -> None:
-    """Replay simulated days through the approved and candidate configs."""
-    _not_yet("M5")
+def shadow(
+    candidate: Annotated[str, typer.Argument()] = "llm_high_capability_v1",
+    release_id: Annotated[str | None, typer.Option(help="Attach the run to this release")] = None,
+) -> None:
+    """Replay 14 simulated days: the approved config decides, the candidate shadows."""
+    from control_plane.triage.activation import attach_shadow, latest_release
+    from control_plane.triage.llm_eval import RunPausedError
+    from control_plane.triage.shadow import run_shadow
+
+    release = latest_release(candidate)
+    if release is None:
+        typer.echo(f"Propose a release for {candidate} first: cp release propose", err=True)
+        raise typer.Exit(code=1)
+    provider, store, settings = _live(candidate)
+    try:
+        summary = run_shadow(
+            candidate,
+            release["cohort"],
+            provider=provider,
+            store=store,
+            settings=settings,
+            progress=_progress,
+        )
+    except RunPausedError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(code=3) from exc
+    attach_shadow(release_id or release["release_id"], f"artifacts/shadow/{summary['run_id']}")
+    typer.echo(json.dumps(summary["totals"], indent=2))
+
+
+release_app = typer.Typer(
+    help="Release proposals and decisions (Section 6.7)", no_args_is_help=True
+)
+app.add_typer(release_app, name="release")
+
+
+@release_app.command("propose")
+def release_propose(
+    candidate: Annotated[str, typer.Argument()],
+    proposed_by: Annotated[str, typer.Option()] = "owner@example.com",
+) -> None:
+    """Propose a release: gates for the full candidate and for the proposed cohort."""
+    from control_plane.triage.activation import propose
+
+    record = propose(candidate, proposed_by)
+    for key in ("full_candidate", "cohort_candidate"):
+        gates = record[key]["gates"]
+        typer.echo(f"{key}: {sum(g['passed'] for g in gates)}/{len(gates)} gates pass")
+        for g in gates:
+            if not g["passed"]:
+                typer.echo(f"  FAIL {g['gate']}: observed {g['observed']} vs {g['threshold']}")
+    typer.echo(f"Proposed {record['release_id']}; cohort excludes {record['cohort_excluded']}")
+
+
+@release_app.command("decide")
+def release_decide(
+    release_id: Annotated[str, typer.Argument()],
+    decision: Annotated[
+        str, typer.Argument(help="activate_cohort, activate_full, withhold, or reject")
+    ],
+    rationale: Annotated[str, typer.Option()],
+    decided_by: Annotated[str, typer.Option()] = "admin@example.com",
+) -> None:
+    """Record a governance admin's release decision (final)."""
+    from control_plane.triage.activation import ReleaseError, decide
+
+    try:
+        record = decide(release_id, decision, rationale, decided_by, "governance_admin")
+    except ReleaseError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(f"{record['release_id']}: {record['decision']} by {record['decided_by']}")
+
+
+monitor_app = typer.Typer(help="Monitoring alert policy (Section 6.8)", no_args_is_help=True)
+app.add_typer(monitor_app, name="monitor")
+
+
+def _latest_shadow_run() -> str:
+    from control_plane.monitoring import SHADOW_DIR
+
+    runs = sorted(p.name for p in SHADOW_DIR.glob("shadow_*") if (p / "summary.json").exists())
+    if not runs:
+        typer.echo("Run cp shadow first.", err=True)
+        raise typer.Exit(code=1)
+    return runs[-1]
+
+
+@monitor_app.command("freeze")
+def monitor_freeze() -> None:
+    """Derive alert thresholds from baseline days 1 to 7 and freeze them (create only)."""
+    from control_plane.monitoring import freeze_alert_policy
+
+    policy = freeze_alert_policy(_latest_shadow_run())
+    typer.echo(json.dumps(policy["thresholds"], indent=2))
 
 
 @app.command()
 def drill() -> None:
-    """Run the incident drill on simulated days 10 to 12."""
-    _not_yet("M5")
+    """Run the incident drill on simulated days 10 to 12 and write the incident report."""
+    from control_plane.monitoring import load_drift, run_drill
+    from control_plane.pricing import load_price_card
+    from control_plane.triage.llm_eval import llm_context, run_llm_calls
+    from control_plane.triage.m5_report import incident_report
+
+    run_id = _latest_shadow_run()
+    candidate = "llm_high_capability_v1"
+    provider, store, settings = _live(candidate)
+    ctx = llm_context(candidate, settings)
+    drift = load_drift()
+    calls = run_llm_calls(
+        ctx,
+        [(d["case_id"], d["text"]) for d in drift],
+        experiment_id=f"drill_{run_id}",
+        provider=provider,
+        price_card=load_price_card(backend=provider.backend),
+        store=store,
+        settings=settings,
+    )
+    record = run_drill(run_id, {c.case_id: c for c in calls})
+    incident_report()
+    typer.echo(
+        json.dumps(
+            {
+                "detected": record["detected"],
+                "incident": record["incident"],
+                "timeline": record["timeline"],
+            },
+            indent=2,
+            default=str,
+        )
+    )
+
+
+@release_app.command("report")
+def release_report() -> None:
+    """Regenerate docs/release_recommendation.md from release and shadow artifacts."""
+    from control_plane.triage.m5_report import RECOMMENDATION, release_recommendation
+
+    release_recommendation()
+    typer.echo(f"Wrote {RECOMMENDATION}")
 
 
 @app.command()

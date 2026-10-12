@@ -539,7 +539,11 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
                         else (None if can else f"The {gate} gate needs {', '.join(approvers)}"),
                     }
                 )
-        return {"gates": items, "cases": []}  # routed cases arrive with shadow replay (M5)
+        cases = sorted(
+            (c for c in store.list("routed_cases") if c["status"] == "pending"),
+            key=lambda c: c["case_id"],
+        )
+        return {"gates": items, "cases": cases}
 
     @app.get("/api/incidents")
     def incidents(
@@ -555,6 +559,181 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
             return {"available": False}
         data: dict[str, Any] = json.loads(EXPERIMENT_SUMMARY.read_text())
         return {"available": True, **data}
+
+    # Releases, shadow, and monitoring (Section 6.6 to 6.8)
+
+    class ProposeBody(BaseModel):
+        candidate_config_id: str = Field(pattern="^llm_[a-z_]+_v[0-9]+$")
+        cohort: list[str] | None = None
+
+    class DecideBody(BaseModel):
+        decision: str
+        rationale: str
+
+    class PreviewBody(BaseModel):
+        candidate_config_id: str = Field(pattern="^llm_[a-z_]+_v[0-9]+$")
+        cohort: list[str]
+
+    def managed_app(store: Store, app_id: str) -> dict[str, Any]:
+        doc = load_app(store, app_id)
+        if doc["platform"] != "managed":
+            raise HTTPException(status_code=404, detail="releases apply to managed apps")
+        return doc
+
+    @app.get("/api/apps/{app_id}/releases")
+    def list_releases(app_id: str, _: ReadDetail, store: StoreDep) -> list[dict[str, Any]]:
+        return sorted(
+            (r for r in store.list("releases") if r["app_id"] == app_id),
+            key=lambda r: r["proposed_at"],
+            reverse=True,
+        )
+
+    @app.post("/api/apps/{app_id}/releases/preview")
+    def release_preview(
+        app_id: str, body: PreviewBody, _: ReadDetail, store: StoreDep
+    ) -> dict[str, Any]:
+        from control_plane.triage.activation import preview
+
+        managed_app(store, app_id)
+        return preview(body.candidate_config_id, body.cohort)
+
+    @app.post("/api/apps/{app_id}/releases")
+    def propose_release(
+        app_id: str,
+        body: ProposeBody,
+        user: Annotated[Me, Depends(require(Action.PROPOSE_RELEASE))],
+        store: StoreDep,
+    ) -> dict[str, Any]:
+        from control_plane.triage.activation import build_proposal
+
+        managed_app(store, app_id)
+        record = build_proposal(body.candidate_config_id, user.email, body.cohort, now())
+        record["release_id"] += f"_{uuid.uuid4().hex[:4]}"
+        store.create("releases", record["release_id"], record)
+        _app_event(
+            store,
+            app_id,
+            "release_proposed",
+            user.email,
+            f"Proposed {record['candidate_config_id']} with a "
+            f"{len(record['cohort'])}-intent cohort",
+            record["release_id"],
+        )
+        return record
+
+    @app.post("/api/apps/{app_id}/releases/{release_id}/decide")
+    def decide_release(
+        app_id: str,
+        release_id: str,
+        body: DecideBody,
+        user: Annotated[Me, Depends(require(Action.DECIDE_RELEASE))],
+        store: StoreDep,
+    ) -> dict[str, Any]:
+        from control_plane.triage.activation import ReleaseError, validate_decision
+
+        app_doc = managed_app(store, app_id)
+        record = store.get("releases", release_id)
+        if record is None or record["app_id"] != app_id:
+            raise HTTPException(status_code=404, detail="release not found")
+        try:
+            validate_decision(record, body.decision, body.rationale, user.role.value)
+        except ReleaseError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        updates = {
+            "decision": body.decision,
+            "rationale": body.rationale.strip(),
+            "decided_by": user.email,
+            "decided_at": now().isoformat(),
+        }
+        store.update("releases", release_id, updates)
+        evidence = {
+            **(app_doc.get("evidence") or {}),
+            "release_decision": body.decision,
+            "release_ref": f"releases/{release_id}",
+        }
+        store.update(
+            "apps",
+            app_id,
+            {
+                "evidence": evidence,
+                "last_decision": f"Release {body.decision}",
+                "version": app_doc.get("version", 1) + 1,
+            },
+        )
+        _app_event(
+            store,
+            app_id,
+            f"release_{body.decision}",
+            user.email,
+            body.rationale.strip(),
+            release_id,
+        )
+        rescore(store)
+        return {**record, **updates}
+
+    @app.get("/api/apps/{app_id}/shadow")
+    def shadow_summary(app_id: str, _: ReadDetail) -> dict[str, Any]:
+        from control_plane.monitoring import SHADOW_DIR
+
+        runs = sorted(SHADOW_DIR.glob("shadow_*/summary.json")) if SHADOW_DIR.exists() else []
+        if app_id != "support-triage" or not runs:
+            return {"available": False}
+        data: dict[str, Any] = json.loads(runs[-1].read_text())
+        return {"available": True, **data}
+
+    @app.get("/api/apps/{app_id}/monitoring")
+    def monitoring(app_id: str, _: ReadDetail) -> dict[str, Any]:
+        from control_plane.monitoring import MONITORING_DIR
+
+        drills = sorted(MONITORING_DIR.glob("drill_*.json")) if MONITORING_DIR.exists() else []
+        if app_id != "support-triage" or not drills:
+            return {"available": False}
+        drill: dict[str, Any] = json.loads(drills[-1].read_text())
+        drill.pop("drift_rows", None)
+        policy = json.loads((MONITORING_DIR / f"{drill['alert_policy']}.json").read_text())
+        return {"available": True, "drill": drill, "alert_policy": policy}
+
+    class CaseDecision(BaseModel):
+        decision: str = Field(pattern="^(approve|reject)$")
+        reason: str
+        label: str | None = None
+
+    @app.post("/api/reviews/cases/{case_id}")
+    def decide_case(
+        case_id: str,
+        body: CaseDecision,
+        user: Annotated[Me, Depends(require(Action.APPROVE_CASE))],
+        store: StoreDep,
+    ) -> dict[str, Any]:
+        case = store.get("routed_cases", case_id)
+        if case is None or case["status"] != "pending":
+            raise HTTPException(status_code=404, detail="case not pending")
+        if not body.reason.strip():
+            raise HTTPException(status_code=422, detail="a reason is required")
+        review_id = uuid.uuid4().hex
+        store.create(
+            "reviews",
+            review_id,
+            {
+                "review_id": review_id,
+                "subject": "case",
+                "subject_id": case_id,
+                "reviewer": user.email,
+                "decision": body.decision,
+                "reason": body.reason,
+                "created_at": now().isoformat(),
+            },
+        )
+        store.update(
+            "routed_cases",
+            case_id,
+            {
+                "status": body.decision,
+                "reviewer": user.email,
+                "final_label": body.label or case["suggested_label"],
+            },
+        )
+        return {"review_id": review_id}
 
     # Settings
 
@@ -609,6 +788,25 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
 
     _mount_console(app)
     return app
+
+
+def _app_event(store: Store, app_id: str, kind: str, actor: str, reason: str, ref: str) -> None:
+    event_id = uuid.uuid4().hex
+    store.create(
+        f"apps/{app_id}/events",
+        event_id,
+        {
+            "event_id": event_id,
+            "app_id": app_id,
+            "kind": kind,
+            "from_stage": None,
+            "to_stage": None,
+            "actor": actor,
+            "reason": reason,
+            "evidence_refs": [ref],
+            "created_at": datetime.now(UTC).isoformat(),
+        },
+    )
 
 
 def _mount_console(app: FastAPI) -> None:

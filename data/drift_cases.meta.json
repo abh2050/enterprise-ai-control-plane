@@ -1,0 +1,6 @@
+{
+  "provenance": "FIXTURE",
+  "rows": 40,
+  "authored_by": "Drafted by Claude (AI coding assistant) during the build session on 2026-10-12 for the incident drill. Single rater. Distinct from the risk suite and from Banking77.",
+  "use": "Injected into simulated shadow days 10 to 12 by `cp drill` (Section 6.8)."
+}

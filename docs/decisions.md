@@ -111,3 +111,13 @@ Each entry records the decision, the alternatives considered, and the reason.
 
 ## D29. Mortgage Document Q&A is a managed app in the seed (M4)
 - Scenario 1 needs a managed app at review_gates with every approval in place. The seed's Mortgage Document Q&A is managed with both high-risk gates approved.
+
+## D30. Measured gates block every activation; the owner chose a real-only M5 path (M5)
+- Frozen-set gates: gemini-3.8-flash passes 5 of 10 as a full candidate and 4 of 6 as the spec's cohort (failing sensitive intents excluded). gemini-3.1-flash-lite passes 3 of 10 and 3 of 5. The cohort still fails macro F1, and routing keys on the classifier's label, so some sensitive cases inherit classifier misses.
+- Decisions: reject flash-lite (dominated: less accurate and costlier per call than 3.8 Flash with caching); withhold 3.8 Flash after the shadow replay.
+- The spec's signature scenario did not occur. Per Section 6.7, docs/release_recommendation.md describes what happened. The owner declined the optional FIXTURE demo of the pattern, so no constructed candidate exists anywhere.
+
+## D31. Shadow candidate is gemini-3.8-flash; monitoring watches the production classifier (M5)
+- 3.8 Flash is the better candidate on every gate and is cheaper per call with its cached prefix, so it is the one replayed in shadow.
+- With no activation, production stays on classifier_v1. Monitoring, the alert policy, and the drill apply to classifier_v1. Rollback means pausing automation: every case goes to human review until a shadow check passes every frozen threshold.
+- The 40 drift cases (data/drift_cases.jsonl) were written in the build session, labeled FIXTURE, single rater, and are distinct from the risk suite.

@@ -254,3 +254,65 @@ def test_stalled_filter() -> None:
     c = client()
     stalled = c.get("/api/apps?stalled=1", headers=EXEC).json()
     assert stalled and all(x["stalled_vs_median"] for x in stalled)
+
+
+def test_release_proposal_and_decision_rules_over_http() -> None:
+    c = client()
+    preview = c.post(
+        "/api/apps/support-triage/releases/preview",
+        headers=OWNER,
+        json={
+            "candidate_config_id": "llm_high_capability_v1",
+            "cohort": ["card_arrival", "exchange_rate"],
+        },
+    ).json()
+    assert {"gates", "all_passed", "scorecard"} <= preview.keys()
+    assert (
+        c.post(
+            "/api/apps/support-triage/releases",
+            headers=REVIEWER,
+            json={"candidate_config_id": "llm_high_capability_v1"},
+        ).status_code
+        == 403
+    )
+    proposed = c.post(
+        "/api/apps/support-triage/releases",
+        headers=OWNER,
+        json={"candidate_config_id": "llm_high_capability_v1"},
+    )
+    assert proposed.status_code == 200, proposed.text
+    rid = proposed.json()["release_id"]
+    path = f"/api/apps/support-triage/releases/{rid}/decide"
+    reason = "Gates fail on the measured frozen set; hold for fixes."
+    assert (
+        c.post(path, headers=OWNER, json={"decision": "withhold", "rationale": reason}).status_code
+        == 403
+    )
+    blocked = c.post(path, headers=ADMIN, json={"decision": "activate_full", "rationale": reason})
+    assert blocked.status_code == 422 and "blocked" in blocked.json()["detail"]
+    ok = c.post(path, headers=ADMIN, json={"decision": "withhold", "rationale": reason})
+    assert ok.status_code == 200 and ok.json()["decision"] == "withhold"
+    again = c.post(path, headers=ADMIN, json={"decision": "reject", "rationale": reason})
+    assert again.status_code == 422
+    kinds = [e["kind"] for e in c.get("/api/apps/support-triage", headers=ADMIN).json()["events"]]
+    assert "release_proposed" in kinds and "release_withhold" in kinds
+
+
+def test_external_apps_have_no_releases_and_viewer_cannot_decide() -> None:
+    c = client()
+    assert (
+        c.post(
+            "/api/apps/sales-email-drafts/releases",
+            headers=OWNER,
+            json={"candidate_config_id": "llm_high_capability_v1"},
+        ).status_code
+        == 404
+    )
+    rels = c.get("/api/apps/support-triage/releases", headers=ADMIN).json()
+    if rels:
+        r = c.post(
+            f"/api/apps/support-triage/releases/{rels[0]['release_id']}/decide",
+            headers=EXEC,
+            json={"decision": "withhold", "rationale": "x" * 30},
+        )
+        assert r.status_code == 403

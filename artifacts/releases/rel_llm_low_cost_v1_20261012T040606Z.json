@@ -1,0 +1,531 @@
+{
+  "release_id": "rel_llm_low_cost_v1_20261012T040606Z",
+  "app_id": "support-triage",
+  "candidate_config_id": "llm_low_cost_v1",
+  "baseline_config_id": "classifier_v1",
+  "policy_id": "policy_llm_low_cost_v1",
+  "cohort": [
+    "Refund_not_showing_up",
+    "activate_my_card",
+    "age_limit",
+    "apple_pay_or_google_pay",
+    "atm_support",
+    "automatic_top_up",
+    "balance_not_updated_after_bank_transfer",
+    "balance_not_updated_after_cheque_or_cash_deposit",
+    "beneficiary_not_allowed",
+    "cancel_transfer",
+    "card_about_to_expire",
+    "card_acceptance",
+    "card_arrival",
+    "card_delivery_estimate",
+    "card_linking",
+    "card_not_working",
+    "card_payment_fee_charged",
+    "card_payment_wrong_exchange_rate",
+    "card_swallowed",
+    "cash_withdrawal_charge",
+    "change_pin",
+    "contactless_not_working",
+    "country_support",
+    "declined_card_payment",
+    "declined_cash_withdrawal",
+    "declined_transfer",
+    "disposable_card_limits",
+    "edit_personal_details",
+    "exchange_charge",
+    "exchange_rate",
+    "exchange_via_app",
+    "extra_charge_on_statement",
+    "failed_transfer",
+    "fiat_currency_support",
+    "get_disposable_virtual_card",
+    "get_physical_card",
+    "getting_spare_card",
+    "getting_virtual_card",
+    "lost_or_stolen_card",
+    "order_physical_card",
+    "passcode_forgotten",
+    "pending_card_payment",
+    "pending_cash_withdrawal",
+    "pending_top_up",
+    "pending_transfer",
+    "pin_blocked",
+    "receiving_money",
+    "request_refund",
+    "reverted_card_payment?",
+    "supported_cards_and_currencies",
+    "terminate_account",
+    "top_up_by_bank_transfer_charge",
+    "top_up_by_card_charge",
+    "top_up_by_cash_or_cheque",
+    "top_up_failed",
+    "top_up_limits",
+    "top_up_reverted",
+    "topping_up_by_card",
+    "transaction_charged_twice",
+    "transfer_fee_charged",
+    "transfer_into_account",
+    "transfer_not_received_by_recipient",
+    "transfer_timing",
+    "unable_to_verify_identity",
+    "verify_my_identity",
+    "verify_source_of_funds",
+    "verify_top_up",
+    "virtual_card_not_working",
+    "visa_or_mastercard",
+    "why_verify_identity",
+    "wrong_amount_of_cash_received",
+    "wrong_exchange_rate_for_cash_withdrawal"
+  ],
+  "cohort_excluded": [
+    "card_payment_not_recognised",
+    "cash_withdrawal_not_recognised",
+    "compromised_card",
+    "direct_debit_payment_not_recognised",
+    "lost_or_stolen_phone"
+  ],
+  "full_candidate": {
+    "gates": [
+      {
+        "gate": "sensitive_recall.card_payment_not_recognised",
+        "threshold": 0.95,
+        "observed": 0.85,
+        "passed": false,
+        "comparison": ">="
+      },
+      {
+        "gate": "sensitive_recall.cash_withdrawal_not_recognised",
+        "threshold": 0.95,
+        "observed": 0.8,
+        "passed": false,
+        "comparison": ">="
+      },
+      {
+        "gate": "sensitive_recall.compromised_card",
+        "threshold": 0.95,
+        "observed": 0.65,
+        "passed": false,
+        "comparison": ">="
+      },
+      {
+        "gate": "sensitive_recall.direct_debit_payment_not_recognised",
+        "threshold": 0.95,
+        "observed": 0.5,
+        "passed": false,
+        "comparison": ">="
+      },
+      {
+        "gate": "sensitive_recall.lost_or_stolen_card",
+        "threshold": 0.95,
+        "observed": 1.0,
+        "passed": true,
+        "comparison": ">="
+      },
+      {
+        "gate": "sensitive_recall.lost_or_stolen_phone",
+        "threshold": 0.95,
+        "observed": 0.75,
+        "passed": false,
+        "comparison": ">="
+      },
+      {
+        "gate": "auto_precision",
+        "threshold": 0.89415,
+        "observed": 0.973684,
+        "passed": true,
+        "comparison": ">="
+      },
+      {
+        "gate": "macro_f1",
+        "threshold": 0.893365,
+        "observed": 0.839377,
+        "passed": false,
+        "comparison": ">="
+      },
+      {
+        "gate": "latency_p95_ms",
+        "threshold": 10000,
+        "observed": 1382,
+        "passed": true,
+        "comparison": "<="
+      },
+      {
+        "gate": "risk_sensitive_route_accuracy",
+        "threshold": 1.0,
+        "observed": 0.95,
+        "passed": false,
+        "comparison": ">="
+      }
+    ],
+    "all_passed": false,
+    "scorecard": {
+      "cases": {
+        "value": 1540,
+        "unit": "cases",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "macro_f1": {
+        "value": 0.8393771004485522,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "accuracy": {
+        "value": 0.8415584415584415,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "automation_coverage": {
+        "value": 0.7649350649350649,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "auto_precision": {
+        "value": 0.9736842105263158,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "review_rate": {
+        "value": 0.22792207792207791,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "abstention_rate": {
+        "value": 0.007142857142857143,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "latency_p50_ms": {
+        "value": 1069,
+        "unit": "ms",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "latency_p95_ms": {
+        "value": 1382,
+        "unit": "ms",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "model_cost_per_1k_usd": {
+        "value": 1.013875974025974,
+        "unit": "USD per 1,000 cases",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "total_cost_per_correct_usd": {
+        "value": null,
+        "unit": "USD per correctly handled case",
+        "provenance": "ASSUMPTION",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_recall.card_payment_not_recognised": {
+        "value": 0.85,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_review_rate.card_payment_not_recognised": {
+        "value": 1.0,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_recall.cash_withdrawal_not_recognised": {
+        "value": 0.8,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_review_rate.cash_withdrawal_not_recognised": {
+        "value": 1.0,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_recall.compromised_card": {
+        "value": 0.65,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_review_rate.compromised_card": {
+        "value": 1.0,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_recall.direct_debit_payment_not_recognised": {
+        "value": 0.5,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_review_rate.direct_debit_payment_not_recognised": {
+        "value": 0.95,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_recall.lost_or_stolen_card": {
+        "value": 1.0,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_review_rate.lost_or_stolen_card": {
+        "value": 1.0,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_recall.lost_or_stolen_phone": {
+        "value": 0.75,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_review_rate.lost_or_stolen_phone": {
+        "value": 1.0,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "risk_route_accuracy.ambiguous": {
+        "value": 0.55,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "risk_route_accuracy.out_of_domain": {
+        "value": 0.9,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "risk_route_accuracy.sensitive_indirect": {
+        "value": 0.95,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      }
+    }
+  },
+  "cohort_candidate": {
+    "gates": [
+      {
+        "gate": "sensitive_recall.lost_or_stolen_card",
+        "threshold": 0.95,
+        "observed": 1.0,
+        "passed": true,
+        "comparison": ">="
+      },
+      {
+        "gate": "auto_precision",
+        "threshold": 0.894144,
+        "observed": 0.973684,
+        "passed": true,
+        "comparison": ">="
+      },
+      {
+        "gate": "macro_f1",
+        "threshold": 0.893365,
+        "observed": 0.848777,
+        "passed": false,
+        "comparison": ">="
+      },
+      {
+        "gate": "latency_p95_ms",
+        "threshold": 10000,
+        "observed": 1374,
+        "passed": true,
+        "comparison": "<="
+      },
+      {
+        "gate": "risk_sensitive_route_accuracy",
+        "threshold": 1.0,
+        "observed": 0.95,
+        "passed": false,
+        "comparison": ">="
+      }
+    ],
+    "all_passed": false,
+    "scorecard": {
+      "cases": {
+        "value": 1540,
+        "unit": "cases",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "macro_f1": {
+        "value": 0.8487774870340125,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "accuracy": {
+        "value": 0.8519480519480519,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "automation_coverage": {
+        "value": 0.7649350649350649,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "auto_precision": {
+        "value": 0.9736842105263158,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "review_rate": {
+        "value": 0.22792207792207791,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "abstention_rate": {
+        "value": 0.007142857142857143,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "latency_p50_ms": {
+        "value": 1059,
+        "unit": "ms",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "latency_p95_ms": {
+        "value": 1374,
+        "unit": "ms",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "model_cost_per_1k_usd": {
+        "value": 0.9511038961038961,
+        "unit": "USD per 1,000 cases",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "total_cost_per_correct_usd": {
+        "value": null,
+        "unit": "USD per correctly handled case",
+        "provenance": "ASSUMPTION",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_recall.card_payment_not_recognised": {
+        "value": 0.8,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_review_rate.card_payment_not_recognised": {
+        "value": 1.0,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_recall.cash_withdrawal_not_recognised": {
+        "value": 0.9,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_review_rate.cash_withdrawal_not_recognised": {
+        "value": 1.0,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_recall.compromised_card": {
+        "value": 0.9,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_review_rate.compromised_card": {
+        "value": 1.0,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_recall.direct_debit_payment_not_recognised": {
+        "value": 0.85,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_review_rate.direct_debit_payment_not_recognised": {
+        "value": 0.95,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_recall.lost_or_stolen_card": {
+        "value": 1.0,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_review_rate.lost_or_stolen_card": {
+        "value": 1.0,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_recall.lost_or_stolen_phone": {
+        "value": 0.95,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "sensitive_review_rate.lost_or_stolen_phone": {
+        "value": 1.0,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "risk_route_accuracy.ambiguous": {
+        "value": 0.55,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "risk_route_accuracy.out_of_domain": {
+        "value": 0.9,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      },
+      "risk_route_accuracy.sensitive_indirect": {
+        "value": 0.95,
+        "unit": "ratio",
+        "provenance": "MEASURED",
+        "source": "blend of classifier_v1 and llm_low_cost_v1 frozen results"
+      }
+    }
+  },
+  "evidence_refs": [
+    "artifacts/experiments/exp_classifier_v1_20261011T164751Z",
+    "artifacts/experiments/exp_llm_low_cost_v1_20261011T195657Z"
+  ],
+  "proposed_by": "owner@example.com",
+  "proposed_at": "2026-10-12T04:06:06.324999+00:00",
+  "decision": "reject",
+  "rationale": "Measured on the 1,540-case frozen set, gemini-3.1-flash-lite passes 3 of 10 gates: macro F1 0.839 against a 0.893 floor, five sensitive intents below 0.95 recall, and 0.95 on risk-suite sensitive routing. Even with those intents excluded, the cohort fails macro F1 and risk routing. It is also dominated: gemini-3.8-flash is more accurate and cheaper per call with caching.",
+  "decided_by": "admin@example.com",
+  "decided_at": "2026-10-12T04:06:17.289079+00:00",
+  "shadow_ref": null,
+  "provenance": "MEASURED"
+}

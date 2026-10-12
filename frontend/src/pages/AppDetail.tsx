@@ -2,13 +2,14 @@
 // artifacts/experiment_summary.json; release decisions, shadow, and monitoring arrive in M5.
 import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2, OctagonAlert } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Link, useParams } from "react-router";
 import { useSession } from "../components/Shell";
 import { Card, DataTable, EmptyState, HeaderBand, HealthPill, Input, MetricInline, ModuleError, ProvenanceBadge, Select, Skeleton, StatusText, cx } from "../components/ui";
 import { api, type AppDetailData, type Metric } from "../lib/api";
 import { label, money, pct, relative, timestamp } from "../lib/format";
 import { useUrlFilters } from "../lib/state";
+import { CohortEditor, MonitoringTab, ReleaseTab, ShadowTab } from "./detail/M5Tabs";
 
 interface ConfigEvidence {
   experiment_id: string;
@@ -212,10 +213,6 @@ function Experiments({ ev }: { ev: Evidence | undefined }) {
 function Policy({ ev }: { ev: Evidence | undefined }) {
   const [config, setConfig] = useState("llm_low_cost_v1");
   const c = ev?.configs[config];
-  const failing = useMemo(
-    () => (c ? c.policy.sensitive_intents.filter((i) => (c.scorecard[`sensitive_recall.${i}`]?.value ?? 0) < 0.95) : []),
-    [c],
-  );
   if (!ev?.available || !c) return <EmptyState illustration="no-experiments" title="No decision policy" missing="Decision policies belong to managed apps." />;
   return (
     <div className="flex flex-col gap-6">
@@ -234,36 +231,12 @@ function Policy({ ev }: { ev: Evidence | undefined }) {
           ))}
         </ul>
       </Card>
-      <Card title={`Cohort editor: ${failing.length} sensitive intents miss the 0.95 recall gate`}>
-        <p className="t-body text-muted">
-          A cohort activation would exclude the failing intents below. Recording a cohort decision and replaying its economics arrives with shadow replay and release decisions (M5); this view is read only until then.
-        </p>
-        <ul className="mt-3 grid grid-cols-1 gap-2 min-[720px]:grid-cols-2">
-          {c.policy.sensitive_intents.map((i) => {
-            const recall = c.scorecard[`sensitive_recall.${i}`]?.value ?? null;
-            const fail = recall !== null && recall < 0.95;
-            return (
-              <li key={i} className="t-body flex flex-wrap items-center justify-between gap-2 rounded-lg border border-line px-3 py-2">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" checked={!fail} disabled aria-describedby={`cohort-${i}`} className="size-5" />
-                  {i}
-                </label>
-                <span id={`cohort-${i}`}>
-                  {fail ? (
-                    <StatusText tone="danger" icon={OctagonAlert}>
-                      Recall {pct(recall)}: excluded
-                    </StatusText>
-                  ) : (
-                    <StatusText tone="healthy" icon={CheckCircle2}>
-                      Recall {pct(recall)}
-                    </StatusText>
-                  )}
-                </span>
-              </li>
-            );
-          })}
-        </ul>
-      </Card>
+      <CohortEditor
+        appId="support-triage"
+        eligible={c.policy.eligible_cohort}
+        sensitive={c.policy.sensitive_intents}
+        recall={(cand, intent) => ev.configs[cand]?.scorecard[`sensitive_recall.${intent}`]?.value ?? null}
+      />
       <Card title="Where sensitive cases went (confusion filtered to sensitive intents)" action={<ProvenanceBadge label="MEASURED" />}>
         <DataTable
           caption="Sensitive confusion"
@@ -280,56 +253,6 @@ function Policy({ ev }: { ev: Evidence | undefined }) {
             x.routes.abstain,
           ])}
         />
-      </Card>
-    </div>
-  );
-}
-
-function Release({ ev }: { ev: Evidence | undefined }) {
-  if (!ev?.available) return <EmptyState illustration="no-experiments" title="No release candidates" missing="Release gates apply to managed apps with experiments." />;
-  const base = ev.configs.classifier_v1;
-  return (
-    <div className="flex flex-col gap-6">
-      {ORDER.filter((c) => c !== "classifier_v1" && ev.configs[c]).map((c) => {
-        const x = ev.configs[c]!;
-        const gates: [string, string, number | null, boolean][] = [
-          ...x.policy.sensitive_intents.map((i): [string, string, number | null, boolean] => {
-            const v = x.scorecard[`sensitive_recall.${i}`]?.value ?? null;
-            return [`Sensitive recall: ${i}`, "≥ 0.95", v, v !== null && v >= 0.95];
-          }),
-          ["Auto precision", `≥ ${x.economics.gate_threshold?.toFixed(3)}`, x.scorecard.auto_precision?.value ?? null, (x.scorecard.auto_precision?.value ?? 0) >= (x.economics.gate_threshold ?? 1)],
-          ["Macro F1 vs classifier", `≥ ${((base?.scorecard.macro_f1?.value ?? 0) - 0.02).toFixed(3)}`, x.scorecard.macro_f1?.value ?? null, (x.scorecard.macro_f1?.value ?? 0) >= (base?.scorecard.macro_f1?.value ?? 0) - 0.02],
-          ["Latency p95 (ms)", "≤ 10,000", x.scorecard.latency_p95_ms?.value ?? null, (x.scorecard.latency_p95_ms?.value ?? Infinity) <= 10000],
-          ["Risk suite sensitive route accuracy", "= 1.0", x.scorecard["risk_route_accuracy.sensitive_indirect"]?.value ?? null, (x.scorecard["risk_route_accuracy.sensitive_indirect"]?.value ?? 0) >= 1],
-        ];
-        const passed = gates.filter((g) => g[3]).length;
-        return (
-          <Card key={c} title={`${CONFIG_LABEL[c]}: ${passed} of ${gates.length} gates pass${passed < gates.length ? ", so full activation is blocked" : ""}`} action={<ProvenanceBadge label="MEASURED" />}>
-            <DataTable
-              caption={`Gate results for ${CONFIG_LABEL[c]}`}
-              columns={["Gate", "Threshold", "Observed", "Result"]}
-              rows={gates.map(([g, t, v, ok]) => [
-                g,
-                t,
-                v === null ? "—" : g.startsWith("Latency") ? v.toLocaleString() : v.toFixed(3),
-                ok ? (
-                  <StatusText key="r" tone="healthy" icon={CheckCircle2}>
-                    Pass
-                  </StatusText>
-                ) : (
-                  <StatusText key="r" tone="danger" icon={OctagonAlert}>
-                    Fail
-                  </StatusText>
-                ),
-              ])}
-            />
-          </Card>
-        );
-      })}
-      <Card title="Decision">
-        <p className="t-body text-muted">
-          The release decision form (activate cohort, activate full, withhold, reject) records a governance admin's decision with its rationale and scorecard reference. It arrives with cohort shadow replay in M5, so the decision can cite measured cohort economics. No decision has been recorded.
-        </p>
       </Card>
     </div>
   );
@@ -400,11 +323,11 @@ export default function AppDetail() {
         ) : tab === "policy" ? (
           <Policy ev={ev.data} />
         ) : tab === "shadow" ? (
-          <EmptyState illustration="no-shadow" title="No shadow runs yet" missing="Shadow replay over 14 simulated days (labeled SIMULATED) arrives in M5." />
+          <ShadowTab appId={appId} />
         ) : tab === "release" ? (
-          <Release ev={ev.data} />
+          d.external ? <EmptyState illustration="no-experiments" title="No releases" missing="Release gates apply to managed apps." /> : <ReleaseTab appId={appId} />
         ) : tab === "monitoring" ? (
-          <EmptyState illustration="stale" title="No monitoring signals yet" missing="Daily review rate, cost per correctly handled case, and sampled accuracy, with alert lines, arrive with monitoring in M5." />
+          d.external ? <EmptyState illustration="stale" title="No monitoring signals" missing="External platforms report usage through imports; daily model signals apply to managed apps." /> : <MonitoringTab appId={appId} />
         ) : (
           <Audit d={d} />
         )}

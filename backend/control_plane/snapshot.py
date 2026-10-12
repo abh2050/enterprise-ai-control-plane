@@ -99,6 +99,12 @@ def export(out_dir: Path, fixed_now: datetime) -> int:
         save(f"/apps/{a['app_id']}", get(f"/apps/{a['app_id']}"))
         save(f"/apps/{a['app_id']}/evidence", get(f"/apps/{a['app_id']}/evidence"))
     save("/assist", get("/assist"))
-    save("/reviews/pending", get("/reviews/pending"))
+    pending = get("/reviews/pending")
+    for case in pending["cases"]:
+        case["text"] = None  # the public snapshot carries no message text
+    save("/reviews/pending", pending)
+    save(f"/apps/{'support-triage'}/releases", get("/apps/support-triage/releases"))
+    save(f"/apps/{'support-triage'}/shadow", get("/apps/support-triage/shadow"))
+    save(f"/apps/{'support-triage'}/monitoring", get("/apps/support-triage/monitoring"))
     save("/incidents", get("/incidents"))
     return written

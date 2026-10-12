@@ -87,6 +87,7 @@ def seed_registry(store: Store, now: datetime | None = None) -> dict[str, int]:
             loaded_events += 1
     for incident in seed["incidents"]:
         store.set("incidents", incident["incident_id"], incident)
+    load_m5_evidence(store)
     from control_plane.assist import score_all
 
     score_all(store, now)
@@ -101,3 +102,120 @@ def seed_registry(store: Store, now: datetime | None = None) -> dict[str, int]:
 # Kept for callers that only need identities.
 def seed_fixture(store: Store, now: datetime | None = None) -> dict[str, int]:
     return seed_registry(store, now)
+
+
+def load_m5_evidence(store: Store) -> dict[str, int]:
+    """Releases, drill incidents, their audit events, and routed cases for review.
+
+    Everything comes from committed artifacts. Case text is read from the local Banking77
+    files (data/raw, gitignored) and is shown only in the console.
+    """
+    from control_plane.monitoring import INCIDENT_DIR, MONITORING_DIR, SHADOW_DIR
+    from control_plane.triage.activation import releases
+
+    counts = {"releases": 0, "incidents": 0, "events": 0, "cases": 0}
+    app_id = "support-triage"
+    app = store.get("apps", app_id)
+    recs = sorted(releases(), key=lambda r: r["proposed_at"])
+    for r in recs:
+        store.set("releases", r["release_id"], r)
+        counts["releases"] += 1
+        for kind, when, actor, reason in (
+            (
+                "release_proposed",
+                r["proposed_at"],
+                r["proposed_by"],
+                f"Proposed {r['candidate_config_id']} with a {len(r['cohort'])}-intent cohort",
+            ),
+            (f"release_{r['decision']}", r["decided_at"], r["decided_by"], r["rationale"]),
+        ):
+            if not when:
+                continue
+            event_id = f"{r['release_id']}-{kind}"
+            if store.get(f"apps/{app_id}/events", event_id) is None:
+                store.create(
+                    f"apps/{app_id}/events",
+                    event_id,
+                    {
+                        "event_id": event_id,
+                        "app_id": app_id,
+                        "kind": kind,
+                        "from_stage": None,
+                        "to_stage": None,
+                        "actor": actor,
+                        "reason": reason,
+                        "evidence_refs": [f"artifacts/releases/{r['release_id']}.json"],
+                        "created_at": when,
+                    },
+                )
+                counts["events"] += 1
+    decided = [r for r in recs if r["decision"]]
+    if app and decided:
+        last = decided[-1]
+        evidence = {
+            **(app.get("evidence") or {}),
+            "release_decision": last["decision"],
+            "release_ref": f"artifacts/releases/{last['release_id']}.json",
+        }
+        store.update(
+            "apps", app_id, {"evidence": evidence, "last_decision": f"Release {last['decision']}"}
+        )
+    if INCIDENT_DIR.exists():
+        for path in sorted(INCIDENT_DIR.glob("*.json")):
+            inc = json.loads(path.read_text())
+            store.set("incidents", inc["incident_id"], inc)
+            counts["incidents"] += 1
+    for path in sorted(MONITORING_DIR.glob("drill_*.json")) if MONITORING_DIR.exists() else []:
+        drill = json.loads(path.read_text())
+        for i, e in enumerate(drill["timeline"]):
+            event_id = f"{path.stem}-{i}"
+            if store.get(f"apps/{app_id}/events", event_id) is None:
+                store.create(
+                    f"apps/{app_id}/events",
+                    event_id,
+                    {
+                        "event_id": event_id,
+                        "app_id": app_id,
+                        "kind": f"drill_{e['event']}",
+                        "from_stage": None,
+                        "to_stage": None,
+                        "actor": e["actor"],
+                        "reason": f"Simulated day {e['day']} (FIXTURE drill): {e['detail']}",
+                        "evidence_refs": [f"artifacts/monitoring/{path.name}"],
+                        "created_at": drill["ran_at"],
+                    },
+                )
+                counts["events"] += 1
+    runs = (
+        sorted(p for p in SHADOW_DIR.glob("shadow_*") if (p / "comparisons.jsonl").exists())
+        if SHADOW_DIR.exists()
+        else []
+    )
+    if runs:
+        rows = [json.loads(x) for x in (runs[-1] / "comparisons.jsonl").read_text().splitlines()]
+        texts: dict[str, str] = {}
+        try:
+            from control_plane.triage.dataset import load_split
+
+            texts = {c.case_id: c.text for c in load_split("shadow_pool")}
+        except (FileNotFoundError, KeyError):
+            texts = {}
+        last_day = max(r["day"] for r in rows)
+        for r in rows:
+            if r["day"] == last_day and r["approved_route"] == "review":
+                store.set(
+                    "routed_cases",
+                    r["case_id"],
+                    {
+                        "case_id": r["case_id"],
+                        "day": r["day"],
+                        "app_id": app_id,
+                        "text": texts.get(r["case_id"]),
+                        "suggested_label": r["approved_label"],
+                        "shadow_llm_label": r["candidate_label"],
+                        "status": "pending",
+                        "provenance": "SIMULATED",
+                    },
+                )
+                counts["cases"] += 1
+    return counts

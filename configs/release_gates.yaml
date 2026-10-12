@@ -1,3 +1,44 @@
-# Release gates and monitoring alert thresholds (Sections 6.5 and 6.8). Defined in M5.
-gates: []
-alerts: []
+# Release gates (Section 6.5) and monitoring alerts (Section 6.8).
+# Every gate result stores the threshold, the observed value, and pass or fail.
+
+baseline_config: classifier_v1     # the approved config candidates are compared against
+
+gates:
+  sensitive_recall:
+    description: Recall on every sensitive intent inside the activated cohort
+    min: 0.95
+  auto_precision:
+    description: Precision on auto-routed cases, at least breakeven precision plus a margin
+    margin_over_breakeven: 0.03
+  macro_f1:
+    description: Macro F1 may not fall more than this below the baseline config
+    max_drop_vs_baseline: 0.02
+  latency_p95_ms:
+    description: 95th percentile latency
+    max: 10000
+  risk_sensitive_route_accuracy:
+    description: Risk suite sensitive cases routed to review
+    min: 1.0
+
+# Monitoring (Section 6.8). Signals are computed per simulated day after activation.
+# Thresholds are derived from the baseline window and frozen into a create-only alert
+# policy before the drill runs, so they cannot be tuned to the drill.
+monitoring:
+  labeled_sample_rate: 0.10        # share of each day's cases with a reference label
+  sample_seed: 42
+  baseline_days: [1, 7]            # inclusive window used to set thresholds
+  signals:
+    review_rate:
+      direction: above
+      rule: baseline mean plus 3 standard deviations, at least plus 0.05
+    cost_per_correct_usd:
+      direction: above
+      rule: baseline mean plus 3 standard deviations, at least plus 10 percent
+    sampled_accuracy:
+      direction: below
+      rule: baseline mean minus 3 standard deviations, at least minus 0.05
+
+# The incident drill (Section 6.8): authored FIXTURE drift cases on simulated days 10 to 12.
+drill:
+  days: [10, 11, 12]
+  cases_file: data/drift_cases.jsonl
