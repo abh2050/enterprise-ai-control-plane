@@ -44,7 +44,7 @@ Built and deployed on Google Cloud: **BigQuery, Firestore, Cloud Run (service an
 Eight tables in the `control_plane` dataset, every column from [`infra/bigquery.sql`](infra/bigquery.sql). Each fact table is partitioned by `event_date`, clustered by `app_id`, and merged on `event_id`, so a nightly re-export never double-counts. Lines are the joins the analytics queries use: every table reaches the app dimension (`app_snapshots`) through `app_id`; experiment results join the budget ledger through `experiment_id`.
 
 <p align="center">
-  <a href="docs/diagrams/12_bigquery_schema.png"><img src="assets/web/diagrams/12_bigquery_schema.webp" alt="BigQuery schema: eight tables in the control_plane dataset with their columns, keys, partitioning, clustering, and joins" width="100%"></a>
+  <a href="docs/diagrams/12_bigquery_schema.png"><img src="docs/diagrams/12_bigquery_schema.png" alt="BigQuery schema: eight tables in the control_plane dataset with their columns, keys, partitioning, clustering, and joins" width="100%"></a>
 </p>
 
 ### 2. Where the data comes from: lineage
@@ -52,7 +52,7 @@ Eight tables in the `control_plane` dataset, every column from [`infra/bigquery.
 Five Firestore collections and two sets of committed evaluation artifacts feed BigQuery through one nightly Cloud Run job: JSONL to Cloud Storage, load into a `_staging` table, then `MERGE`. The right column shows what reads each table; users, releases, reviews, notes, and message text never leave Firestore.
 
 <p align="center">
-  <a href="docs/diagrams/13_data_lineage.png"><img src="assets/web/diagrams/13_data_lineage.webp" alt="Data lineage: Firestore collections and committed artifacts flow through the nightly export to BigQuery tables and the console and reports that read them" width="100%"></a>
+  <a href="docs/diagrams/13_data_lineage.png"><img src="docs/diagrams/13_data_lineage.png" alt="Data lineage: Firestore collections and committed artifacts flow through the nightly export to BigQuery tables and the console and reports that read them" width="100%"></a>
 </p>
 
 ### 3. The system on Google Cloud
@@ -60,7 +60,7 @@ Five Firestore collections and two sets of committed evaluation artifacts feed B
 People reach the console only through Identity-Aware Proxy; the FastAPI service on Cloud Run re-verifies every signed assertion. Cloud Run jobs evaluate models on Vertex AI, replay shadow traffic, monitor, and export; Cloud Scheduler runs monitoring and export nightly.
 
 <p align="center">
-  <a href="docs/diagrams/01_system_overview.png"><img src="assets/web/diagrams/01_system_overview.webp" alt="Google Cloud system overview: IAP, the Cloud Run console and four jobs, Cloud Scheduler, Firestore, BigQuery, Cloud Storage, Vertex AI, and Secret Manager" width="100%"></a>
+  <a href="docs/diagrams/01_system_overview.png"><img src="docs/diagrams/01_system_overview.png" alt="Google Cloud system overview: IAP, the Cloud Run console and four jobs, Cloud Scheduler, Firestore, BigQuery, Cloud Storage, Vertex AI, and Secret Manager" width="100%"></a>
 </p>
 
 ### 4. Request path, identity, and spend
