@@ -13,7 +13,7 @@ FILES = (
 )
 PARITY = (
     "<b>CI parity test</b>\n"
-    "81 scripted requests, every role, replayed\n"
+    "78 scripted requests, every role, replayed\n"
     "against the native app and the browser engine:\n"
     "identical statuses and bodies"
 )

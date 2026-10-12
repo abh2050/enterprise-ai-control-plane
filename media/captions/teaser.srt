@@ -1,0 +1,26 @@
+1
+00:00:00,000 --> 00:00:03,000
+Neither LLM shipped. [MEASURED]
+
+2
+00:00:03,000 --> 00:00:07,000
+5 of 10 release gates passed.
+Activation withheld. [MEASURED]
+
+3
+00:00:07,000 --> 00:00:11,000
+Policy blocks moves without evidence. [SYNTHETIC]
+
+4
+00:00:11,000 --> 00:00:16,000
+Drift detected. Automation paused.
+Human review restored. [FIXTURE; MEASURED detection]
+
+5
+00:00:16,000 --> 00:00:20,650
+Enterprise AI Control Plane:
+governance that decides when not to ship.
+
+6
+00:00:20,650 --> 00:00:21,000
+Neither LLM shipped. [MEASURED]

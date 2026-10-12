@@ -17,4 +17,4 @@ opens in draw.io; each `.png` is the 2x export. Edit the source, not the `.drawi
 | 08 | [Monitoring and incident](08_monitoring_and_incident.png) | Daily signals, the frozen alert policy, detection, pause, rollback, resume | 0.2177 against 0.2172, day 10, day 13, 0.0006, 40 cases: `docs/incident_report.md`; days 1 to 7 and 10%: `configs/release_gates.yaml` |
 | 09 | [Delivery](09_delivery.png) | CI checks, Cloud Build, Artifact Registry, deploy, smoke checks, teardown, GitHub Pages | Smoke checks: `scripts/smoke_gcp.sh` |
 | 10 | [Local development](10_local_development.png) | Fixture identity, store backends, the Firestore emulator, the fixture provider | none |
-| 11 | [Public demo](11_public_demo.png) | The GitHub Pages console running the unchanged backend in the browser | 81 requests: `tests/fixtures/demo_parity.json`, docs/decisions.md D38 |
+| 11 | [Public demo](11_public_demo.png) | The GitHub Pages console running the unchanged backend in the browser | 78 requests: `tests/fixtures/demo_parity.json`, docs/decisions.md D38 |

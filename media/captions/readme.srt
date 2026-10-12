@@ -1,0 +1,29 @@
+1
+00:00:00,000 --> 00:00:08,000
+Pipeline: drag Mortgage Document Q&A into Evaluation.
+Its approvals are in place. [SYNTHETIC]
+
+2
+00:00:08,000 --> 00:00:17,000
+Meeting Notes is blocked: the business case is missing. [SYNTHETIC]
+
+3
+00:00:17,000 --> 00:00:23,000
+Executive viewer: write controls disappear. [SYNTHETIC]
+
+4
+00:00:23,000 --> 00:00:35,000
+Flow: see lifecycle movement and where apps stall. [SYNTHETIC]
+
+5
+00:00:35,000 --> 00:00:45,000
+Release: 5 of 10 full-candidate gates pass;
+4 of 6 proposed-cohort gates pass. [MEASURED]
+
+6
+00:00:45,000 --> 00:00:53,000
+Activate full is blocked because release gates fail. [MEASURED]
+
+7
+00:00:53,000 --> 00:01:00,000
+A governance admin records Withhold with a rationale. [MEASURED]

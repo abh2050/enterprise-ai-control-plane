@@ -46,3 +46,10 @@ video/
 media/live/
 media/claude-browser/
 .DS_Store
+
+# Local video production intermediates
+media/work/
+brag-output*/
+
+# Higgsfield originals (about 4 MB each); the site uses assets/web/
+assets/generated/*.png

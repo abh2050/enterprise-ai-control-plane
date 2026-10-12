@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Enterprise AI Control Plane</title>
+<meta name="description" content="A governance control plane that measured two Gemini models against a classifier on 1,540 banking messages, withheld the LLM when it failed the release gates, and enforces that decision in software. Try the live app in your browser.">
+<meta property="og:title" content="Enterprise AI Control Plane">
+<meta property="og:description" content="Governance that decides, with evidence, when not to ship an AI model. Try the live app in your browser.">
+<meta property="og:image" content="assets/web/hero.webp">
+<meta name="color-scheme" content="dark light">
+<link rel="preload" href="assets/fonts/inter-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" as="image" href="assets/web/hero.webp" imagesrcset="assets/web/hero-960.webp 960w, assets/web/hero.webp 1920w" imagesizes="100vw">
+<style>
+@font-face {
+  font-family: "Inter";
+  src: url("assets/fonts/inter-latin-wght.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+/* Tokens: the console's Midnight Graphite palette (frontend/src/styles/tokens.css). */
+:root {
+  --bg: #0A0F1A; --surface: #111827; --raised: #182233; --overlay: #1E2A3F;
+  --border: #26324A; --border-strong: #697388;
+  --ink: #EEF2F8; --muted: #8C9AB0;
+  --accent: #5B9BFF; --accent-strong: #3D7FF0; --accent-soft: #16294A; --accent-contrast: #0A0F1A;
+  --focus: #A8C8FF;
+  --healthy: #2FBF8F; --warning: #F2B84B; --danger: #F0625F; --info: #7AB8FF;
+  --shade: rgba(10, 15, 26, 0.72);
+  --band: .38;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #F6F8FB; --surface: #FFFFFF; --raised: #EEF2F7; --overlay: #FFFFFF;
+    --border: #D8DFEA; --border-strong: #858C96;
+    --ink: #111827; --muted: #5B677A;
+    --accent: #1E6BD8; --accent-strong: #1858BF; --accent-soft: #E3EEFF; --accent-contrast: #FFFFFF;
+    --focus: #1A5BBF;
+    --healthy: #0E7E57; --warning: #966400; --danger: #C23B3B; --info: #2563EB;
+    --shade: rgba(246, 248, 251, 0.80);
+    --band: .1;
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #F6F8FB; --surface: #FFFFFF; --raised: #EEF2F7; --overlay: #FFFFFF;
+  --border: #D8DFEA; --border-strong: #858C96;
+  --ink: #111827; --muted: #5B677A;
+  --accent: #1E6BD8; --accent-strong: #1858BF; --accent-soft: #E3EEFF; --accent-contrast: #FFFFFF;
+  --focus: #1A5BBF;
+  --healthy: #0E7E57; --warning: #966400; --danger: #C23B3B; --info: #2563EB;
+  --shade: rgba(246, 248, 251, 0.80);
+  --band: .1;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 400 17px/1.6 "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-feature-settings: "tnum" 1, "cv11" 1;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); text-underline-offset: 3px; }
+a:hover { color: var(--accent-strong); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 6px; }
+img, video { max-width: 100%; height: auto; display: block; }
+h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; margin: 0; }
+h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 700; }
+h3 { font-size: 19px; font-weight: 650; }
+p { margin: 0; }
+.wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+.skip { position: absolute; left: -9999px; }
+.skip:focus { left: 16px; top: 16px; z-index: 50; background: var(--surface); padding: 8px 12px; }
+
+/* Top bar */
+.top {
+  position: sticky; top: 0; z-index: 30;
+  background: color-mix(in srgb, var(--bg) 86%, transparent);
+  backdrop-filter: blur(10px); border-bottom: 1px solid var(--border);
+}
+.top .wrap { display: flex; align-items: center; gap: 20px; height: 60px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 650; color: var(--ink); text-decoration: none; white-space: nowrap; }
+.brand svg { color: var(--accent); }
+.nav { display: flex; gap: 4px; margin-left: auto; align-items: center; }
+.nav a.link { color: var(--muted); text-decoration: none; font-size: 15px; padding: 8px 10px; border-radius: 8px; }
+.nav a.link:hover { color: var(--ink); background: var(--raised); }
+@media (max-width: 900px) { .nav a.link { display: none; } }
+.icon-btn {
+  display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--surface); color: var(--ink); cursor: pointer;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 22px;
+  border-radius: 12px; font-weight: 600; font-size: 16px; text-decoration: none;
+  border: 1px solid var(--border-strong); color: var(--ink); background: var(--surface);
+  transition: background .15s, border-color .15s, transform .15s;
+}
+.btn:hover { background: var(--raised); color: var(--ink); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-contrast); }
+.btn.primary:hover { background: var(--accent-strong); color: var(--accent-contrast); }
+.btn.small { min-height: 40px; padding: 0 16px; font-size: 15px; }
+.btn { white-space: nowrap; }
+@media (max-width: 560px) { .brand-name { display: none; } }
+
+/* Hero */
+.hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--border); }
+.hero picture img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, var(--bg) 0%, var(--shade) 45%, transparent 100%), linear-gradient(0deg, var(--bg) 0%, transparent 35%); }
+.hero .wrap { position: relative; z-index: 1; display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; padding: 88px 0 72px; }
+@media (max-width: 960px) {
+  .hero .wrap { grid-template-columns: 1fr; padding: 56px 0 48px; }
+  .hero::after { background: linear-gradient(180deg, var(--shade), var(--bg) 92%); }
+}
+.eyebrow { color: var(--accent); font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 18px; }
+.hero h1 { font-size: clamp(38px, 5.6vw, 64px); font-weight: 750; }
+.hero .lead { margin-top: 22px; font-size: clamp(18px, 2vw, 21px); color: var(--muted); max-width: 34em; }
+.hero .lead strong { color: var(--ink); font-weight: 600; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+.cta-note { margin-top: 14px; font-size: 14px; color: var(--muted); }
+.frame { border: 1px solid var(--border); border-radius: 16px; overflow: hidden; background: var(--surface); box-shadow: 0 30px 80px -30px rgba(0,0,0,.6); }
+.frame video { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #0A0F1A; }
+.frame figcaption { padding: 10px 14px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--border); }
+
+/* Stat strip */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin-top: -1px; }
+@media (max-width: 900px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+.stat { background: var(--surface); padding: 22px 22px 20px; }
+.stat .v { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; }
+.stat .k { color: var(--muted); font-size: 14px; margin-top: 4px; }
+.stat .b { margin-top: 10px; }
+
+/* Provenance badges, as in the console */
+.badge { display: inline-block; font-size: 11px; font-weight: 650; letter-spacing: .06em; padding: 2px 7px; border-radius: 999px; border: 1px solid currentColor; vertical-align: 2px; white-space: nowrap; }
+.MEASURED { color: var(--healthy); }
+.SIMULATED { color: var(--info); }
+.FIXTURE { color: var(--warning); }
+.ASSUMPTION { color: var(--muted); }
+.SYNTHETIC, .AUTHORED { color: var(--warning); }
+
+/* Sections */
+section { padding: 96px 0; border-bottom: 1px solid var(--border); position: relative; }
+section.band, footer.band { overflow: hidden; position: relative; }
+section.band > picture img, footer.band > picture img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: var(--band); }
+section.band::before, footer.band::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, var(--bg), transparent 30%, transparent 70%, var(--bg)); z-index: 0; }
+section.band > .wrap, footer.band > .wrap { position: relative; z-index: 1; }
+.kicker { color: var(--accent); font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 12px; }
+.intro { color: var(--muted); font-size: 19px; max-width: 46em; margin-top: 16px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 40px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px; }
+@media (max-width: 900px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
+.card p { color: var(--muted); margin-top: 8px; }
+.card .num { font-size: 32px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+
+/* The decision */
+.verdict { margin-top: 36px; display: grid; grid-template-columns: 1.3fr 1fr; gap: 24px; }
+@media (max-width: 900px) { .verdict { grid-template-columns: 1fr; } }
+.verdict ol { margin: 0; padding-left: 22px; display: grid; gap: 14px; }
+.verdict li::marker { color: var(--accent); font-weight: 700; }
+.verdict .decision { border-left: 4px solid var(--danger); }
+.gates { display: grid; gap: 10px; margin-top: 14px; }
+.gate { display: flex; justify-content: space-between; gap: 12px; font-size: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.gate:last-child { border-bottom: 0; }
+.gate .pass { color: var(--healthy); font-weight: 600; }
+.gate .fail { color: var(--danger); font-weight: 600; }
+
+/* Try it */
+.try { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; margin-top: 40px; }
+@media (max-width: 900px) { .try { grid-template-columns: 1fr; } }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.steps li { display: grid; grid-template-columns: 36px 1fr; gap: 14px; align-items: start; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+.steps .n { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+.steps b { display: block; }
+.steps span { color: var(--muted); font-size: 15px; }
+.ready { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); margin-top: 14px; }
+.ready .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border-strong); }
+.ready.done .dot { background: var(--healthy); }
+
+/* Carousel */
+.carousel { margin-top: 40px; }
+.slides { display: grid; grid-auto-flow: column; grid-auto-columns: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; border-radius: 16px; border: 1px solid var(--border); }
+.slides::-webkit-scrollbar { display: none; }
+.slides figure { margin: 0; scroll-snap-align: start; background: var(--surface); }
+.slides img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.slides figcaption { padding: 16px 20px; color: var(--muted); }
+.slides figcaption b { color: var(--ink); }
+.car-nav { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
+.car-nav .dots { display: flex; gap: 6px; margin-right: auto; flex-wrap: wrap; }
+.car-nav .dots button { width: 28px; height: 6px; border-radius: 3px; border: 0; background: var(--border); cursor: pointer; padding: 0; }
+.car-nav .dots button[aria-current="true"] { background: var(--accent); }
+
+/* Gallery */
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-top: 40px; }
+.gallery button { all: unset; cursor: zoom-in; display: block; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.gallery button:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.gallery img { width: 100%; aspect-ratio: 16 / 10; object-fit: contain; background: #fff; }
+.gallery span { display: block; padding: 12px 14px; font-weight: 600; font-size: 15px; }
+.gallery span small { display: block; color: var(--muted); font-weight: 400; font-size: 13px; margin-top: 2px; }
+dialog { border: 1px solid var(--border); border-radius: 16px; background: var(--surface); color: var(--ink); padding: 0; width: min(1400px, 96vw); max-height: 94vh; }
+dialog::backdrop { background: rgba(5, 8, 15, .82); }
+dialog img { width: 100%; max-height: 80vh; object-fit: contain; background: #fff; }
+dialog .bar { display: flex; align-items: center; gap: 12px; padding: 12px 16px; }
+dialog .bar b { margin-right: auto; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; margin-top: 32px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); }
+table { width: 100%; border-collapse: collapse; font-size: 15px; }
+th, td { text-align: left; padding: 13px 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; font-size: 13px; letter-spacing: .03em; background: var(--raised); }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; white-space: nowrap; }
+td .badge { margin-left: 6px; }
+.best { color: var(--healthy); font-weight: 650; }
+.worst { color: var(--danger); font-weight: 650; }
+.src { font-size: 13px; color: var(--muted); margin-top: 12px; }
+
+/* Timeline */
+.timeline { list-style: none; margin: 40px 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; }
+@media (max-width: 900px) { .timeline { grid-template-columns: 1fr; } }
+.timeline li { position: relative; padding: 26px 18px 0 0; border-top: 2px solid var(--border-strong); }
+@media (max-width: 900px) { .timeline li { border-top: 0; border-left: 2px solid var(--border-strong); padding: 0 0 22px 22px; } }
+.timeline li::before { content: ""; position: absolute; top: -8px; left: 0; width: 14px; height: 14px; border-radius: 50%; background: var(--surface); border: 2px solid var(--border-strong); }
+@media (max-width: 900px) { .timeline li::before { top: 2px; left: -8px; } }
+.timeline li.hot::before { border-color: var(--danger); background: var(--danger); }
+.timeline li.ok::before { border-color: var(--healthy); background: var(--healthy); }
+.timeline .day { font-size: 13px; color: var(--muted); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+.timeline b { display: block; margin: 4px 0; }
+.timeline span { color: var(--muted); font-size: 15px; }
+
+.videos { display: grid; grid-template-columns: 1.6fr 1fr; gap: 24px; margin-top: 40px; }
+@media (max-width: 900px) { .videos { grid-template-columns: 1fr; } }
+.videos video { width: 100%; aspect-ratio: 16 / 9; background: #0A0F1A; }
+
+ul.plain { margin: 0; padding-left: 20px; display: grid; gap: 10px; color: var(--muted); }
+ul.plain b { color: var(--ink); }
+footer { padding: 72px 0 96px; }
+footer .wrap { display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; }
+@media (max-width: 900px) { footer .wrap { grid-template-columns: 1fr; } }
+footer p { color: var(--muted); margin-top: 10px; }
+.links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .btn { transition: none; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Enterprise AI Control Plane, top of page">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/></svg>
+      <span class="brand-name">Enterprise AI Control Plane</span>
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <a class="link" href="#decision">The decision</a>
+      <a class="link" href="#try">Try it</a>
+      <a class="link" href="#product">Product</a>
+      <a class="link" href="#architecture">Architecture</a>
+      <a class="link" href="#evidence">Evidence</a>
+      <a class="btn small primary" href="console/">Open the app</a>
+      <button class="icon-btn" id="theme" type="button" aria-label="Switch color theme">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div class="hero" id="top">
+  <picture>
+    <source type="image/webp" srcset="assets/web/hero-960.webp 960w, assets/web/hero.webp 1920w" sizes="100vw">
+    <img src="assets/web/hero.webp" alt="" fetchpriority="high">
+  </picture>
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">AI product governance · portfolio project</p>
+      <h1>The control plane that decided <em>not</em> to ship the LLM.</h1>
+      <p class="lead">It tracks every AI app a bank is building, gates each one through a governed lifecycle, and for one live use case it <strong>measured two Gemini models against a plain classifier on 1,540 banking messages</strong>. Neither model passed the release gates, so the software withheld them, and it enforces that decision.</p>
+      <div class="cta">
+        <a class="btn primary" href="console/">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+          Try the live app
+        </a>
+        <a class="btn" href="#watch">Watch the demo</a>
+        <a class="btn" href="#" data-repo>Read the code</a>
+      </div>
+      <p class="cta-note">No sign-up. The app runs its real backend inside your browser, and nothing you do leaves your tab.</p>
+    </div>
+    <figure class="frame" style="margin:0">
+      <video id="teaser" muted loop playsinline preload="metadata" poster="assets/web/teaser-poster.webp" aria-label="21-second teaser: the release gates failing, a blocked lifecycle move, and the drift incident">
+        <source src="media/teaser.webm" type="video/webm">
+        <source src="media/teaser.mp4" type="video/mp4">
+      </video>
+      <figcaption>21-second teaser · real console footage · captions only</figcaption>
+    </figure>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="stats" role="list">
+    <div class="stat" role="listitem"><div class="v">1,540</div><div class="k">identical frozen cases per model</div><div class="b"><span class="badge MEASURED">MEASURED</span></div></div>
+    <div class="stat" role="listitem"><div class="v">5 of 10</div><div class="k">release gates passed by the best LLM</div><div class="b"><span class="badge MEASURED">MEASURED</span></div></div>
+    <div class="stat" role="listitem"><div class="v">Day 10</div><div class="k">drift caught the day it began</div><div class="b"><span class="badge MEASURED">MEASURED</span> <span class="badge FIXTURE">FIXTURE drill</span></div></div>
+    <div class="stat" role="listitem"><div class="v">78</div><div class="k">scripted requests: browser app answers exactly like the server</div><div class="b"><span class="badge MEASURED">MEASURED test</span></div></div>
+  </div>
+</div>
+
+<section id="problem">
+  <div class="wrap">
+    <p class="kicker">The problem</p>
+    <h2>Banks have dozens of AI apps in flight and no shared way to decide which ones should ship.</h2>
+    <p class="intro">Copilot add-ons, vendor tools, and in-house models each arrive with a demo and a promise. What is missing is one place that knows who owns each app, what it is supposed to save, which approvals it has, and whether the model inside is good enough to trust with customers. This project builds that place and runs one use case through it end to end.</p>
+    <div class="grid3">
+      <div class="card"><h3>A governed registry</h3><p>40 apps across Copilot, Abacus, custom builds, and managed apps move through nine stages. Every move is checked on the server against the lifecycle rules and the person's role. Nobody can approve their own submission. <span class="badge SYNTHETIC">SYNTHETIC</span></p></div>
+      <div class="card"><h3>Evidence before release</h3><p>Support Triage routes banking messages to auto-handling, human review, or abstain. Three configs were scored on the same frozen cases, a deterministic policy decides each route, and release gates decide whether a model may go live.</p></div>
+      <div class="card"><h3>Control after release</h3><p>A budget ledger reserves money before every model call, daily signals watch for drift, and an incident pauses automation and rolls back to human review. All of it is visible in one console.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="decision">
+  <picture><source type="image/webp" srcset="assets/web/decision-960.webp 960w, assets/web/decision.webp 1920w" sizes="100vw"><img src="assets/web/decision.webp" alt="" loading="lazy"></picture>
+  <div class="wrap">
+    <p class="kicker">The decision</p>
+    <h2>Withhold the LLM. Keep the classifier in production.</h2>
+    <div class="verdict">
+      <div class="card">
+        <ol>
+          <li>gemini-3.8-flash passes <b>5 of 10</b> release gates as a full candidate and <b>4 of 6</b> as the proposed cohort. <span class="badge MEASURED">MEASURED</span></li>
+          <li>Its macro F1 is <b>0.885</b> against a floor of <b>0.893</b>, and <b>4</b> sensitive intents miss the 0.95 recall gate, the lowest at <b>0.60</b>. <span class="badge MEASURED">MEASURED</span></li>
+          <li>Where the LLM and the classifier agree, auto-routed precision rises to <b>0.976</b>, and the LLM routes <b>90%</b> of out-of-domain risk cases to abstain against <b>0%</b> for the classifier. <span class="badge MEASURED">MEASURED</span></li>
+          <li>In a 14-day shadow replay the models agreed on <b>85.5%</b> of labels <span class="badge SIMULATED">SIMULATED</span> for <b>$1.65</b> of model spend <span class="badge MEASURED">MEASURED</span>; the cohort would have added about <b>$151</b> of net value <span class="badge ASSUMPTION">ASSUMPTION</span>.</li>
+          <li>That gain does not justify releasing below the sensitive-recall bar. The next investment is targeted: fix the card-payment versus direct-debit confusions and re-evaluate, rather than buying a bigger model.</li>
+        </ol>
+        <p class="src">Source: <a data-evidence="docs/release_recommendation.md" href="docs/release_recommendation.md">docs/release_recommendation.md</a></p>
+      </div>
+      <div class="card decision">
+        <h3>Recorded release decisions</h3>
+        <div class="gates">
+          <div class="gate"><span>gemini-3.8-flash, full release</span><span class="fail">5 of 10 · withheld</span></div>
+          <div class="gate"><span>gemini-3.8-flash, 73-intent cohort</span><span class="fail">4 of 6 · withheld</span></div>
+          <div class="gate"><span>gemini-3.1-flash-lite</span><span class="fail">3 of 10 · rejected</span></div>
+          <div class="gate"><span>classifier_v1 (baseline)</span><span class="pass">stays in production</span></div>
+        </div>
+        <p class="src">Every gate stores its threshold, the observed value, and pass or fail. A full activation is blocked in software while any gate fails. <span class="badge MEASURED">MEASURED</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="try">
+  <div class="wrap">
+    <p class="kicker">Try it</p>
+    <h2>Play with the real app. It takes seconds, not minutes.</h2>
+    <p class="intro">The live app opens straight away with the full portfolio. In the background it starts the unchanged Python backend inside your browser, so every click is checked by the same rules as the server. Switch roles with the "Viewing as" menu. "Reset demo" puts everything back.</p>
+    <div class="try">
+      <ol class="steps">
+        <li><span class="n">1</span><div><b>Move an app through the lifecycle</b><span>On Pipeline, drag Mortgage Document Q&amp;A from Review gates to Evaluation. Then try Meeting Notes to Business case: it is blocked until a business case exists.</span></div></li>
+        <li><span class="n">2</span><div><b>Try to approve your own submission</b><span>As Governance admin, submit an app and open Reviews. A different person must approve.</span></div></li>
+        <li><span class="n">3</span><div><b>Edit the release cohort</b><span>Support Triage, Decision Policy tab: change the cohort and preview the gates, recomputed from the measured results.</span></div></li>
+        <li><span class="n">4</span><div><b>Record a release decision</b><span>On the Release tab, try "Activate full". It stays blocked while gates fail; record "Withhold" instead.</span></div></li>
+        <li><span class="n">5</span><div><b>Switch to Executive viewer</b><span>Every write control disappears, and the backend refuses writes anyway.</span></div></li>
+      </ol>
+      <div>
+        <figure class="frame" style="margin:0">
+          <img src="assets/web/screens/pipeline.webp" alt="The Pipeline page: application cards in lifecycle columns from Intake to Evaluation, with owners, platforms, risk tiers, and days in stage" loading="lazy" width="1600" height="900">
+          <figcaption>Pipeline · every move validated against configs/lifecycle.yaml and your role</figcaption>
+        </figure>
+        <div class="cta" style="margin-top:20px">
+          <a class="btn primary" href="console/">Open the live app</a>
+        </div>
+        <p class="ready" id="ready" aria-live="polite"><span class="dot"></span><span id="ready-text">Preparing the app in the background…</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="watch">
+  <div class="wrap">
+    <p class="kicker">Watch</p>
+    <h2>The product in four minutes, the architecture in one.</h2>
+    <div class="videos">
+      <figure style="margin:0">
+        <video controls preload="none" poster="assets/web/control_plane_demo-poster.webp" aria-label="Four-minute product demo with burned-in captions">
+          <source src="media/control_plane_demo.webm" type="video/webm">
+          <source src="media/control_plane_demo.mp4" type="video/mp4">
+        </video>
+        <figcaption class="src">Product demo · 4:00 · captions burned in · real console footage</figcaption>
+      </figure>
+      <figure style="margin:0">
+        <video controls preload="none" poster="assets/web/architecture_overview-poster.webp" aria-label="58-second architecture overview with burned-in captions">
+          <source src="media/architecture_overview.webm" type="video/webm">
+          <source src="media/architecture_overview.mp4" type="video/mp4">
+        </video>
+        <figcaption class="src">Architecture overview · 0:58 · captions burned in</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="product">
+  <div class="wrap">
+    <p class="kicker">The product</p>
+    <h2>One console for the portfolio, the evidence, and the decision.</h2>
+    <p class="intro">Screens from the deployed Google Cloud console in live mode. Every number on screen carries its provenance: MEASURED, SIMULATED, FIXTURE, or ASSUMPTION.</p>
+    <div class="carousel" aria-roledescription="carousel" aria-label="Console screens">
+      <div class="slides" id="slides" tabindex="0" aria-live="polite"></div>
+      <div class="car-nav">
+        <div class="dots" id="dots" role="tablist" aria-label="Choose a screen"></div>
+        <button class="icon-btn" id="prev" type="button" aria-label="Previous screen"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+        <button class="icon-btn" id="next" type="button" aria-label="Next screen"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="architecture">
+  <picture><source type="image/webp" srcset="assets/web/architecture-960.webp 960w, assets/web/architecture.webp 1920w" sizes="100vw"><img src="assets/web/architecture.webp" alt="" loading="lazy"></picture>
+  <div class="wrap">
+    <p class="kicker">Architecture</p>
+    <h2>Google Cloud, least privilege, and a budget on every call.</h2>
+    <p class="intro">Cloud Run behind Identity-Aware Proxy, Firestore for the registry and the ledger, BigQuery for analytics, Cloud Run jobs on a schedule, and Vertex AI for the models. It was deployed, smoke-tested, recorded, and torn down the same day. Eleven diagrams, each drawn with Google's official icons; select one to enlarge it.</p>
+    <div class="gallery" id="gallery"></div>
+  </div>
+</section>
+<dialog id="lightbox" aria-label="Diagram">
+  <div class="bar"><b id="lb-title"></b><a id="lb-source" class="btn small" href="#">draw.io source</a><a id="lb-full" class="btn small" href="#">Full size</a><button class="icon-btn" id="lb-close" type="button" aria-label="Close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+  <img id="lb-img" alt="">
+</dialog>
+
+<section class="band" id="evidence">
+  <picture><source type="image/webp" srcset="assets/web/evidence-960.webp 960w, assets/web/evidence.webp 1920w" sizes="100vw"><img src="assets/web/evidence.webp" alt="" loading="lazy"></picture>
+  <div class="wrap">
+    <p class="kicker">Evidence</p>
+    <h2>Three configs, the same 1,540 frozen cases.</h2>
+    <p class="intro">Thresholds were tuned on a development split and frozen before any frozen run; each config saw the frozen set once, in the same order. Banking77 (CC BY 4.0), 77 intents.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th scope="col">Metric</th><th scope="col" class="num">classifier_v1</th><th scope="col" class="num">gemini-3.8-flash</th><th scope="col" class="num">gemini-3.1-flash-lite</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Macro F1 (abstain counts as a miss)</th><td class="num best">0.913</td><td class="num">0.885</td><td class="num worst">0.839</td></tr>
+          <tr><th scope="row">Automation coverage</th><td class="num best">86.2%</td><td class="num">79.4%</td><td class="num">76.5%</td></tr>
+          <tr><th scope="row">Precision on auto-routed cases</th><td class="num">0.944</td><td class="num best">0.976</td><td class="num">0.974</td></tr>
+          <tr><th scope="row">Review rate</th><td class="num">13.8%</td><td class="num">20.5%</td><td class="num">22.8%</td></tr>
+          <tr><th scope="row">Latency p95</th><td class="num best">2 ms</td><td class="num">3,531 ms</td><td class="num">1,382 ms</td></tr>
+          <tr><th scope="row">Model cost per 1,000 cases</th><td class="num best">$0.0000</td><td class="num">$1.0655</td><td class="num">$1.0139</td></tr>
+          <tr><th scope="row">Out-of-domain risk cases routed correctly</th><td class="num worst">0.00</td><td class="num best">0.90</td><td class="num best">0.90</td></tr>
+          <tr><th scope="row">Lowest recall on a sensitive intent</th><td class="num">0.75</td><td class="num">0.60</td><td class="num worst">0.50</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="src">All values <span class="badge MEASURED">MEASURED</span> on Vertex AI at list prices. Risk-suite cases are <span class="badge AUTHORED">AUTHORED</span> by one rater. Source: <a data-evidence="docs/experiment_report.md" href="docs/experiment_report.md">docs/experiment_report.md</a></p>
+  </div>
+</section>
+
+<section id="business">
+  <div class="wrap">
+    <p class="kicker">Business case</p>
+    <h2>The LLM is worth more per month, and still not safe to ship.</h2>
+    <p class="intro">Net monthly value = labor saved on correct auto routes − misroute costs − review labor − model cost − infrastructure, for 50,000 cases a month. Every input is an assumption a finance partner would replace; the precision figures are measured.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th scope="col">Config</th><th scope="col" class="num">Auto precision</th><th scope="col" class="num">Breakeven precision</th><th scope="col" class="num">Net monthly value</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">classifier_v1</th><td class="num">0.944 <span class="badge MEASURED">MEASURED</span></td><td class="num">0.849 <span class="badge ASSUMPTION">ASSUMPTION</span></td><td class="num">$57,270 <span class="badge ASSUMPTION">ASSUMPTION</span></td></tr>
+          <tr><th scope="row">gemini-3.8-flash</th><td class="num">0.976 <span class="badge MEASURED">MEASURED</span></td><td class="num">0.865 <span class="badge ASSUMPTION">ASSUMPTION</span></td><td class="num">$66,957 <span class="badge ASSUMPTION">ASSUMPTION</span></td></tr>
+          <tr><th scope="row">gemini-3.1-flash-lite</th><td class="num">0.974 <span class="badge MEASURED">MEASURED</span></td><td class="num">0.864 <span class="badge ASSUMPTION">ASSUMPTION</span></td><td class="num">$62,130 <span class="badge ASSUMPTION">ASSUMPTION</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 style="margin-top:40px">Sensitivity for gemini-3.8-flash: net monthly value (breakeven precision)</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th scope="col">Misroute cost \ review minutes</th><th scope="col" class="num">0.5 min</th><th scope="col" class="num">1 min</th><th scope="col" class="num">2 min</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">$4</th><td class="num">$74,429 (0.810)</td><td class="num">$70,594 (0.819)</td><td class="num">$62,923 (0.836)</td></tr>
+          <tr><th scope="row">$8</th><td class="num">$70,793 (0.859)</td><td class="num best">$66,957 (0.865)</td><td class="num">$59,287 (0.878)</td></tr>
+          <tr><th scope="row">$16</th><td class="num">$63,520 (0.906)</td><td class="num">$59,685 (0.911)</td><td class="num">$52,014 (0.919)</td></tr>
+          <tr><th scope="row">$32</th><td class="num">$48,974 (0.944)</td><td class="num">$45,139 (0.947)</td><td class="num">$37,469 (0.952)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="src">All values <span class="badge ASSUMPTION">ASSUMPTION</span>; the highlighted cell is the base case. Value is not the release criterion: the sensitive-recall gate is. Source: <a data-evidence="docs/business_case.md" href="docs/business_case.md">docs/business_case.md</a></p>
+  </div>
+</section>
+
+<section class="band" id="incident">
+  <picture><source type="image/webp" srcset="assets/web/incident-960.webp 960w, assets/web/incident.webp 1920w" sizes="100vw"><img src="assets/web/incident.webp" alt="" loading="lazy"></picture>
+  <div class="wrap">
+    <p class="kicker">Incident response</p>
+    <h2>Drift was caught the day it began, and automation stood down.</h2>
+    <p class="intro">A drill on the production classifier: alert thresholds were frozen from a baseline window before 40 authored drift cases were injected on simulated days 10 to 12.</p>
+    <ol class="timeline">
+      <li><span class="day">Days 1–7</span><b>Baseline</b><span>Thresholds set from the mean and spread of each daily signal, then frozen.</span></li>
+      <li><span class="day">Day 10</span><b>Drift begins</b><span>Paraphrased sensitive and out-of-domain messages join the traffic. <span class="badge FIXTURE">FIXTURE</span></span></li>
+      <li class="hot"><span class="day">Day 10</span><b>Incident opened</b><span>Review rate 0.2177 against a threshold of 0.2172: detected 0 days after the drift began. <span class="badge MEASURED">MEASURED</span></span></li>
+      <li class="hot"><span class="day">Day 10</span><b>Pause and roll back</b><span>The governance admin pauses automation; every case goes to human review.</span></li>
+      <li class="ok"><span class="day">Day 13</span><b>Resume</b><span>A shadow check passes every threshold, and automation resumes.</span></li>
+    </ol>
+    <p class="src" style="margin-top:28px">The honest caveat: the margin was 0.0006 and no other signal breached, so the report recommends a drift-specific signal before relying on these alerts. Source: <a data-evidence="docs/incident_report.md" href="docs/incident_report.md">docs/incident_report.md</a></p>
+  </div>
+</section>
+
+<section id="engineering">
+  <div class="wrap">
+    <p class="kicker">Engineering decisions</p>
+    <h2>Choices, the alternatives, and why.</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th scope="col">Decision</th><th scope="col">Alternatives considered</th><th scope="col">Why</th></tr></thead>
+        <tbody>
+          <tr><td>A deterministic six-rule policy decides every route</td><td>Trust the LLM's self-reported confidence</td><td>Self-reported confidence is neither calibrated nor auditable. Thresholds are tuned on development data and frozen before evaluation. (D6, D15)</td></tr>
+          <tr><td>The frozen set is used once per config</td><td>Iterate against the test set</td><td>Re-running against the test set quietly tunes to it; a re-run needs a logged reason. (D10)</td></tr>
+          <tr><td>A ledger reserves budget before every model call</td><td>Billing alerts after the fact</td><td>Reserve, send, settle exactly once; lost responses are held, never retried. Total model spend was capped at $10. (D11, D13, D20)</td></tr>
+          <tr><td>Withhold the better-scoring LLM</td><td>Ship a narrowed cohort anyway</td><td>The cohort still failed macro F1 and one sensitive recall; the measured result wins over the demo story. (D30)</td></tr>
+          <tr><td>IAP directly on Cloud Run; the backend re-verifies every assertion</td><td>A load balancer in front of IAP</td><td>No load balancer cost, and a forged header is rejected at the edge and again in the app. (D33, D35)</td></tr>
+          <tr><td>Analytics export loads staging tables, then MERGEs</td><td>Streaming inserts</td><td>Re-running the nightly export cannot double-count: the same row count after two runs. (D34, D37)</td></tr>
+          <tr><td>The public app runs the unchanged backend in the browser</td><td>A read-only snapshot; a hosted backend and database</td><td>Visitors can act, nobody can deface it, it costs nothing, and a parity test holds it to the server. (D36, D38)</td></tr>
+          <tr><td>Diagrams generated as draw.io from code, with draw.io's own Google Cloud icons</td><td>Auto-layout diagram libraries</td><td>Exact placement and editable files; a test checks the icon styles against draw.io's source. (D39)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="src">Thirty-nine recorded decisions in <a data-evidence="docs/decisions.md" href="docs/decisions.md">docs/decisions.md</a>.</p>
+  </div>
+</section>
+
+<section id="limitations">
+  <div class="wrap">
+    <p class="kicker">Limitations</p>
+    <h2>What this does not prove.</h2>
+    <div class="grid2">
+      <ul class="plain">
+        <li><b>Single-rater labels.</b> The 60 risk-suite cases and the 40 drift cases were written and labeled by one person. <span class="badge AUTHORED">AUTHORED</span></li>
+        <li><b>Simulated traffic.</b> Shadow mode replays the Banking77 test split over 14 simulated days, not live customers. <span class="badge SIMULATED">SIMULATED</span></li>
+        <li><b>Benchmark versus production.</b> Banking77 messages are short, single-intent, and English. Real queues are messier.</li>
+      </ul>
+      <ul class="plain">
+        <li><b>Assumed economics.</b> Volumes, minutes, labor rates, and misroute costs are placeholders a finance partner would supply. <span class="badge ASSUMPTION">ASSUMPTION</span></li>
+        <li><b>A sample organization.</b> The 40-app registry is generated, not a real bank's portfolio. <span class="badge SYNTHETIC">SYNTHETIC</span></li>
+        <li><b>No live model calls in the public app.</b> Its numbers come from the committed real runs; the Google Cloud deployment was torn down after verification.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="band" id="author">
+  <picture><source type="image/webp" srcset="assets/web/closing-960.webp 960w, assets/web/closing.webp 1920w" sizes="100vw"><img src="assets/web/closing.webp" alt="" loading="lazy"></picture>
+  <div class="wrap">
+    <div>
+      <p class="kicker">About</p>
+      <h2>Built end to end as a product case study.</h2>
+      <p>Product framing, evaluation design, the governance rules, the Google Cloud deployment, and the console were built for this portfolio project. The repository holds the code, the measured artifacts, every report, and the decision log.</p>
+      <div class="links">
+        <a class="btn primary" href="console/">Open the live app</a>
+        <a class="btn" href="#" data-repo>Repository</a>
+        <a class="btn" href="https://github.com/abh2050">GitHub profile</a>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Read the evidence</h3>
+      <ul class="plain" style="margin-top:12px">
+        <li><a data-evidence="docs/release_recommendation.md" href="docs/release_recommendation.md">Release recommendation</a></li>
+        <li><a data-evidence="docs/experiment_report.md" href="docs/experiment_report.md">Experiment report</a></li>
+        <li><a data-evidence="docs/business_case.md" href="docs/business_case.md">Business case</a></li>
+        <li><a data-evidence="docs/incident_report.md" href="docs/incident_report.md">Incident report</a></li>
+        <li><a data-evidence="docs/executive_report.md" href="docs/executive_report.md">Executive report</a></li>
+        <li><a data-evidence="docs/decisions.md" href="docs/decisions.md">Decision log</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  // Theme: follow the system until the visitor picks one.
+  const root = document.documentElement;
+  try { const t = localStorage.getItem("cp.site.theme"); if (t) root.dataset.theme = t; } catch {}
+  document.getElementById("theme").addEventListener("click", () => {
+    const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark ? "light" : "dark";
+    try { localStorage.setItem("cp.site.theme", root.dataset.theme); } catch {}
+  });
+
+  // Repository links: derived from the GitHub Pages address, so nothing is hard-coded.
+  const host = location.hostname, seg = location.pathname.split("/").filter(Boolean)[0];
+  const repo = host.endsWith(".github.io") && seg ? `https://github.com/${host.split(".")[0]}/${seg}` : null;
+  document.querySelectorAll("[data-repo]").forEach(a => { a.href = repo || "https://github.com/abh2050"; });
+  if (repo) document.querySelectorAll("[data-evidence]").forEach(a => { a.href = `${repo}/blob/main/${a.dataset.evidence}`; });
+
+  // Teaser: autoplay muted, unless the visitor prefers reduced motion.
+  const teaser = document.getElementById("teaser");
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { teaser.controls = true; }
+  else { teaser.autoplay = true; teaser.play().catch(() => { teaser.controls = true; }); }
+
+  // Console screens carousel.
+  const screens = [
+    ["portfolio", "Portfolio", "KPIs, the cost-versus-value investment matrix, and an attention queue that names the next decision."],
+    ["pipeline", "Pipeline", "Every app by lifecycle stage; drag or use the keyboard, and the server validates each move."],
+    ["flow", "Flow", "How apps entered, advanced, stalled, and exited, from BigQuery when deployed."],
+    ["triage-business", "Business case", "Breakeven precision and the sensitivity of net value to its assumptions."],
+    ["triage-experiments", "Experiments", "Three configs on the same frozen cases, with per-intent drill-downs and bootstrap intervals."],
+    ["triage-policy", "Decision policy", "The cohort editor previews the release gates from the measured results."],
+    ["triage-release", "Release", "Every gate's threshold, observed value, and result, with the recorded decision and rationale."],
+    ["triage-monitoring", "Monitoring", "Daily signals against frozen alert lines, with the drill's incident marked."],
+    ["incidents", "Incidents", "The drill's timeline: detection, pause, rollback, and recovery."],
+  ];
+  const slides = document.getElementById("slides"), dots = document.getElementById("dots");
+  screens.forEach(([id, name, text], i) => {
+    const f = document.createElement("figure");
+    f.setAttribute("aria-roledescription", "slide");
+    f.setAttribute("aria-label", `${i + 1} of ${screens.length}: ${name}`);
+    f.innerHTML = `<img src="assets/web/screens/${id}.webp" alt="The ${name} page of the console in live mode" loading="lazy" width="1600" height="900"><figcaption><b>${name}.</b> ${text}</figcaption>`;
+    slides.append(f);
+    const d = document.createElement("button");
+    d.type = "button"; d.setAttribute("aria-label", `Show ${name}`);
+    d.addEventListener("click", () => go(i));
+    dots.append(d);
+  });
+  let current = 0;
+  const go = i => { current = (i + screens.length) % screens.length; slides.scrollTo({ left: slides.clientWidth * current, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); mark(); };
+  const mark = () => [...dots.children].forEach((d, i) => d.setAttribute("aria-current", String(i === current)));
+  slides.addEventListener("scroll", () => { const i = Math.round(slides.scrollLeft / slides.clientWidth); if (i !== current) { current = i; mark(); } }, { passive: true });
+  slides.addEventListener("keydown", e => { if (e.key === "ArrowRight") go(current + 1); if (e.key === "ArrowLeft") go(current - 1); });
+  document.getElementById("prev").addEventListener("click", () => go(current - 1));
+  document.getElementById("next").addEventListener("click", () => go(current + 1));
+  mark();
+
+  // Diagram gallery and lightbox.
+  const diagrams = [
+    ["01_system_overview", "System overview", "What the deploy script creates"],
+    ["02_triage_request_path", "Triage request path", "Ledger, three configs, policy, settlement"],
+    ["03_registry_lifecycle", "Registry lifecycle", "Nine stages and the gate rules"],
+    ["04_identity_and_access", "Identity and access", "IAP checks and every service account grant"],
+    ["05_budget_ledger", "Budget ledger", "Reserve, send, settle, hold, pause"],
+    ["06_experiment_to_release", "Experiment to release", "From dev tuning to the recorded decision"],
+    ["07_analytics_pipeline", "Analytics pipeline", "Idempotent export to BigQuery"],
+    ["08_monitoring_and_incident", "Monitoring and incident", "Signals, detection, pause, rollback"],
+    ["09_delivery", "Delivery", "CI, image, deploy, smoke checks, teardown"],
+    ["10_local_development", "Local development", "Offline except paid model calls"],
+    ["11_public_demo", "Public demo", "The real backend in the visitor's browser"],
+  ];
+  const gallery = document.getElementById("gallery"), lb = document.getElementById("lightbox");
+  diagrams.forEach(([file, name, sub], i) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.innerHTML = `<img src="assets/web/diagrams/${file}.webp" alt="Diagram ${i + 1}: ${name}. ${sub}." loading="lazy" width="1100" height="690"><span>${String(i + 1).padStart(2, "0")} · ${name}<small>${sub}</small></span>`;
+    b.addEventListener("click", () => {
+      document.getElementById("lb-title").textContent = `${String(i + 1).padStart(2, "0")} · ${name}`;
+      const img = document.getElementById("lb-img");
+      img.src = `docs/diagrams/${file}.png`; img.alt = `Diagram ${i + 1}: ${name}. ${sub}.`;
+      document.getElementById("lb-full").href = `docs/diagrams/${file}.png`;
+      document.getElementById("lb-source").href = repo ? `${repo}/blob/main/docs/diagrams/${file}.drawio` : `docs/diagrams/${file}.drawio`;
+      lb.showModal();
+    });
+    gallery.append(b);
+  });
+  document.getElementById("lb-close").addEventListener("click", () => lb.close());
+  lb.addEventListener("click", e => { if (e.target === lb) lb.close(); });
+
+  // Warm the app while the visitor reads: fetch its Python runtime into the HTTP cache
+  // once this page is idle, so "Open the live app" starts in a second or two.
+  const ready = document.getElementById("ready"), readyText = document.getElementById("ready-text");
+  const conn = navigator.connection;
+  const skip = conn && (conn.saveData || /2g/.test(conn.effectiveType || ""));
+  async function warm() {
+    try {
+      const base = "console/demo/";
+      const [lock, manifest] = await Promise.all([
+        fetch(base + "pyodide/pyodide-lock.json").then(r => r.json()),
+        fetch(base + "manifest.json").then(r => r.json()),
+      ]);
+      const files = ["pyodide/pyodide.mjs", "pyodide/pyodide.asm.js", "pyodide/pyodide.asm.wasm", "pyodide/python_stdlib.zip", "pyodide/packages.json", manifest.bundle]
+        .concat(Object.values(lock.packages).map(p => "pyodide/" + p.file_name));
+      await Promise.all(files.map(f => fetch(base + f, { priority: "low" }).then(r => r.ok && r.arrayBuffer())));
+      ready.classList.add("done");
+      readyText.textContent = "The app is ready: it will open instantly.";
+    } catch {
+      readyText.textContent = "The app loads on demand; it opens in a few seconds.";
+    }
+  }
+  if (skip) readyText.textContent = "The app loads on demand to save your data.";
+  else addEventListener("load", () => (window.requestIdleCallback || setTimeout)(warm, { timeout: 4000 }));
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+# Atmosphere imagery for index.html (console spec Section 9B, project spec Section 14.3).
+# Generated with Higgsfield (scripts/generate_assets.py). Atmosphere only: no text, no UI,
+# no metrics, no logos, no people. Product evidence comes only from real captures and the
+# draw.io diagrams. Art direction: deep navy and graphite, one cool accent matching the
+# console accent (#4C8DFF family), soft volumetric light, calm.
+model: higgsfield-ai/soul/v2/standard
+aspect_ratio: "16:9"
+resolution: 1080p
+style_suffix: >-
+  cinematic, calm, minimal, deep navy and graphite palette, one cool blue accent glow,
+  soft volumetric light, subtle film grain, no text, no letters, no numbers, no people,
+  no faces, no logos, no user interface, no screens
+assets:
+  - id: hero
+    use: Hero background behind the headline and the teaser video
+    takes: 2
+    prompt: >-
+      wide abstract space of thin luminous lines forming a series of open gates receding
+      into darkness, one gate softly lit in cool blue, large empty dark area on the left
+  - id: decision
+    use: Background band for "The decision" section
+    takes: 2
+    prompt: >-
+      a single narrow beam of cool light stopped by a translucent glass threshold, the
+      light pooling before it, dark graphite surroundings, quiet and deliberate
+  - id: evidence
+    use: Background band for the evidence and scorecard section
+    takes: 2
+    prompt: >-
+      an orderly field of faint glowing measurement ticks and fine grid lines on dark
+      graphite, a few cells gently illuminated, precise and quiet
+  - id: architecture
+    use: Background band for the architecture gallery
+    takes: 2
+    prompt: >-
+      layered translucent planes stacked in depth like floors of a building, connected by
+      thin vertical light threads, dark navy space
+  - id: incident
+    use: Background band for the incident drill section
+    takes: 2
+    prompt: >-
+      a calm dark horizon with one faint ripple of disturbance in the light, a soft pulse
+      of cool light being contained by thin parallel lines
+  - id: closing
+    use: Background for the author and links section
+    takes: 2
+    prompt: >-
+      dawn-like soft cool glow rising over a dark minimal landscape of thin lines, open and
+      hopeful, lots of empty space

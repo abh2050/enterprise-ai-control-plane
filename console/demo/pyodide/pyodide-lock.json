@@ -1,0 +1,237 @@
+{
+ "info": {
+  "abi_version": "2025_0",
+  "arch": "wasm32",
+  "platform": "emscripten_4_0_9",
+  "python": "3.13.2"
+ },
+ "packages": {
+  "typing-inspection": {
+   "depends": [],
+   "file_name": "typing_inspection-0.4.2-py3-none-any.whl",
+   "imports": [
+    "typing_inspection"
+   ],
+   "install_dir": "site",
+   "name": "typing-inspection",
+   "package_type": "package",
+   "sha256": "a00e8bbec6999ab79272b06aaacbeee737ff3c15cb8785b34fd189d35b0c24e0",
+   "unvendored_tests": false,
+   "version": "0.4.2"
+  },
+  "typing-extensions": {
+   "depends": [],
+   "file_name": "typing_extensions-4.15.0-py3-none-any.whl",
+   "imports": [
+    "typing_extensions"
+   ],
+   "install_dir": "site",
+   "name": "typing-extensions",
+   "package_type": "package",
+   "sha256": "42190f892f6219350c50e107954f57cb6196acac818fece4a7d21689c94f71de",
+   "unvendored_tests": false,
+   "version": "4.15.0"
+  },
+  "annotated-types": {
+   "depends": [],
+   "file_name": "annotated_types-0.7.0-py3-none-any.whl",
+   "imports": [
+    "annotated_types"
+   ],
+   "install_dir": "site",
+   "name": "annotated-types",
+   "package_type": "package",
+   "sha256": "6a8e8a10986f2f73bf3aa1e63eb807c845bdf97a0fa436dfda1d4e8a81603fb0",
+   "unvendored_tests": true,
+   "version": "0.7.0"
+  },
+  "pydantic": {
+   "depends": [
+    "typing-extensions",
+    "pydantic_core",
+    "annotated-types",
+    "typing-inspection"
+   ],
+   "file_name": "pydantic-2.12.5-py3-none-any.whl",
+   "imports": [
+    "pydantic"
+   ],
+   "install_dir": "site",
+   "name": "pydantic",
+   "package_type": "package",
+   "sha256": "453523330094d7d47780b540c12580e8e743ea34c5aa4205e43577655c39ca23",
+   "unvendored_tests": false,
+   "version": "2.12.5"
+  },
+  "pyyaml": {
+   "depends": [],
+   "file_name": "pyyaml-6.0.2-cp313-cp313-pyemscripten_2025_0_wasm32.whl",
+   "imports": [
+    "_yaml",
+    "yaml"
+   ],
+   "install_dir": "site",
+   "name": "pyyaml",
+   "package_type": "package",
+   "sha256": "20b40e900704ae4e204a9978d9806f148205df4cbdf44b5eb73a189254a72757",
+   "unvendored_tests": false,
+   "version": "6.0.2"
+  },
+  "pydantic-core": {
+   "depends": [
+    "typing-extensions"
+   ],
+   "file_name": "pydantic_core-2.41.5-cp313-cp313-pyemscripten_2025_0_wasm32.whl",
+   "imports": [
+    "pydantic_core"
+   ],
+   "install_dir": "site",
+   "name": "pydantic_core",
+   "package_type": "package",
+   "sha256": "bd76fcb1cc8e93de5c6cb4d0fa0754382d4cbb6d726a1643ce174e1785c40b75",
+   "unvendored_tests": false,
+   "version": "2.41.5"
+  },
+  "numpy": {
+   "depends": [],
+   "file_name": "numpy-2.2.5-cp313-cp313-pyemscripten_2025_0_wasm32.whl",
+   "imports": [
+    "numpy"
+   ],
+   "install_dir": "site",
+   "name": "numpy",
+   "package_type": "package",
+   "sha256": "800c98edc0c864dfa49f07005680c699b4b42b84eae1f8cb19d35b3634e7f05c",
+   "unvendored_tests": false,
+   "version": "2.2.5"
+  },
+  "pydantic-settings": {
+   "name": "pydantic-settings",
+   "version": "2.15.0",
+   "file_name": "pydantic_settings-2.15.0-py3-none-any.whl",
+   "install_dir": "site",
+   "sha256": "0ba092c291c94baceb5eff768aa0d56400a457585bc0175925a5a5510303da42",
+   "imports": [],
+   "depends": [
+    "pydantic",
+    "python-dotenv",
+    "typing-inspection"
+   ]
+  },
+  "starlette": {
+   "name": "starlette",
+   "version": "1.7.0",
+   "file_name": "starlette-1.7.0-py3-none-any.whl",
+   "install_dir": "site",
+   "sha256": "67f8e99895493dd2911a03f11314af6ceebeae4e704bb9f43dfc6a9db151c93e",
+   "imports": [],
+   "depends": [
+    "anyio"
+   ]
+  },
+  "python-dotenv": {
+   "name": "python-dotenv",
+   "version": "1.2.4",
+   "file_name": "python_dotenv-1.2.4-py3-none-any.whl",
+   "install_dir": "site",
+   "sha256": "42269a8a5b3fd54ffa6f3d84b18abed50064717576b4ecf03dc4a55d8aa04fdc",
+   "imports": [
+    "dotenv"
+   ],
+   "depends": []
+  },
+  "annotated-doc": {
+   "name": "annotated-doc",
+   "version": "0.0.5",
+   "file_name": "annotated_doc-0.0.5-py3-none-any.whl",
+   "install_dir": "site",
+   "sha256": "117bac03a25ede5df5440e855b32d556049ca169ead221505badf432fed4b101",
+   "imports": [],
+   "depends": []
+  },
+  "opentelemetry-api": {
+   "name": "opentelemetry-api",
+   "version": "1.45.1",
+   "file_name": "opentelemetry_api-1.45.1-py3-none-any.whl",
+   "install_dir": "site",
+   "sha256": "b31553efa588ae44bc306f863c785c5333a9ecc091248c6ee68b4b6c87fdedfb",
+   "imports": [],
+   "depends": [
+    "typing-extensions"
+   ]
+  },
+  "fastapi": {
+   "name": "fastapi",
+   "version": "0.143.0",
+   "file_name": "fastapi-0.143.0-py3-none-any.whl",
+   "install_dir": "site",
+   "sha256": "3e9395fd35276425b61b516a31fdd7c77fe2af83e41b4da22e30696fb1304c5d",
+   "imports": [],
+   "depends": [
+    "annotated-doc",
+    "opentelemetry-api",
+    "pydantic",
+    "starlette",
+    "typing-extensions",
+    "typing-inspection"
+   ]
+  },
+  "sniffio": {
+   "depends": [],
+   "file_name": "sniffio-1.3.1-py3-none-any.whl",
+   "imports": [
+    "sniffio"
+   ],
+   "install_dir": "site",
+   "name": "sniffio",
+   "package_type": "package",
+   "sha256": "00e8755f7917b0cbd388da79eb03bab98f88206eb0c6116a0bf77c4090f064bf",
+   "unvendored_tests": true,
+   "version": "1.3.1"
+  },
+  "libopenssl": {
+   "depends": [],
+   "file_name": "libopenssl-1.1.1w.zip",
+   "imports": [],
+   "install_dir": "dynlib",
+   "name": "libopenssl",
+   "package_type": "shared_library",
+   "sha256": "b45d7b987ff32bf43c40a56df4db6d627354d8e076b4e897d8d11b81fd596899",
+   "unvendored_tests": false,
+   "version": "1.1.1w"
+  },
+  "ssl": {
+   "depends": [
+    "libopenssl"
+   ],
+   "file_name": "ssl-1.0.0-cp313-cp313-pyemscripten_2025_0_wasm32.whl",
+   "imports": [
+    "ssl",
+    "_ssl"
+   ],
+   "install_dir": "site",
+   "name": "ssl",
+   "package_type": "cpython_module",
+   "sha256": "aebcda0b42e9409aa82caaaa177ef6ee8c275921a59ca476801f5eb0fc39f6d3",
+   "unvendored_tests": false,
+   "version": "1.0.0"
+  },
+  "anyio": {
+   "depends": [
+    "ssl",
+    "sniffio",
+    "typing-extensions"
+   ],
+   "file_name": "anyio-4.9.0-py3-none-any.whl",
+   "imports": [
+    "anyio"
+   ],
+   "install_dir": "site",
+   "name": "anyio",
+   "package_type": "package",
+   "sha256": "7e2c5a3638a1a4854fa1b5b5e1e81fe7b7e548765b871fa566a75f99f29d3dda",
+   "unvendored_tests": false,
+   "version": "4.9.0"
+  }
+ }
+}

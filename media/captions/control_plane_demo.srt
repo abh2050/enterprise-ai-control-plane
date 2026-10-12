@@ -1,0 +1,143 @@
+1
+00:00:00,000 --> 00:00:06,000
+Enterprise AI Control Plane
+Decide what ships. Enforce the decision.
+
+2
+00:00:06,000 --> 00:00:18,000
+Portfolio: investment, risk, spend, and bottlenecks
+across a generated sample organization. [SYNTHETIC]
+
+3
+00:00:18,000 --> 00:00:26,000
+Pipeline: drag Mortgage Document Q&A into Evaluation.
+Its approvals are in place. [SYNTHETIC]
+
+4
+00:00:26,000 --> 00:00:35,000
+Meeting Notes is blocked: the business case is missing. [SYNTHETIC]
+
+5
+00:00:35,000 --> 00:00:41,000
+Executive viewer: write controls disappear. [SYNTHETIC]
+
+6
+00:00:41,000 --> 00:00:51,000
+Flow: see lifecycle movement and where apps stall. [SYNTHETIC]
+
+7
+00:00:51,000 --> 00:01:03,000
+Applications: search the registry by name, owner, or problem.
+Filter by stage and health. [SYNTHETIC]
+
+8
+00:01:03,000 --> 00:01:18,000
+Reviews: an independent reviewer checks evidence
+and approves a gate. Submitters cannot approve themselves. [SYNTHETIC]
+
+9
+00:01:18,000 --> 00:01:27,000
+Business Case: compare breakeven precision.
+Classifier 0.849; high capability 0.865; low cost 0.864. [ASSUMPTION]
+
+10
+00:01:27,000 --> 00:01:36,000
+Net monthly value: classifier $57,270;
+high capability $66,957; low cost $62,130. [ASSUMPTION]
+
+11
+00:01:36,000 --> 00:01:44,000
+Experiments: every configuration sees
+the same 1,540 frozen cases. [MEASURED]
+
+12
+00:01:44,000 --> 00:01:52,000
+gemini-3.8-flash macro F1: 0.885.
+The release floor is 0.893. [MEASURED]
+
+13
+00:01:52,000 --> 00:02:00,000
+4 sensitive intents miss the 0.95 recall gate.
+The lowest is 0.60. [MEASURED]
+
+14
+00:02:00,000 --> 00:02:08,000
+Decision Policy: deterministic routing.
+Edit the cohort, then preview its release gates. [MEASURED]
+
+15
+00:02:08,000 --> 00:02:15,000
+Preview uses frozen results.
+The app owner proposes the cohort for release. [MEASURED]
+
+16
+00:02:15,000 --> 00:02:21,000
+Shadow: 85.5% label agreement over 1,540 cases. [SIMULATED]
+
+17
+00:02:21,000 --> 00:02:27,000
+$1.65 of measured model spend in shadow. [MEASURED]
+
+18
+00:02:27,000 --> 00:02:33,000
++151 USD net value over 14 days
+for the cohort versus the classifier. [ASSUMPTION]
+
+19
+00:02:33,000 --> 00:02:43,000
+Release: 5 of 10 full-candidate gates pass;
+4 of 6 proposed-cohort gates pass. [MEASURED]
+
+20
+00:02:43,000 --> 00:02:51,000
+Activate full is blocked because release gates fail. [MEASURED]
+
+21
+00:02:51,000 --> 00:02:58,000
+A governance admin records Withhold with a rationale. [MEASURED]
+
+22
+00:02:58,000 --> 00:03:04,000
+Monitoring: the incident opened on simulated day 10. [FIXTURE; MEASURED]
+
+23
+00:03:04,000 --> 00:03:10,000
+Review rate: 0.2177 against 0.2172.
+Breach margin: 0.0006. [SIMULATED; FIXTURE; MEASURED]
+
+24
+00:03:10,000 --> 00:03:16,000
+Incidents: drift detected the day it began.
+Automation paused; rollback restores human review. [FIXTURE; MEASURED]
+
+25
+00:03:16,000 --> 00:03:22,000
+The drill records recovery. Automation resumed day 13. [FIXTURE; MEASURED]
+
+26
+00:03:22,000 --> 00:03:30,000
+Audit: trace lifecycle changes, actors,
+reasons, and evidence references. [MEASURED]
+
+27
+00:03:30,000 --> 00:03:38,000
+Settings: admins manage roles.
+Executive viewers have read-only access. [SYNTHETIC]
+
+28
+00:03:38,000 --> 00:03:43,000
+IAP protects the console. Jobs produce durable evidence.
+
+29
+00:03:43,000 --> 00:03:48,000
+Frozen evidence becomes a recorded release decision. [MEASURED]
+
+30
+00:03:48,000 --> 00:03:56,000
+Withhold gemini-3.8-flash. Reject gemini-3.1-flash-lite.
+Limits: single-rater labels, simulated traffic, benchmark gap. [MEASURED]
+
+31
+00:03:56,000 --> 00:04:00,000
+REPO_URL
+Placeholder — owner to insert repository link

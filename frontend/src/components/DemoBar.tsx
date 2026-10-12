@@ -2,7 +2,7 @@
 // and suggested things to try. The backend runs in this tab, so every rule the server
 // enforces is enforced here too, and nothing a visitor does reaches anyone else.
 import { useQueryClient } from "@tanstack/react-query";
-import { Cpu, Lightbulb, LoaderCircle, RotateCcw, TriangleAlert } from "lucide-react";
+import { BookOpen, Cpu, Lightbulb, LoaderCircle, RotateCcw, TriangleAlert } from "lucide-react";
 import { useState, useSyncExternalStore } from "react";
 import { api, getFixtureUser, setFixtureUser } from "../lib/api";
 import { getEngineState, onEngineState } from "../lib/demo/engine";
@@ -29,7 +29,16 @@ export function DemoBar() {
   const qc = useQueryClient();
   const toast = useToast();
   const [who, setWho] = useState(getFixtureUser() ?? "admin@example.com");
-  const [tips, setTips] = useState(false);
+  // First visit: show what to try without being asked.
+  const [tips, setTips] = useState(() => {
+    try {
+      const seen = localStorage.getItem("cp.demoTipsSeen");
+      localStorage.setItem("cp.demoTipsSeen", "1");
+      return !seen;
+    } catch {
+      return true;
+    }
+  });
   const [resetting, setResetting] = useState(false);
 
   return (
@@ -65,6 +74,9 @@ export function DemoBar() {
               void qc.invalidateQueries();
             }}
           />
+          <a href="../" className="m-hover t-card inline-flex min-h-11 items-center gap-2 rounded-lg px-4 text-ink hover:bg-raised sm:min-h-9">
+            <BookOpen size={16} strokeWidth={1.75} aria-hidden /> About this project
+          </a>
           <Button variant="ghost" icon={Lightbulb} aria-expanded={tips} onClick={() => setTips((t) => !t)}>
             Things to try
           </Button>

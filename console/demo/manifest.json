@@ -1,0 +1,18 @@
+{
+  "bundle": "bundle.zip",
+  "sha256": "5489e2535e092092d58fd9b673eabbc4768641f688f950c381c9de64d6f59fb7",
+  "files": 89,
+  "bytes": 421111,
+  "requirements": [
+    "fastapi==0.143.0",
+    "starlette==1.7.0",
+    "pydantic-settings==2.15.0",
+    "python-dotenv==1.2.4"
+  ],
+  "pyodide_packages": [
+    "pydantic",
+    "pyyaml",
+    "numpy",
+    "micropip"
+  ]
+}

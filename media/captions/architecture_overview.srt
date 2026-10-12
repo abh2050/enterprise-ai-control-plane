@@ -1,0 +1,54 @@
+1
+00:00:00,000 --> 00:00:05,000
+Enterprise AI Control Plane
+Governance that decides when not to ship an AI model
+
+2
+00:00:05,000 --> 00:00:10,000
+IAP protects the Cloud Run console.
+
+3
+00:00:10,000 --> 00:00:15,000
+Cloud Run jobs produce evidence; Vertex AI supplies candidates.
+
+4
+00:00:15,000 --> 00:00:20,000
+Firestore keeps records. BigQuery supports analysis. Cloud Storage keeps artifacts.
+
+5
+00:00:20,000 --> 00:00:24,000
+Tune on development data. Freeze the policy. [MEASURED]
+
+6
+00:00:24,000 --> 00:00:28,000
+1,540 frozen cases. Scorecard, then gates. [MEASURED]
+
+7
+00:00:28,000 --> 00:00:31,000
+gemini-3.8-flash: 5 of 10 release gates. [MEASURED]
+
+8
+00:00:31,000 --> 00:00:35,000
+Shadow replay. Decision: withhold. [SIMULATED; MEASURED]
+
+9
+00:00:35,000 --> 00:00:40,000
+The registry enforces lifecycle moves. [SYNTHETIC]
+
+10
+00:00:40,000 --> 00:00:45,000
+Release gates block activation. [MEASURED]
+
+11
+00:00:45,000 --> 00:00:50,000
+Pause automation. Restore human review. [FIXTURE; MEASURED]
+
+12
+00:00:50,000 --> 00:00:56,000
+Withheld: gemini-3.8-flash passed 5 of 10 release gates
+on 1,540 frozen cases. [MEASURED]
+
+13
+00:00:56,000 --> 00:00:58,000
+REPO_URL
+Placeholder — owner to insert repository link

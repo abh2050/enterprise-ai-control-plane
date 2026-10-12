@@ -1,0 +1,1 @@
+{"email": "snapshot viewer", "role": "executive_viewer", "permissions": ["read_portfolio", "read_flow", "read_reports", "read_app_detail", "read_reviews", "read_incidents"], "security_reviewer": false}

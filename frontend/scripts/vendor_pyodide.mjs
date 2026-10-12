@@ -6,6 +6,7 @@
 // pinned in .demo-data/demo/manifest.json), freezes the result into a trimmed
 // pyodide-lock.json, and copies or downloads every file, checking each one's SHA-256
 // against the lock. The browser then loads only these files: no CDN or PyPI at runtime.
+import { setDefaultResultOrder } from "node:dns";
 import { loadPyodide } from "pyodide";
 import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { createHash } from "node:crypto";
@@ -20,6 +21,18 @@ const pyodideDir = dirname(createRequire(import.meta.url).resolve("pyodide/packa
 const manifest = JSON.parse(readFileSync(join(demoDir, "manifest.json"), "utf8"));
 const CORE = ["pyodide.mjs", "pyodide.asm.js", "pyodide.asm.wasm", "python_stdlib.zip"];
 const CDN = `https://cdn.jsdelivr.net/pyodide/v${JSON.parse(readFileSync(join(pyodideDir, "package.json"), "utf8")).version}/full/`;
+
+// Some networks have no working IPv6 route; prefer IPv4 for the downloads below.
+setDefaultResultOrder("ipv4first");
+
+// Skip when the vendored set already matches the pinned inputs: builds stay offline and fast.
+const version = JSON.parse(readFileSync(join(pyodideDir, "package.json"), "utf8")).version;
+const stamp = JSON.stringify({ version, requirements: manifest.requirements, packages: manifest.pyodide_packages });
+const stampFile = join(outDir, "vendor-stamp.json");
+if (existsSync(stampFile) && readFileSync(stampFile, "utf8") === stamp && existsSync(join(outDir, "pyodide-lock.json"))) {
+  console.log(`vendored runtime is current (${outDir}); skipping`);
+  process.exit(0);
+}
 
 const py = await loadPyodide({ stdout: () => {}, stderr: () => {} });
 await py.loadPackage(manifest.pyodide_packages, { messageCallback: () => {} });
@@ -59,4 +72,5 @@ for (const f of CORE) copyFileSync(join(pyodideDir, f), join(outDir, f));
 writeFileSync(join(outDir, "package.json"), '{ "type": "commonjs" }\n');
 writeFileSync(join(outDir, "pyodide-lock.json"), JSON.stringify({ info: lock.info, packages }, null, 1) + "\n");
 writeFileSync(join(outDir, "packages.json"), JSON.stringify(Object.keys(packages).sort()) + "\n");
+writeFileSync(stampFile, stamp);
 console.log(`vendored ${Object.keys(packages).length} packages + runtime into ${outDir}`);

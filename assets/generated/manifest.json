@@ -1,0 +1,134 @@
+[
+ {
+  "file": "hero-1.png",
+  "asset": "hero",
+  "use": "Hero background behind the headline and the teaser video",
+  "model": "higgsfield-ai/soul/v2/standard",
+  "prompt": "wide abstract space of thin luminous lines forming a series of open gates receding into darkness, one gate softly lit in cool blue, large empty dark area on the left, cinematic, calm, minimal, deep navy and graphite palette, one cool blue accent glow, soft volumetric light, subtle film grain, no text, no letters, no numbers, no people, no faces, no logos, no user interface, no screens",
+  "aspect_ratio": "16:9",
+  "resolution": "1080p",
+  "request_id": "154fe267-4cea-4ade-b6d4-8563eb55b3c7",
+  "generated_at": "2026-10-12T19:47:16+00:00"
+ },
+ {
+  "file": "hero-2.png",
+  "asset": "hero",
+  "use": "Hero background behind the headline and the teaser video",
+  "model": "higgsfield-ai/soul/v2/standard",
+  "prompt": "wide abstract space of thin luminous lines forming a series of open gates receding into darkness, one gate softly lit in cool blue, large empty dark area on the left, cinematic, calm, minimal, deep navy and graphite palette, one cool blue accent glow, soft volumetric light, subtle film grain, no text, no letters, no numbers, no people, no faces, no logos, no user interface, no screens",
+  "aspect_ratio": "16:9",
+  "resolution": "1080p",
+  "request_id": "63992afc-0b3d-4ecd-a4c7-ebcfeb3523ad",
+  "generated_at": "2026-10-12T19:47:40+00:00"
+ },
+ {
+  "file": "decision-1.png",
+  "asset": "decision",
+  "use": "Background band for \"The decision\" section",
+  "model": "higgsfield-ai/soul/v2/standard",
+  "prompt": "a single narrow beam of cool light stopped by a translucent glass threshold, the light pooling before it, dark graphite surroundings, quiet and deliberate, cinematic, calm, minimal, deep navy and graphite palette, one cool blue accent glow, soft volumetric light, subtle film grain, no text, no letters, no numbers, no people, no faces, no logos, no user interface, no screens",
+  "aspect_ratio": "16:9",
+  "resolution": "1080p",
+  "request_id": "e62b55f9-3ab8-4518-ac6b-13770952ba38",
+  "generated_at": "2026-10-12T19:48:03+00:00"
+ },
+ {
+  "file": "decision-2.png",
+  "asset": "decision",
+  "use": "Background band for \"The decision\" section",
+  "model": "higgsfield-ai/soul/v2/standard",
+  "prompt": "a single narrow beam of cool light stopped by a translucent glass threshold, the light pooling before it, dark graphite surroundings, quiet and deliberate, cinematic, calm, minimal, deep navy and graphite palette, one cool blue accent glow, soft volumetric light, subtle film grain, no text, no letters, no numbers, no people, no faces, no logos, no user interface, no screens",
+  "aspect_ratio": "16:9",
+  "resolution": "1080p",
+  "request_id": "6957ff0d-081f-4b61-a336-10ff5d437f89",
+  "generated_at": "2026-10-12T19:48:36+00:00"
+ },
+ {
+  "file": "evidence-1.png",
+  "asset": "evidence",
+  "use": "Background band for the evidence and scorecard section",
+  "model": "higgsfield-ai/soul/v2/standard",
+  "prompt": "an orderly field of faint glowing measurement ticks and fine grid lines on dark graphite, a few cells gently illuminated, precise and quiet, cinematic, calm, minimal, deep navy and graphite palette, one cool blue accent glow, soft volumetric light, subtle film grain, no text, no letters, no numbers, no people, no faces, no logos, no user interface, no screens",
+  "aspect_ratio": "16:9",
+  "resolution": "1080p",
+  "request_id": "992339f5-08bc-498c-8e9b-6eee82162fca",
+  "generated_at": "2026-10-12T19:49:07+00:00"
+ },
+ {
+  "file": "evidence-2.png",
+  "asset": "evidence",
+  "use": "Background band for the evidence and scorecard section",
+  "model": "higgsfield-ai/soul/v2/standard",
+  "prompt": "an orderly field of faint glowing measurement ticks and fine grid lines on dark graphite, a few cells gently illuminated, precise and quiet, cinematic, calm, minimal, deep navy and graphite palette, one cool blue accent glow, soft volumetric light, subtle film grain, no text, no letters, no numbers, no people, no faces, no logos, no user interface, no screens",
+  "aspect_ratio": "16:9",
+  "resolution": "1080p",
+  "request_id": "36f81229-f98c-46f8-8a0d-d20de08f59f6",
+  "generated_at": "2026-10-12T19:49:31+00:00"
+ },
+ {
+  "file": "architecture-1.png",
+  "asset": "architecture",
+  "use": "Background band for the architecture gallery",
+  "model": "higgsfield-ai/soul/v2/standard",
+  "prompt": "layered translucent planes stacked in depth like floors of a building, connected by thin vertical light threads, dark navy space, cinematic, calm, minimal, deep navy and graphite palette, one cool blue accent glow, soft volumetric light, subtle film grain, no text, no letters, no numbers, no people, no faces, no logos, no user interface, no screens",
+  "aspect_ratio": "16:9",
+  "resolution": "1080p",
+  "request_id": "4c8cc7c0-f27b-4c76-bfd9-2bf75aa20dd2",
+  "generated_at": "2026-10-12T19:49:55+00:00"
+ },
+ {
+  "file": "architecture-2.png",
+  "asset": "architecture",
+  "use": "Background band for the architecture gallery",
+  "model": "higgsfield-ai/soul/v2/standard",
+  "prompt": "layered translucent planes stacked in depth like floors of a building, connected by thin vertical light threads, dark navy space, cinematic, calm, minimal, deep navy and graphite palette, one cool blue accent glow, soft volumetric light, subtle film grain, no text, no letters, no numbers, no people, no faces, no logos, no user interface, no screens",
+  "aspect_ratio": "16:9",
+  "resolution": "1080p",
+  "request_id": "87db6f2a-921d-4de5-b1c1-4f51c82f3a22",
+  "generated_at": "2026-10-12T19:50:19+00:00"
+ },
+ {
+  "file": "incident-1.png",
+  "asset": "incident",
+  "use": "Background band for the incident drill section",
+  "model": "higgsfield-ai/soul/v2/standard",
+  "prompt": "a calm dark horizon with one faint ripple of disturbance in the light, a soft pulse of cool light being contained by thin parallel lines, cinematic, calm, minimal, deep navy and graphite palette, one cool blue accent glow, soft volumetric light, subtle film grain, no text, no letters, no numbers, no people, no faces, no logos, no user interface, no screens",
+  "aspect_ratio": "16:9",
+  "resolution": "1080p",
+  "request_id": "c1ab1738-87f8-48ad-bf94-4a0907c90345",
+  "generated_at": "2026-10-12T19:50:38+00:00"
+ },
+ {
+  "file": "incident-2.png",
+  "asset": "incident",
+  "use": "Background band for the incident drill section",
+  "model": "higgsfield-ai/soul/v2/standard",
+  "prompt": "a calm dark horizon with one faint ripple of disturbance in the light, a soft pulse of cool light being contained by thin parallel lines, cinematic, calm, minimal, deep navy and graphite palette, one cool blue accent glow, soft volumetric light, subtle film grain, no text, no letters, no numbers, no people, no faces, no logos, no user interface, no screens",
+  "aspect_ratio": "16:9",
+  "resolution": "1080p",
+  "request_id": "8e87f862-ea1d-4a99-aee6-7df4ffd3285d",
+  "generated_at": "2026-10-12T19:51:02+00:00"
+ },
+ {
+  "file": "closing-1.png",
+  "asset": "closing",
+  "use": "Background for the author and links section",
+  "model": "higgsfield-ai/soul/v2/standard",
+  "prompt": "dawn-like soft cool glow rising over a dark minimal landscape of thin lines, open and hopeful, lots of empty space, cinematic, calm, minimal, deep navy and graphite palette, one cool blue accent glow, soft volumetric light, subtle film grain, no text, no letters, no numbers, no people, no faces, no logos, no user interface, no screens",
+  "aspect_ratio": "16:9",
+  "resolution": "1080p",
+  "request_id": "e9873d23-f82c-4991-9359-52d13c412157",
+  "generated_at": "2026-10-12T19:51:21+00:00"
+ },
+ {
+  "file": "closing-2.png",
+  "asset": "closing",
+  "use": "Background for the author and links section",
+  "model": "higgsfield-ai/soul/v2/standard",
+  "prompt": "dawn-like soft cool glow rising over a dark minimal landscape of thin lines, open and hopeful, lots of empty space, cinematic, calm, minimal, deep navy and graphite palette, one cool blue accent glow, soft volumetric light, subtle film grain, no text, no letters, no numbers, no people, no faces, no logos, no user interface, no screens",
+  "aspect_ratio": "16:9",
+  "resolution": "1080p",
+  "request_id": "7c78dcaa-27a6-4489-9175-dd677f1cf783",
+  "generated_at": "2026-10-12T19:51:45+00:00"
+ }
+]
