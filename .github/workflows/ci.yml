@@ -65,3 +65,25 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm run build
+
+  e2e:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: uv sync --frozen
+        working-directory: .
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run contrast
+      - run: npm run build && npm run build:snapshot
+      - name: End-to-end scenarios (visual baselines are compared on macOS only)
+        run: npx playwright test e2e/scenarios.spec.ts

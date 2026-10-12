@@ -30,7 +30,7 @@ from control_plane.settings import (
     assert_safe_bind,
     get_settings,
 )
-from control_plane.store import Store, build_store
+from control_plane.store import MemoryStore, Store, build_store
 
 ROOT = Path(__file__).resolve().parents[2]
 FRONTEND_DIST = ROOT / "frontend" / "dist"
@@ -205,6 +205,18 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
             for u in store.list("users")
             if u["email"] in fixtures
         ]
+
+    @app.post("/api/fixture/reset", status_code=204)
+    def fixture_reset(request: Request) -> Response:
+        """Reload the seed. Test support: fixture identity with the memory store only."""
+        if (
+            settings.identity_mode is not IdentityMode.FIXTURE
+            or settings.store_backend is not StoreBackend.MEMORY
+        ):
+            raise HTTPException(status_code=404)
+        request.app.state.store = MemoryStore()
+        seed_registry(request.app.state.store, now())
+        return Response(status_code=204)
 
     # Portfolio
 

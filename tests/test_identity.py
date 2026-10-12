@@ -79,3 +79,9 @@ def test_every_role_has_permissions_and_only_admin_manages_roles() -> None:
     assert set(PERMISSIONS) == set(Role)
     assert [r for r in Role if allowed(r, Action.MANAGE_ROLES)] == [Role.GOVERNANCE_ADMIN]
     assert not any(allowed(Role.EXECUTIVE_VIEWER, a) for a in Action if "read" not in a)
+
+
+def test_fixture_reset_unavailable_outside_fixture_memory_mode() -> None:
+    client = make_client(Settings(_env_file=None, identity_mode=IdentityMode.IAP))
+    assert client.post("/api/fixture/reset").status_code == 404
+    assert make_client().post("/api/fixture/reset").status_code == 204

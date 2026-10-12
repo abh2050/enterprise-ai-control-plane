@@ -5,7 +5,8 @@ import { BrowserRouter, HashRouter, Navigate, Route, Routes } from "react-router
 import { Shell } from "./components/Shell";
 import { Skeleton, ToastProvider } from "./components/ui";
 import "./index.css";
-import { SNAPSHOT } from "./lib/api";
+import { SNAPSHOT, snapshotFile } from "./lib/api";
+import { setClock } from "./lib/clock";
 import Portfolio from "./pages/Portfolio";
 
 const Pipeline = lazy(() => import("./pages/Pipeline"));
@@ -15,6 +16,12 @@ const AppDetail = lazy(() => import("./pages/AppDetail"));
 const Reviews = lazy(() => import("./pages/Reviews"));
 const Incidents = lazy(() => import("./pages/Incidents"));
 const Settings = lazy(() => import("./pages/Settings"));
+
+if (SNAPSHOT) {
+  // Pin the clock to the export time before anything renders.
+  const meta = await fetch(`${import.meta.env.BASE_URL}${snapshotFile("/meta")}`).then((r) => r.json() as Promise<{ generated_at: string }>);
+  setClock(meta.generated_at);
+}
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: false, refetchOnWindowFocus: false, staleTime: 30_000 } },

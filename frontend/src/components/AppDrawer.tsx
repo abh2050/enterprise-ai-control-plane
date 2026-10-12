@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { api, ApiError, type AppDetailData, type Note } from "../lib/api";
 import { label, relative, timestamp } from "../lib/format";
+import { now as clockNow } from "../lib/clock";
 import { track } from "../lib/state";
 import { useSession } from "./Shell";
 import { Button, Drawer, HealthPill, MetricInline, ModuleError, ProvenanceBadge, Skeleton, Textarea, useToast } from "./ui";
@@ -41,7 +42,7 @@ function NoteItem({ note, appId }: { note: Note; appId: string }) {
   const toast = useToast();
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(note.text);
-  const canEdit = me?.email === note.author && Date.now() - new Date(note.created_at).getTime() < EDIT_WINDOW;
+  const canEdit = me?.email === note.author && clockNow() - new Date(note.created_at).getTime() < EDIT_WINDOW;
   const canDelete = me?.email === note.author || me?.role === "governance_admin";
   const refresh = () => qc.invalidateQueries({ queryKey: ["app", appId] });
   const edit = useMutation({

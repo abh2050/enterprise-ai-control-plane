@@ -215,12 +215,50 @@ export function snapshotFile(path: string): string {
   return `snapshot/${path.replace(/^\//, "").replace(/[/?=&]/g, "_") || "root"}.json`;
 }
 
+async function snapshotGet<T>(path: string): Promise<T> {
+  const [base, qs] = path.split("?");
+  // App lists are filtered and sorted locally from one exported file.
+  if (base === "/apps") {
+    const res = await fetch(`${import.meta.env.BASE_URL}${snapshotFile("/apps")}`);
+    if (!res.ok) throw new ApiError(res.status, "Not included in the snapshot");
+    return filterApps((await res.json()) as AppCard[], new URLSearchParams(qs ?? "")) as T;
+  }
+  const res = await fetch(`${import.meta.env.BASE_URL}${snapshotFile(path)}`);
+  if (!res.ok) throw new ApiError(res.status, "Not included in the snapshot");
+  return (await res.json()) as T;
+}
+
+function filterApps(cards: AppCard[], q: URLSearchParams): AppCard[] {
+  let out = cards;
+  const text = q.get("q")?.toLowerCase();
+  if (text) out = out.filter((c) => c.name.toLowerCase().includes(text) || (c.owner ?? "").toLowerCase().includes(text) || c.business_problem.toLowerCase().includes(text));
+  const eq: [string, keyof AppCard][] = [["platform", "platform"], ["risk", "risk_tier"], ["owner", "owner"], ["business_unit", "business_unit"], ["health", "health"]];
+  for (const [param, field] of eq) {
+    const v = q.get(param);
+    if (v) out = out.filter((c) => c[field] === v);
+  }
+  const stage = q.get("stage");
+  if (stage && stage !== "all") out = out.filter((c) => c.stage === stage);
+  if (q.get("stalled")) out = out.filter((c) => c.stalled_vs_median);
+  const min = q.get("spend_min");
+  const max = q.get("spend_max");
+  if (min) out = out.filter((c) => (c.monthly_spend_usd.value ?? 0) >= Number(min));
+  if (max) out = out.filter((c) => (c.monthly_spend_usd.value ?? 0) <= Number(max));
+  const sort = q.get("sort") ?? "recent";
+  const by: Record<string, (a: AppCard, b: AppCard) => number> = {
+    spend: (a, b) => (b.monthly_spend_usd.value ?? 0) - (a.monthly_spend_usd.value ?? 0),
+    value: (a, b) => (b.estimated_value_usd.value ?? -1) - (a.estimated_value_usd.value ?? -1),
+    days: (a, b) => (b.days_in_stage.value ?? 0) - (a.days_in_stage.value ?? 0),
+    recent: (a, b) => (b.last_activity_at ?? "").localeCompare(a.last_activity_at ?? ""),
+    name: (a, b) => a.name.localeCompare(b.name),
+  };
+  return [...out].sort(by[sort] ?? by.name);
+}
+
 async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
   if (SNAPSHOT) {
     if (method !== "GET") throw new ApiError(403, "The snapshot is read only");
-    const res = await fetch(`${import.meta.env.BASE_URL}${snapshotFile(path)}`);
-    if (!res.ok) throw new ApiError(res.status, "Not included in the snapshot");
-    return (await res.json()) as T;
+    return snapshotGet<T>(path);
   }
   const headers: Record<string, string> = { Accept: "application/json" };
   const user = getFixtureUser();

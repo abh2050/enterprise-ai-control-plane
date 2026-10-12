@@ -97,3 +97,17 @@ Each entry records the decision, the alternatives considered, and the reason.
 ## D25. Seed timestamps are anchored to load time (M4)
 - The seed history ends on its reference date (2026-10-01). On load, every timestamp shifts so the history ends at the current time, so days in stage, stalls, and expiring approvals look the same whenever the console is opened. The snapshot and visual tests use a fixed clock.
 - Production, paused, and retired are steady states, so time spent in them never counts as a stall.
+
+## D26. WCAG adjustments to five spec tokens (M4)
+- scripts/contrast.mjs checks every text pair at 4.5:1 and every control boundary at 3:1. Five values failed and were adjusted minimally, keeping hue: light accent #1F6FE0 to #1E6BD8, light status_healthy #0F8A5F to #0E7E57, light status_warning #9A6700 to #966400, and border_strong in both themes (light #C3CEDD to #858C96, dark #34425E to #697388). Each change is commented in frontend/src/styles/tokens.css with the original ratio. Card borders (`border`) are decorative and stay as specified.
+
+## D27. Undo is a server action, limited to the mover's own latest move (M4)
+- Some lifecycle moves have no backward transition, so a 10-second undo cannot be an ordinary move. `POST /apps/{id}/undo` restores the stored previous state within 15 seconds (10 in the UI plus network grace), only for the person who made the move, and writes a new `stage_change_undone` event. The original event stays in the append-only history.
+
+## D28. Display clock, fixture reset, and an early snapshot (M4)
+- The console renders relative times from a display clock. The snapshot pins it to the export time; visual tests pin it through a local override. Freezing the browser clock in Playwright stalled rendering intermittently, so it is not used.
+- `POST /api/fixture/reset` reloads the seed for test isolation. It exists only with fixture identity and the memory store, which are loopback only.
+- Scenario 10 needs snapshot mode in M4, so a working read-only snapshot (static JSON from the real API, client-side list filtering) is built now; M7 finishes it for GitHub Pages.
+
+## D29. Mortgage Document Q&A is a managed app in the seed (M4)
+- Scenario 1 needs a managed app at review_gates with every approval in place. The seed's Mortgage Document Q&A is managed with both high-risk gates approved.

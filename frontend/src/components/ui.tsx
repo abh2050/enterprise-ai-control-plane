@@ -25,6 +25,7 @@ import {
   type TextareaHTMLAttributes,
 } from "react";
 import type { DatasetLabel, Health, Metric, Provenance } from "../lib/api";
+import { now as clockNow } from "../lib/clock";
 import { exactMetric, metricText, relative, timestamp } from "../lib/format";
 
 const cx = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(" ");
@@ -229,7 +230,7 @@ export function Card({ children, className, title, action, updatedAt }: { childr
 
 /** "Updated {relative time}" on hover and focus; amber with a refresh after 5 minutes. */
 export function Updated({ at, onRefresh }: { at: string; onRefresh?: () => void }) {
-  const stale = Date.now() - new Date(at).getTime() > 5 * 60 * 1000;
+  const stale = clockNow() - new Date(at).getTime() > 5 * 60 * 1000;
   if (stale) {
     return (
       <span className="t-label mt-3 flex items-center gap-2 text-warning">

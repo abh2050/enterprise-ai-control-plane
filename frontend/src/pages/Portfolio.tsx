@@ -26,6 +26,7 @@ import {
 } from "../components/ui";
 import { api, getFixtureUser, query, SNAPSHOT, STAGES, type AppCard, type Metric, type PortfolioData } from "../lib/api";
 import { compact, label, money, relative, timestamp } from "../lib/format";
+import { now as clockNow } from "../lib/clock";
 import { track, useUrlFilters } from "../lib/state";
 
 const Matrix = lazy(() => import("../charts/PortfolioCharts").then((m) => ({ default: m.InvestmentMatrix })));
@@ -429,7 +430,7 @@ export default function Portfolio() {
             ) : p?.next_gate ? (
               <div className="flex flex-col gap-2" data-testid="next-gate">
                 <span className="t-kpi" title={timestamp(p.next_gate.due_at)}>
-                  {Math.max(0, Math.ceil((new Date(p.next_gate.due_at).getTime() - Date.now()) / 864e5))} days
+                  {Math.max(0, Math.ceil((new Date(p.next_gate.due_at).getTime() - clockNow()) / 864e5))} days
                 </span>
                 <span className="t-body">
                   {label(p.next_gate.kind)}: <button type="button" className="t-card text-accent hover:underline" onClick={() => openApp(p.next_gate!.app_id)}>{p.next_gate.name}</button>

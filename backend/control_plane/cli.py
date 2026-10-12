@@ -384,9 +384,20 @@ def report() -> None:
 
 
 @app.command()
-def snapshot() -> None:
+def snapshot(
+    out: Annotated[str, typer.Option(help="Folder the snapshot build serves")] = (
+        "frontend/.snapshot-data"
+    ),
+    at: Annotated[str, typer.Option(help="Fixed clock, ISO 8601")] = "2026-10-12T12:00:00+00:00",
+) -> None:
     """Export read-only JSON for the static snapshot console."""
-    _not_yet("M7")
+    from datetime import datetime
+    from pathlib import Path
+
+    from control_plane.snapshot import export
+
+    count = export(Path(out), datetime.fromisoformat(at))
+    typer.echo(f"Wrote {count} snapshot files to {out}/snapshot")
 
 
 if __name__ == "__main__":

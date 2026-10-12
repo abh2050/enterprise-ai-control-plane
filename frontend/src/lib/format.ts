@@ -1,5 +1,6 @@
 // Number and date formatting (console spec Section 9A).
 // Compact: 1,000 -> 1.0k and 1,000,000 -> 1.0m. Exact values go in tooltips and labels.
+import { now as clockNow } from "./clock";
 
 export function compact(n: number): string {
   const abs = Math.abs(n);
@@ -46,7 +47,7 @@ export function exactMetric(value: number | null, unit: string): string {
 
 const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 
-export function relative(iso: string | null, now: Date = new Date()): string {
+export function relative(iso: string | null, now: Date = new Date(clockNow())): string {
   if (!iso) return "never";
   const diff = (new Date(iso).getTime() - now.getTime()) / 1000;
   const abs = Math.abs(diff);

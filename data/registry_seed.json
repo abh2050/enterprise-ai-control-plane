@@ -2403,14 +2403,14 @@
    "name": "Mortgage Document Q&A",
    "owner": "priya.raman@example.com",
    "business_unit": "Lending",
-   "platform": "custom",
+   "platform": "managed",
    "business_problem": "Mortgage underwriters search long application packs for specific facts such as income sources and existing commitments. Answers with exact page citations could speed underwriting while the underwriter remains responsible for every lending decision.",
    "risk_tier": "high",
    "stage": "review_gates",
    "prior_stage": null,
    "paused": false,
-   "version": 4,
-   "active_config_id": null,
+   "version": 6,
+   "active_config_id": "mortgage-doc-qa_v1",
    "monthly_budget_micros": 500000000,
    "monthly_spend_micros": 0,
    "monthly_volume": null,
@@ -2432,34 +2432,49 @@
    "last_usage_at": null,
    "business_case": {
     "monthly_volume": {
-     "value": 800,
+     "value": 12000,
      "unit": "cases per month",
      "provenance": "ASSUMPTION",
      "justification": "Owner estimate at intake (synthetic)."
     },
     "value_hypothesis": "Time saved for the team named in the business problem.",
     "monthly_value_usd": {
-     "value": 3700.0,
+     "value": 3900.0,
      "unit": "USD per month",
      "provenance": "ASSUMPTION",
      "justification": "Owner estimate of labor saved (synthetic)."
     },
     "monthly_cost_estimate_usd": {
-     "value": 500,
+     "value": 800,
      "unit": "USD per month",
      "provenance": "ASSUMPTION",
      "justification": "Owner estimate of license and usage cost (synthetic)."
     }
    },
    "submitted_by": "priya.raman@example.com",
-   "gates": {},
+   "gates": {
+    "governance": {
+     "gate": "governance",
+     "approved_by": "admin@example.com",
+     "approved_at": "2026-09-29T04:21:14.677286+00:00",
+     "expires_at": "2027-03-28T04:21:14.677286+00:00",
+     "review_id": "reviews/mortgage-doc-qa-governance"
+    },
+    "security": {
+     "gate": "security",
+     "approved_by": "security@example.com",
+     "approved_at": "2026-09-28T23:02:55.840254+00:00",
+     "expires_at": "2027-03-27T23:02:55.840254+00:00",
+     "review_id": "reviews/mortgage-doc-qa-security"
+    }
+   },
    "evidence": {
     "scorecard_passed": false,
     "release_decision": null
    },
-   "approvals_expire_at": null,
-   "last_decision": "Moved to review_gates",
-   "last_activity_at": "2026-09-26T15:11:01.943652+00:00",
+   "approvals_expire_at": "2027-03-27T23:02:55.840254+00:00",
+   "last_decision": "Evidence reviewed",
+   "last_activity_at": "2026-09-28T23:02:55.840254+00:00",
    "stage_entered_at": "2026-09-26T15:11:01.943651+00:00",
    "created_at": "2026-09-06T20:25:29.150519+00:00",
    "provenance": "SYNTHETIC"
@@ -2484,16 +2499,16 @@
    "usage_series": [
     0,
     0,
-    5313,
-    5951,
-    7349,
-    7934,
+    0,
+    0,
     7075,
     5297,
     7633,
     7811,
     7041,
-    7628
+    7628,
+    5782,
+    6861
    ],
    "last_usage_at": "2026-10-01T12:00:00+00:00",
    "business_case": {
@@ -2505,7 +2520,7 @@
     },
     "value_hypothesis": "Time saved for the team named in the business problem.",
     "monthly_value_usd": {
-     "value": 1200.0,
+     "value": 1900.0,
      "unit": "USD per month",
      "provenance": "ASSUMPTION",
      "justification": "Owner estimate of labor saved (synthetic)."
@@ -2522,8 +2537,8 @@
     "reviewer": {
      "gate": "reviewer",
      "approved_by": "reviewer@example.com",
-     "approved_at": "2026-08-03T08:34:11.524658+00:00",
-     "expires_at": "2027-01-30T08:34:11.524658+00:00",
+     "approved_at": "2026-08-25T22:07:07.527945+00:00",
+     "expires_at": "2027-02-21T22:07:07.527945+00:00",
      "review_id": "reviews/social-sentiment-monitor-reviewer"
     }
    },
@@ -2531,11 +2546,11 @@
     "scorecard_passed": false,
     "release_decision": null
    },
-   "approvals_expire_at": "2027-01-30T08:34:11.524658+00:00",
+   "approvals_expire_at": "2027-02-21T22:07:07.527945+00:00",
    "last_decision": "Publish decision recorded",
-   "last_activity_at": "2026-08-06T01:06:43.447375+00:00",
-   "stage_entered_at": "2026-08-06T01:06:43.447374+00:00",
-   "created_at": "2026-07-19T07:32:02.538068+00:00",
+   "last_activity_at": "2026-08-29T09:17:26.877495+00:00",
+   "stage_entered_at": "2026-08-29T09:17:26.877495+00:00",
+   "created_at": "2026-08-04T08:04:40.130503+00:00",
    "provenance": "SYNTHETIC"
   },
   {
@@ -2572,20 +2587,20 @@
    "last_usage_at": null,
    "business_case": {
     "monthly_volume": {
-     "value": 3000,
+     "value": 1500,
      "unit": "cases per month",
      "provenance": "ASSUMPTION",
      "justification": "Owner estimate at intake (synthetic)."
     },
     "value_hypothesis": "Time saved for the team named in the business problem.",
     "monthly_value_usd": {
-     "value": 2400.0,
+     "value": 3700.0,
      "unit": "USD per month",
      "provenance": "ASSUMPTION",
      "justification": "Owner estimate of labor saved (synthetic)."
     },
     "monthly_cost_estimate_usd": {
-     "value": 300,
+     "value": 800,
      "unit": "USD per month",
      "provenance": "ASSUMPTION",
      "justification": "Owner estimate of license and usage cost (synthetic)."
@@ -2599,9 +2614,9 @@
    },
    "approvals_expire_at": null,
    "last_decision": "Moved to business_case",
-   "last_activity_at": "2026-09-08T16:33:46.628725+00:00",
-   "stage_entered_at": "2026-09-08T16:33:46.628725+00:00",
-   "created_at": "2026-09-04T02:35:03.172235+00:00",
+   "last_activity_at": "2026-09-19T08:37:26.718576+00:00",
+   "stage_entered_at": "2026-09-19T08:37:26.718576+00:00",
+   "created_at": "2026-09-16T13:15:07.362549+00:00",
    "provenance": "SYNTHETIC"
   },
   {
@@ -2623,17 +2638,17 @@
    "active_users": 35,
    "usage_series": [
     0,
-    2910,
-    3184,
-    3803,
-    3598,
-    3809,
-    2935,
-    3478,
-    4072,
-    3304,
-    3712,
-    2806
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    3593,
+    3398,
+    3310,
+    2697,
+    3035
    ],
    "last_usage_at": "2026-10-01T12:00:00+00:00",
    "business_case": {
@@ -2645,7 +2660,7 @@
     },
     "value_hypothesis": "Time saved for the team named in the business problem.",
     "monthly_value_usd": {
-     "value": 11400.0,
+     "value": 3300.0,
      "unit": "USD per month",
      "provenance": "ASSUMPTION",
      "justification": "Owner estimate of labor saved (synthetic)."
@@ -2662,8 +2677,8 @@
     "governance": {
      "gate": "governance",
      "approved_by": "admin@example.com",
-     "approved_at": "2026-08-07T22:48:51.933953+00:00",
-     "expires_at": "2027-02-03T22:48:51.933953+00:00",
+     "approved_at": "2026-09-10T23:12:29.864801+00:00",
+     "expires_at": "2027-03-09T23:12:29.864801+00:00",
      "review_id": "reviews/call-center-qa-scoring-governance"
     }
    },
@@ -2671,11 +2686,11 @@
     "scorecard_passed": false,
     "release_decision": null
    },
-   "approvals_expire_at": "2027-02-03T22:48:51.933953+00:00",
+   "approvals_expire_at": "2027-03-09T23:12:29.864801+00:00",
    "last_decision": "Publish decision recorded",
-   "last_activity_at": "2026-08-10T21:20:55.256939+00:00",
-   "stage_entered_at": "2026-08-10T21:20:55.256939+00:00",
-   "created_at": "2026-07-09T23:11:58.870276+00:00",
+   "last_activity_at": "2026-09-14T20:22:01.557340+00:00",
+   "stage_entered_at": "2026-09-14T20:22:01.557340+00:00",
+   "created_at": "2026-08-26T02:09:52.788189+00:00",
    "provenance": "SYNTHETIC"
   },
   {
@@ -2719,9 +2734,9 @@
    },
    "approvals_expire_at": null,
    "last_decision": "Registered at intake",
-   "last_activity_at": "2026-09-20T17:26:42.346681+00:00",
-   "stage_entered_at": "2026-09-20T17:26:42.346681+00:00",
-   "created_at": "2026-09-20T17:26:42.346681+00:00",
+   "last_activity_at": "2026-09-27T17:42:42.945956+00:00",
+   "stage_entered_at": "2026-09-27T17:42:42.945956+00:00",
+   "created_at": "2026-09-27T17:42:42.945956+00:00",
    "provenance": "SYNTHETIC"
   },
   {
@@ -2758,20 +2773,20 @@
    "last_usage_at": null,
    "business_case": {
     "monthly_volume": {
-     "value": 1500,
+     "value": 6000,
      "unit": "cases per month",
      "provenance": "ASSUMPTION",
      "justification": "Owner estimate at intake (synthetic)."
     },
     "value_hypothesis": "Time saved for the team named in the business problem.",
     "monthly_value_usd": {
-     "value": 1100.0,
+     "value": 2200.0,
      "unit": "USD per month",
      "provenance": "ASSUMPTION",
      "justification": "Owner estimate of labor saved (synthetic)."
     },
     "monthly_cost_estimate_usd": {
-     "value": 300,
+     "value": 500,
      "unit": "USD per month",
      "provenance": "ASSUMPTION",
      "justification": "Owner estimate of license and usage cost (synthetic)."
@@ -2782,8 +2797,8 @@
     "reviewer": {
      "gate": "reviewer",
      "approved_by": "reviewer@example.com",
-     "approved_at": "2026-07-19T21:29:41.829529+00:00",
-     "expires_at": "2027-01-15T21:29:41.829529+00:00",
+     "approved_at": "2026-08-22T13:00:28.552762+00:00",
+     "expires_at": "2027-02-18T13:00:28.552762+00:00",
      "review_id": "reviews/travel-expense-checker-reviewer"
     }
    },
@@ -2791,11 +2806,11 @@
     "scorecard_passed": false,
     "release_decision": null
    },
-   "approvals_expire_at": "2027-01-15T21:29:41.829529+00:00",
+   "approvals_expire_at": "2027-02-18T13:00:28.552762+00:00",
    "last_decision": "Low usage after policy simplification",
-   "last_activity_at": "2026-09-18T12:53:30.246213+00:00",
-   "stage_entered_at": "2026-09-18T12:53:30.246214+00:00",
-   "created_at": "2026-06-05T12:00:00+00:00",
+   "last_activity_at": "2026-09-28T04:46:47.577943+00:00",
+   "stage_entered_at": "2026-09-28T04:46:47.577943+00:00",
+   "created_at": "2026-07-23T21:52:44.890264+00:00",
    "provenance": "SYNTHETIC"
   },
   {
@@ -2839,13 +2854,13 @@
     },
     "value_hypothesis": "Time saved for the team named in the business problem.",
     "monthly_value_usd": {
-     "value": 9600.0,
+     "value": 6100.0,
      "unit": "USD per month",
      "provenance": "ASSUMPTION",
      "justification": "Owner estimate of labor saved (synthetic)."
     },
     "monthly_cost_estimate_usd": {
-     "value": 1200,
+     "value": 800,
      "unit": "USD per month",
      "provenance": "ASSUMPTION",
      "justification": "Owner estimate of license and usage cost (synthetic)."
@@ -2859,9 +2874,9 @@
    },
    "approvals_expire_at": null,
    "last_decision": "Moved to business_case",
-   "last_activity_at": "2026-09-21T21:51:45.918043+00:00",
-   "stage_entered_at": "2026-09-21T21:51:45.918043+00:00",
-   "created_at": "2026-09-08T21:07:27.735058+00:00",
+   "last_activity_at": "2026-09-18T09:57:02.652990+00:00",
+   "stage_entered_at": "2026-09-18T09:57:02.652990+00:00",
+   "created_at": "2026-09-15T08:34:06.685923+00:00",
    "provenance": "SYNTHETIC"
   }
  ],
@@ -4678,7 +4693,33 @@
    "created_at": "2026-09-26T15:11:01.943652+00:00"
   },
   {
-   "event_id": "b04d337677fc97031fd5a423706c5c56",
+   "event_id": "d39e198b44007d5ae88da71926242b40",
+   "app_id": "mortgage-doc-qa",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "admin@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/mortgage-doc-qa-governance"
+   ],
+   "created_at": "2026-09-29T04:21:14.677286+00:00"
+  },
+  {
+   "event_id": "4ebfa5c3cae9b4a72a79ea680f44704f",
+   "app_id": "mortgage-doc-qa",
+   "kind": "gate_approve",
+   "from_stage": "review_gates",
+   "to_stage": "review_gates",
+   "actor": "security@example.com",
+   "reason": "Evidence reviewed",
+   "evidence_refs": [
+    "reviews/mortgage-doc-qa-security"
+   ],
+   "created_at": "2026-09-28T23:02:55.840254+00:00"
+  },
+  {
+   "event_id": "7e695d0d8a3c3b5e801ef1da45b1ed25",
    "app_id": "social-sentiment-monitor",
    "kind": "created",
    "from_stage": null,
@@ -4686,10 +4727,10 @@
    "actor": "kenji.ito@example.com",
    "reason": "Registered at intake",
    "evidence_refs": [],
-   "created_at": "2026-07-19T07:32:02.538068+00:00"
+   "created_at": "2026-08-04T08:04:40.130503+00:00"
   },
   {
-   "event_id": "f1533ae8670acc5cb321bf214dd8eb85",
+   "event_id": "0a3450fc9918ee461497d6587010f719",
    "app_id": "social-sentiment-monitor",
    "kind": "stage_change",
    "from_stage": "intake",
@@ -4697,10 +4738,10 @@
    "actor": "kenji.ito@example.com",
    "reason": "Moved to business_case",
    "evidence_refs": [],
-   "created_at": "2026-07-24T13:32:08.702796+00:00"
+   "created_at": "2026-08-09T14:04:46.295231+00:00"
   },
   {
-   "event_id": "7e695d0d8a3c3b5e801ef1da45b1ed25",
+   "event_id": "5283aac7bc0a6a5d6e996e3ee3b137fc",
    "app_id": "social-sentiment-monitor",
    "kind": "stage_change",
    "from_stage": "business_case",
@@ -4708,10 +4749,10 @@
    "actor": "kenji.ito@example.com",
    "reason": "Moved to review_gates",
    "evidence_refs": [],
-   "created_at": "2026-07-29T13:26:42.721262+00:00"
+   "created_at": "2026-08-16T10:53:53.286287+00:00"
   },
   {
-   "event_id": "6e996e3ee3b137fc0a3450fc9918ee46",
+   "event_id": "f63fce413a9aca5e176132ed069f14f1",
    "app_id": "social-sentiment-monitor",
    "kind": "gate_approve",
    "from_stage": "review_gates",
@@ -4721,10 +4762,10 @@
    "evidence_refs": [
     "reviews/social-sentiment-monitor-reviewer"
    ],
-   "created_at": "2026-08-03T08:34:11.524658+00:00"
+   "created_at": "2026-08-25T22:07:07.527945+00:00"
   },
   {
-   "event_id": "40181c6e9a8cfa3c5283aac7bc0a6a5d",
+   "event_id": "93403faddc4ad56bd6016237ac9ed156",
    "app_id": "social-sentiment-monitor",
    "kind": "stage_change",
    "from_stage": "review_gates",
@@ -4732,32 +4773,32 @@
    "actor": "admin@example.com",
    "reason": "Publish decision recorded",
    "evidence_refs": [],
-   "created_at": "2026-08-06T01:06:43.447375+00:00"
-  },
-  {
-   "event_id": "175ba98df81401027de1bdfed0725b5c",
-   "app_id": "developer-code-review",
-   "kind": "created",
-   "from_stage": null,
-   "to_stage": "intake",
-   "actor": "tom.becker@example.com",
-   "reason": "Registered at intake",
-   "evidence_refs": [],
-   "created_at": "2026-09-04T02:35:03.172235+00:00"
+   "created_at": "2026-08-29T09:17:26.877495+00:00"
   },
   {
    "event_id": "5553b2fe6889803e5913f9d3785299f4",
    "app_id": "developer-code-review",
+   "kind": "created",
+   "from_stage": null,
+   "to_stage": "intake",
+   "actor": "tom.becker@example.com",
+   "reason": "Registered at intake",
+   "evidence_refs": [],
+   "created_at": "2026-09-16T13:15:07.362549+00:00"
+  },
+  {
+   "event_id": "db9465701ac70ec0ab8ddeb45230dfbd",
+   "app_id": "developer-code-review",
    "kind": "stage_change",
    "from_stage": "intake",
    "to_stage": "business_case",
    "actor": "tom.becker@example.com",
    "reason": "Moved to business_case",
    "evidence_refs": [],
-   "created_at": "2026-09-08T16:33:46.628725+00:00"
+   "created_at": "2026-09-19T08:37:26.718576+00:00"
   },
   {
-   "event_id": "168b1625746f78910964fbbf8cd321b0",
+   "event_id": "52c21221409d360250843242168b1625",
    "app_id": "call-center-qa-scoring",
    "kind": "created",
    "from_stage": null,
@@ -4765,10 +4806,10 @@
    "actor": "aisha.khan@example.com",
    "reason": "Registered at intake",
    "evidence_refs": [],
-   "created_at": "2026-07-09T23:11:58.870276+00:00"
+   "created_at": "2026-08-26T02:09:52.788189+00:00"
   },
   {
-   "event_id": "1dad09b252c21221409d360250843242",
+   "event_id": "6778043bc5c5b37af85e06a11dad09b2",
    "app_id": "call-center-qa-scoring",
    "kind": "stage_change",
    "from_stage": "intake",
@@ -4776,10 +4817,10 @@
    "actor": "aisha.khan@example.com",
    "reason": "Moved to business_case",
    "evidence_refs": [],
-   "created_at": "2026-07-14T06:26:33.973898+00:00"
+   "created_at": "2026-08-29T04:21:49.481377+00:00"
   },
   {
-   "event_id": "dd6ac7b86778043bc5c5b37af85e06a1",
+   "event_id": "fcf56188d32e6dcd83bc9478dd6ac7b8",
    "app_id": "call-center-qa-scoring",
    "kind": "stage_change",
    "from_stage": "business_case",
@@ -4787,10 +4828,10 @@
    "actor": "aisha.khan@example.com",
    "reason": "Moved to review_gates",
    "evidence_refs": [],
-   "created_at": "2026-08-01T14:49:24.706531+00:00"
+   "created_at": "2026-09-08T08:56:18.337121+00:00"
   },
   {
-   "event_id": "de8ede0ba85c6e4a004b6fabfcf56188",
+   "event_id": "69ca97d2764414fd8ae769edde8ede0b",
    "app_id": "call-center-qa-scoring",
    "kind": "gate_approve",
    "from_stage": "review_gates",
@@ -4800,10 +4841,10 @@
    "evidence_refs": [
     "reviews/call-center-qa-scoring-governance"
    ],
-   "created_at": "2026-08-07T22:48:51.933953+00:00"
+   "created_at": "2026-09-10T23:12:29.864801+00:00"
   },
   {
-   "event_id": "0de051a669ca97d2764414fd8ae769ed",
+   "event_id": "5c9d927d84b871bb300568d20de051a6",
    "app_id": "call-center-qa-scoring",
    "kind": "stage_change",
    "from_stage": "review_gates",
@@ -4811,10 +4852,10 @@
    "actor": "admin@example.com",
    "reason": "Publish decision recorded",
    "evidence_refs": [],
-   "created_at": "2026-08-10T21:20:55.256939+00:00"
+   "created_at": "2026-09-14T20:22:01.557340+00:00"
   },
   {
-   "event_id": "4f8d5238288b78b5b5b453ca3d42993c",
+   "event_id": "1f15c7b67c16128db2c08394e17f29e1",
    "app_id": "data-catalog-descriptions",
    "kind": "created",
    "from_stage": null,
@@ -4822,10 +4863,10 @@
    "actor": "daniel.osei@example.com",
    "reason": "Registered at intake",
    "evidence_refs": [],
-   "created_at": "2026-09-20T17:26:42.346681+00:00"
+   "created_at": "2026-09-27T17:42:42.945956+00:00"
   },
   {
-   "event_id": "276aa6ced50755d9a5d04d531e1242e3",
+   "event_id": "fe0490593985fb6217dc8eff687213f9",
    "app_id": "travel-expense-checker",
    "kind": "created",
    "from_stage": null,
@@ -4833,10 +4874,10 @@
    "actor": "lena.fischer@example.com",
    "reason": "Registered at intake",
    "evidence_refs": [],
-   "created_at": "2026-06-05T12:00:00+00:00"
+   "created_at": "2026-07-23T21:52:44.890264+00:00"
   },
   {
-   "event_id": "4ab7706eb77350caeec259dc7f95897c",
+   "event_id": "762172ed1d0bc9bde9b5c5cfd7665cda",
    "app_id": "travel-expense-checker",
    "kind": "stage_change",
    "from_stage": "intake",
@@ -4844,10 +4885,10 @@
    "actor": "lena.fischer@example.com",
    "reason": "Moved to business_case",
    "evidence_refs": [],
-   "created_at": "2026-06-08T22:34:37.705475+00:00"
+   "created_at": "2026-08-04T02:41:02.474133+00:00"
   },
   {
-   "event_id": "6a5d932b45ff2c83b495db4e82456fb4",
+   "event_id": "d50755d9a5d04d531e1242e3f27292b6",
    "app_id": "travel-expense-checker",
    "kind": "stage_change",
    "from_stage": "business_case",
@@ -4855,10 +4896,10 @@
    "actor": "lena.fischer@example.com",
    "reason": "Moved to review_gates",
    "evidence_refs": [],
-   "created_at": "2026-06-17T04:19:51.695174+00:00"
+   "created_at": "2026-08-15T07:47:35.529306+00:00"
   },
   {
-   "event_id": "74eff5453e65260378e3654bfaf14ff0",
+   "event_id": "82456fb44ab7706eb77350caeec259dc",
    "app_id": "travel-expense-checker",
    "kind": "gate_approve",
    "from_stage": "review_gates",
@@ -4868,10 +4909,10 @@
    "evidence_refs": [
     "reviews/travel-expense-checker-reviewer"
    ],
-   "created_at": "2026-07-19T21:29:41.829529+00:00"
+   "created_at": "2026-08-22T13:00:28.552762+00:00"
   },
   {
-   "event_id": "30cbd7556232b17a250741818d1fb540",
+   "event_id": "d5b077e06a5d932b45ff2c83b495db4e",
    "app_id": "travel-expense-checker",
    "kind": "stage_change",
    "from_stage": "review_gates",
@@ -4879,10 +4920,10 @@
    "actor": "admin@example.com",
    "reason": "Publish decision recorded",
    "evidence_refs": [],
-   "created_at": "2026-07-25T06:16:14.625180+00:00"
+   "created_at": "2026-08-30T05:10:11.039870+00:00"
   },
   {
-   "event_id": "bf0d073d821c13369970cf60ebff8d15",
+   "event_id": "3e65260378e3654bfaf14ff07b85179a",
    "app_id": "travel-expense-checker",
    "kind": "stage_change",
    "from_stage": "monitored",
@@ -4890,10 +4931,10 @@
    "actor": "admin@example.com",
    "reason": "Low usage after policy simplification",
    "evidence_refs": [],
-   "created_at": "2026-09-18T12:53:30.246213+00:00"
+   "created_at": "2026-09-28T04:46:47.577943+00:00"
   },
   {
-   "event_id": "00a81de9d20f87d044656d6b81fb18b3",
+   "event_id": "c5ce099c46b8265911df12d7dd30de89",
    "app_id": "wealth-portfolio-letters",
    "kind": "created",
    "from_stage": null,
@@ -4901,10 +4942,10 @@
    "actor": "priya.raman@example.com",
    "reason": "Registered at intake",
    "evidence_refs": [],
-   "created_at": "2026-09-08T21:07:27.735058+00:00"
+   "created_at": "2026-09-15T08:34:06.685923+00:00"
   },
   {
-   "event_id": "d664d2644c6e27ffb9de7a3a486822b9",
+   "event_id": "570210496a39aaa6dabac50dca3dd859",
    "app_id": "wealth-portfolio-letters",
    "kind": "stage_change",
    "from_stage": "intake",
@@ -4912,7 +4953,7 @@
    "actor": "priya.raman@example.com",
    "reason": "Moved to business_case",
    "evidence_refs": [],
-   "created_at": "2026-09-21T21:51:45.918043+00:00"
+   "created_at": "2026-09-18T09:57:02.652990+00:00"
   }
  ],
  "incidents": [
@@ -4935,12 +4976,12 @@
    "app_id": "social-sentiment-monitor",
    "signal": "review_rate",
    "threshold": 0.25,
-   "observed": 0.36,
+   "observed": 0.42,
    "status": "open",
    "actions": [
     "owner notified"
    ],
-   "opened_at": "2026-09-28T22:38:04.572416+00:00",
+   "opened_at": "2026-09-29T15:58:21.816423+00:00",
    "closed_at": null,
    "provenance": "SYNTHETIC"
   }

@@ -1,20 +1,22 @@
-# Checkpoint: M3 LLM configs and economics complete (2026-10-12)
+# Checkpoint: M4 Registry and console complete (2026-10-12)
 
-Plan: ~/.claude/plans/enterprise-ai-control-temporal-magpie.md. Console spec: docs/spec/console_spec.md (applies to M4 and M8). Next: M4 (Section 9A design system, then Section 9 pages, lifecycle, registry seed, importer).
+Plan: ~/.claude/plans/enterprise-ai-control-temporal-magpie.md. Console spec: docs/spec/console_spec.md. Next: M5 (shadow replay, cohort activation, release decisions, monitoring, incidents, drill). LLM spend so far $4.89 of the $10 cap; M5's shadow replay is projected at about $2.10.
+
+## M4 delivered
+- Backend: lifecycle rules (configs/lifecycle.yaml), registry state machine with version checks (409), per-destination requirements (422 before mutation), gate approvals (submitter can never approve), undo, Governance Assist scoring and actions, governance notes (idempotent, 15-minute edit, soft delete), CSV importer (all or nothing), portfolio, catalog, and Flow aggregates, CSV export with formula escaping, product analytics events (no text), settings and roles, snapshot export
+- Seed: 40 SYNTHETIC apps with 180 events and 2 incidents, authored in-session (scripts/gen_registry_seed.py), anchored to load time
+- Frontend: Section 9A design system (tokens WCAG-checked; five values adjusted, D26), shell with responsive sidebar and sticky top bar, every component state, lazy charts; pages Portfolio, Pipeline (drag, keyboard, conflict drawer, undo), Flow, Applications plus app drawer with notes, App Detail (7 tabs, 3 for external apps), Reviews, Incidents, Settings; header band and empty-state slots for Section 9B
+- Snapshot mode (basic; M7 finishes it): `npm run build:snapshot`
 
 ## Exit evidence
-- All three configs were evaluated on the identical 1,540-case frozen set in the same order (docs/experiment_report.md, all MEASURED):
-  - classifier_v1: macro F1 0.913, auto precision 0.944, coverage 86.2%, p95 2 ms, $0 per 1k cases
-  - llm_high_capability_v1 (gemini-3.8-flash, cached prefix): macro F1 0.885, auto precision 0.976, coverage 79.4%, p95 3.5 s, $1.07 per 1k cases
-  - llm_low_cost_v1 (gemini-3.1-flash-lite): macro F1 0.839, auto precision 0.974, coverage 76.5%, p95 1.4 s, $1.01 per 1k cases
-  - Paired bootstrap against the classifier: both LLMs have significantly lower macro F1 and significantly higher auto precision (CIs exclude 0)
-  - No config reaches 0.95 recall on all six sensitive intents. The LLMs abstain on 90% of out-of-domain risk cases; the classifier on 0%.
-- docs/business_case.md, all ASSUMPTION: net monthly value $66,957 (3.8 Flash), $62,130 (flash-lite), $57,270 (classifier); all pass breakeven plus 0.03.
-- Ledger tests pass on memory, file, and the Firestore emulator; 142 tests total; ruff and mypy clean.
-- Spend: $4.89 of the $10 cap at Vertex list prices. 9 unknown outcomes (dropped connections) in the 3.8 Flash run were held and never re-called; they route to review.
+- All ten end-to-end scenarios pass (frontend/e2e/scenarios.spec.ts)
+- Lifecycle tests pass on memory, file, and the Firestore emulator
+- Visual validation: 14 baselines (7 pages x 2 themes, 1440x900, fixed seed and clock), 42 of 42 comparisons pass across 3 repeats. Baselines await owner approval: frontend/e2e/baselines/
+- Backend 193 tests; ruff and mypy clean; tokens pass WCAG 2.2 AA; initial route JS 74.8 KB gzipped; Portfolio API p95 66 ms for 1,000 apps (in process)
 
-## Carried into M4 and M5
-- M5 signature scenario: sensitive-intent gates fail for every config. Release decisions and cohort economics come from these measured numbers (decisions D6, D7).
-- The owner should review the risk suite labels (single rater, AI drafted).
-- Rotate the secrets pasted in chat (Gemini, OpenAI, Hugging Face, HF_CREDENTIALS) and remove GEMINI_API_KEY from .env.
-- Spec questions for M4 are listed in the plan (two stall definitions, visual baseline approval, 1,000-app load fixture, Higgsfield key name).
+## Known gaps
+- Intermittent multi-minute Playwright stalls happen while the Mac sleeps or throttles; with caffeinate the full suite passed 3 of 3. `npm run e2e` now uses caffeinate.
+- The Release decision form, Shadow, and Monitoring tabs show honest empty states until M5. Routed-case reviews also arrive in M5.
+- Flow reads the local event store until the M6 BigQuery export. Product events are stored locally until M6.
+- Higgsfield visuals are placeholders until M8.
+- Still owed by the owner: rotate the pasted keys; review risk-suite labels; approve visual baselines.

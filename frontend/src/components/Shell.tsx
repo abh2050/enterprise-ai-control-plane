@@ -137,7 +137,7 @@ function AvatarMenu({ me, mode }: { me: Me | null; mode: ModeInfo | undefined })
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const fixture = mode?.identity_mode === "fixture" && !SNAPSHOT;
-  const users = useQuery({ queryKey: ["fixture-users"], queryFn: () => api.get<{ email: string; role: string }[]>("/fixture/users"), enabled: fixture });
+  const users = useQuery({ queryKey: ["fixture-users"], queryFn: () => api.get<{ email: string; role: string }[]>("/fixture/users"), enabled: fixture && open });
   const initials = me ? me.email.slice(0, 2).toUpperCase() : "?";
   return (
     <div className="relative">

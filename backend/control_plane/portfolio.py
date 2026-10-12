@@ -426,7 +426,7 @@ def flow(ctx: Context) -> dict[str, Any]:
 
     def in_window(e: dict[str, Any], a: datetime, b: datetime) -> bool:
         t = _parse(e["created_at"])
-        return t is not None and a <= t < b
+        return t is not None and a <= t <= b
 
     window = [e for e in ctx.app_events if in_window(e, start, end)]
     created = [e for e in window if e["kind"] == "created"]

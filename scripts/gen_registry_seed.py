@@ -541,10 +541,11 @@ APPS: list[dict[str, Any]] = [
         "id": "mortgage-doc-qa",
         "name": "Mortgage Document Q&A",
         "bu": "Lending",
-        "platform": "custom",
+        "platform": "managed",
         "risk": "high",
         "owner": "priya.raman@example.com",
         "stage": "review_gates",
+        "gates_complete": True,
         "problem": "Mortgage underwriters search long application packs for specific facts such as income "
         "sources and existing commitments. Answers with exact page citations could speed underwriting "
         "while the underwriter remains responsible for every lending decision.",
@@ -776,7 +777,7 @@ def build() -> dict[str, Any]:
                     left_gates = i < len(plan) - 1
                     if not left_gates and app.get("stalled"):
                         continue  # stalled: still waiting for reviewers
-                    if not left_gates and rng.random() < 0.5:
+                    if not left_gates and not app.get("gates_complete") and rng.random() < 0.5:
                         continue  # in progress: some gates still pending
                     decision = (
                         "reject" if rejected_here and g == GATES[app["risk"]][-1] else "approve"
