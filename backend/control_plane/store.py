@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import builtins
 import copy
-import fcntl
 import json
 import os
 import threading
@@ -211,6 +210,8 @@ class FileStore(MemoryStore):
 
     @contextmanager
     def _exclusive(self) -> Iterator[None]:
+        import fcntl  # POSIX only; the in-browser demo never uses the file store
+
         with self._lock, self._lock_path.open("a") as fh:
             fcntl.flock(fh, fcntl.LOCK_EX)
             try:

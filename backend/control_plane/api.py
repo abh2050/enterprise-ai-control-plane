@@ -128,9 +128,10 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
     app = FastAPI(title="Enterprise AI Control Plane", lifespan=lifespan)
     app.state.settings = settings
     app.state.store = store if store is not None else build_store(settings)
-    from control_plane.iap import KeyCache
+    if settings.identity_mode is IdentityMode.IAP:
+        from control_plane.iap import KeyCache
 
-    app.state.iap_keys = KeyCache()
+        app.state.iap_keys = KeyCache()
     StoreDep = Annotated[Store, Depends(get_store)]
 
     @app.exception_handler(registry.RegistryError)
@@ -625,6 +626,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
             f"Proposed {record['candidate_config_id']} with a "
             f"{len(record['cohort'])}-intent cohort",
             record["release_id"],
+            now(),
         )
         return record
 
@@ -674,6 +676,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
             user.email,
             body.rationale.strip(),
             release_id,
+            now(),
         )
         rescore(store)
         return {**record, **updates}
@@ -799,7 +802,9 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
     return app
 
 
-def _app_event(store: Store, app_id: str, kind: str, actor: str, reason: str, ref: str) -> None:
+def _app_event(
+    store: Store, app_id: str, kind: str, actor: str, reason: str, ref: str, at: datetime
+) -> None:
     event_id = uuid.uuid4().hex
     store.create(
         f"apps/{app_id}/events",
@@ -813,7 +818,7 @@ def _app_event(store: Store, app_id: str, kind: str, actor: str, reason: str, re
             "actor": actor,
             "reason": reason,
             "evidence_refs": [ref],
-            "created_at": datetime.now(UTC).isoformat(),
+            "created_at": at.isoformat(),
         },
     )
 

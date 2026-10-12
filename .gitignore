@@ -33,6 +33,7 @@ artifacts/models/*.pkl
 .cache/
 !imports/example_export.csv
 frontend/.snapshot-data/
+frontend/.demo-data/
 frontend/dist-snapshot/
 frontend/test-results/
 frontend/playwright-report/

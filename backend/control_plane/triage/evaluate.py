@@ -22,7 +22,6 @@ import numpy as np
 import yaml
 
 from control_plane.contracts import ConfigKind, Provenance, Route
-from control_plane.triage import classifier as clf_mod
 from control_plane.triage.dataset import (
     REPO_ROOT,
     SEED,
@@ -84,6 +83,8 @@ def frozen_case_order(cases: list[Case]) -> list[Case]:
 
 
 def train_classifier(name: str = "classifier_v1") -> dict[str, Any]:
+    from control_plane.triage import classifier as clf_mod  # scikit-learn loads on use
+
     train = load_split("classifier_train")
     dev = load_split("dev")
     started = time.perf_counter()
@@ -110,6 +111,8 @@ def train_classifier(name: str = "classifier_v1") -> dict[str, Any]:
 
 
 def freeze_classifier(config_id: str = "classifier_v1", created_by: str = "cli") -> dict[str, Any]:
+    from control_plane.triage import classifier as clf_mod  # scikit-learn loads on use
+
     settings = triage_settings()
     spec = settings["configs"][config_id]
     tuning = settings["policy_tuning"]
@@ -187,6 +190,8 @@ def _guard_frozen_run(config_id: str, force_reason: str | None) -> dict[str, Any
 
 
 def evaluate_config(config_id: str, force_reason: str | None = None) -> dict[str, Any]:
+    from control_plane.triage import classifier as clf_mod  # scikit-learn loads on use
+
     config_path = CONFIG_DIR / f"{config_id}.json"
     if not config_path.exists():
         raise FreezeError(f"{config_id} is not frozen yet; run `cp freeze {config_id}`")

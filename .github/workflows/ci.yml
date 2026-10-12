@@ -87,3 +87,28 @@ jobs:
       - run: npm run build && npm run build:snapshot
       - name: End-to-end scenarios (visual baselines are compared on macOS only)
         run: npx playwright test e2e/scenarios.spec.ts
+
+  demo:
+    # The GitHub Pages console runs the real backend in the browser (Pyodide). This job
+    # builds it, checks that its engine answers exactly like the backend, that the public
+    # bundle carries no secrets or message text, and that the demo works in a browser.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: uv sync --frozen
+      - run: uv run cp data fetch
+      - run: npm ci
+        working-directory: frontend
+      - run: npx playwright install --with-deps chromium
+        working-directory: frontend
+      - run: npm run build:demo
+        working-directory: frontend
+      - run: uv run pytest -q tests/test_demo_parity.py tests/test_demo_bundle.py
+      - run: npm run build && npm run build:snapshot && npx playwright test e2e/demo.spec.ts
+        working-directory: frontend

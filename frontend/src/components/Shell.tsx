@@ -17,7 +17,8 @@ import {
 } from "lucide-react";
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router";
-import { api, getFixtureUser, PLATFORMS, query, setFixtureUser, SNAPSHOT, type AppCard, type Me, type ModeInfo } from "../lib/api";
+import { api, DEMO, getFixtureUser, PLATFORMS, query, setFixtureUser, SNAPSHOT, type AppCard, type Me, type ModeInfo } from "../lib/api";
+import { DemoBar } from "./DemoBar";
 import { label } from "../lib/format";
 import { useTheme, useUrlFilters } from "../lib/state";
 import { cx, IconButton, ProvenanceBadge, Select } from "./ui";
@@ -186,7 +187,7 @@ function TopBar({ me, mode, theme, setTheme }: { me: Me | null; mode: ModeInfo |
     <header className="no-print sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-line bg-canvas/95 px-4 backdrop-blur min-[1024px]:px-8">
       <GlobalSearch />
       <div className="ml-auto flex items-center gap-2">
-        {mode && (
+        {mode && !DEMO && (
           <span className={cx("t-label hidden rounded-full border px-3 py-1 min-[720px]:inline", mode.data_mode === "LIVE" ? "border-healthy text-healthy" : "border-warning text-warning")} title="Data mode">
             {mode.data_mode}
           </span>
@@ -269,6 +270,7 @@ export function Shell({ children }: { children?: ReactNode }) {
         <Sidebar items={items} />
         <div className="flex min-w-0 flex-1 flex-col pb-14 min-[1024px]:pb-0">
           <TopBar me={user} mode={mode.data} theme={theme} setTheme={setTheme} />
+          {DEMO && <DemoBar />}
           <DataModeBanner mode={mode.data} />
           <main className="mx-auto w-full max-w-[1600px] px-4 py-7 min-[720px]:px-8">{children ?? <Outlet />}</main>
         </div>

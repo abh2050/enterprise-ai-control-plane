@@ -24,7 +24,7 @@ import {
   Skeleton,
   Sparkline,
 } from "../components/ui";
-import { api, getFixtureUser, query, SNAPSHOT, STAGES, type AppCard, type Metric, type PortfolioData } from "../lib/api";
+import { api, query, SNAPSHOT, STAGES, type AppCard, type Metric, type PortfolioData } from "../lib/api";
 import { compact, label, money, relative, timestamp } from "../lib/format";
 import { now as clockNow } from "../lib/clock";
 import { track, useUrlFilters } from "../lib/state";
@@ -145,7 +145,7 @@ function Catalog({ onOpen }: { onOpen: (id: string) => void }) {
   const all = useQuery({ queryKey: ["apps", "all", f.platform], queryFn: () => api.get<AppCard[]>(`/apps${query({ platform: f.platform })}`) });
   const owners = [...new Set((all.data ?? []).map((c) => c.owner).filter(Boolean))] as string[];
   const units = [...new Set((all.data ?? []).map((c) => c.business_unit))];
-  const csvHref = `/api/export/catalog.csv${query({ platform: f.platform, stage: params.stage, q: params.q, health: params.health })}`;
+  const csvHref = `/export/catalog.csv${query({ platform: f.platform, stage: params.stage, q: params.q, health: params.health })}`;
   return (
     <section aria-labelledby="catalog-h" className="mt-6">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -169,8 +169,8 @@ function Catalog({ onOpen }: { onOpen: (id: string) => void }) {
               <Button
                 icon={Download}
                 onClick={async () => {
-                  const res = await fetch(csvHref, { headers: { "X-Fixture-User": getFixtureUser() ?? "" } });
-                  const url = URL.createObjectURL(await res.blob());
+                  const csv = await api.text(csvHref);
+                  const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
                   const a = Object.assign(document.createElement("a"), { href: url, download: "catalog.csv" });
                   a.click();
                   URL.revokeObjectURL(url);
@@ -350,7 +350,7 @@ export default function Portfolio() {
                     <Suspense fallback={<Skeleton className="h-[232px]" />}>
                       <Matrix data={p.matrix} onOpen={openApp} />
                     </Suspense>
-                    <div className="t-label pointer-events-none absolute inset-0 grid grid-cols-2 grid-rows-2 px-12 pt-6 pb-8 text-muted opacity-70" aria-hidden>
+                    <div className="t-label pointer-events-none absolute inset-0 grid grid-cols-2 grid-rows-2 pt-0.5 pr-4 pb-0.5 pl-24 text-muted opacity-70" aria-hidden>
                       <span>Scale</span>
                       <span className="text-right">Fix</span>
                       <span className="self-end">Watch</span>

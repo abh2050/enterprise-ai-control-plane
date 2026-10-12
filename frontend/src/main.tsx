@@ -5,7 +5,8 @@ import { BrowserRouter, HashRouter, Navigate, Route, Routes } from "react-router
 import { Shell } from "./components/Shell";
 import { Skeleton, ToastProvider } from "./components/ui";
 import "./index.css";
-import { SNAPSHOT, snapshotFile } from "./lib/api";
+import { DEMO, getFixtureUser, setFixtureUser, snapshotFile, STATIC_SITE } from "./lib/api";
+import { bootEngine, engineReady } from "./lib/demo/engine";
 import { setClock } from "./lib/clock";
 import Portfolio from "./pages/Portfolio";
 
@@ -17,18 +18,25 @@ const Reviews = lazy(() => import("./pages/Reviews"));
 const Incidents = lazy(() => import("./pages/Incidents"));
 const Settings = lazy(() => import("./pages/Settings"));
 
-if (SNAPSHOT) {
+if (STATIC_SITE) {
   // Pin the clock to the export time before anything renders.
   const meta = await fetch(`${import.meta.env.BASE_URL}${snapshotFile("/meta")}`).then((r) => r.json() as Promise<{ generated_at: string }>);
   setClock(meta.generated_at);
+  if (DEMO) {
+    // The engine runs on the same clock, so its answers match the exported first paint.
+    if (!getFixtureUser()) setFixtureUser("admin@example.com");
+    bootEngine(meta.generated_at);
+  }
 }
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: false, refetchOnWindowFocus: false, staleTime: 30_000 } },
 });
+// The first paint came from exported files; once the engine runs, refetch everything from it.
+if (DEMO) void engineReady.then(() => queryClient.invalidateQueries());
 
-// The snapshot is served from static hosting, so it routes with the URL hash.
-const Router = SNAPSHOT ? HashRouter : BrowserRouter;
+// The snapshot and the demo are served from static hosting, so they route with the URL hash.
+const Router = STATIC_SITE ? HashRouter : BrowserRouter;
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

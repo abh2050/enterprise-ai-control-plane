@@ -1,5 +1,8 @@
 // Typed client for the control plane API.
 // Snapshot mode (VITE_SNAPSHOT=1) reads exported JSON files and refuses every write.
+// Demo mode (VITE_DEMO=1) sends every request to the real backend running in the browser
+// (lib/demo); until it has started, reads come from the same exported JSON.
+import { engineRequest, getEngineState } from "./demo/engine";
 
 export type Provenance = "MEASURED" | "SIMULATED" | "FIXTURE" | "ASSUMPTION";
 export type DatasetLabel = "SYNTHETIC" | "AUTHORED" | "IMPORTED";
@@ -191,6 +194,11 @@ export class ApiError extends Error {
 }
 
 export const SNAPSHOT = import.meta.env.VITE_SNAPSHOT === "1";
+export const DEMO = import.meta.env.VITE_DEMO === "1";
+/** Served as static files (GitHub Pages): hash routing and a pinned display clock. */
+export const STATIC_SITE = SNAPSHOT || DEMO;
+// Identity must come from the engine, never from the exported files.
+const ENGINE_ONLY = new Set(["/me", "/mode", "/fixture/users"]);
 const IDENTITY_KEY = "cp.fixtureUser";
 
 export function getFixtureUser(): string | null {
@@ -255,34 +263,63 @@ function filterApps(cards: AppCard[], q: URLSearchParams): AppCard[] {
   return [...out].sort(by[sort] ?? by.name);
 }
 
+async function send(method: string, path: string, body?: unknown): Promise<{ status: number; text: string }> {
+  const headers: Record<string, string> = { Accept: "application/json" };
+  const user = getFixtureUser();
+  if (user) headers["X-Fixture-User"] = user;
+  if (body !== undefined) headers["Content-Type"] = "application/json";
+  const payload = body === undefined ? null : JSON.stringify(body);
+  if (DEMO) {
+    const res = await engineRequest(method, path, headers, payload);
+    return { status: res.status, text: res.body };
+  }
+  const res = await fetch(`/api${path}`, { method, headers, body: payload ?? undefined });
+  return { status: res.status, text: await res.text() };
+}
+
+function demoReadsFromSnapshot(method: string, path: string): boolean {
+  return DEMO && method === "GET" && getEngineState().status !== "ready" && !ENGINE_ONLY.has(path.split("?")[0] ?? path);
+}
+
 async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
   if (SNAPSHOT) {
     if (method !== "GET") throw new ApiError(403, "The snapshot is read only");
     return snapshotGet<T>(path);
   }
-  const headers: Record<string, string> = { Accept: "application/json" };
-  const user = getFixtureUser();
-  if (user) headers["X-Fixture-User"] = user;
-  if (body !== undefined) headers["Content-Type"] = "application/json";
-  const res = await fetch(`/api${path}`, { method, headers, body: body === undefined ? undefined : JSON.stringify(body) });
+  if (demoReadsFromSnapshot(method, path)) {
+    try {
+      return await snapshotGet<T>(path);
+    } catch {
+      // not exported: wait for the engine
+    }
+  }
+  const res = await send(method, path, body);
   if (res.status === 204) return undefined as T;
   let data: Record<string, unknown> = {};
   try {
-    data = (await res.json()) as Record<string, unknown>;
+    data = JSON.parse(res.text) as Record<string, unknown>;
   } catch {
     // non-JSON body
   }
-  if (!res.ok) {
-    const detail = typeof data.detail === "string" ? data.detail : res.statusText;
+  if (res.status >= 400) {
+    const detail = typeof data.detail === "string" ? data.detail : `Request failed (${res.status})`;
     throw new ApiError(res.status, detail, data);
   }
   return data as T;
+}
+
+/** A text response such as the catalog CSV. */
+async function requestText(path: string): Promise<string> {
+  const res = await send("GET", path);
+  if (res.status >= 400) throw new ApiError(res.status, `Request failed (${res.status})`);
+  return res.text;
 }
 
 export const api = {
   get: <T>(path: string) => request<T>("GET", path),
   post: <T>(path: string, body?: unknown) => request<T>("POST", path, body),
   patch: <T>(path: string, body?: unknown) => request<T>("PATCH", path, body),
+  text: requestText,
 };
 
 export function query(params: Record<string, string | number | null | undefined>): string {

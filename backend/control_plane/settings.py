@@ -1,5 +1,6 @@
 """Runtime settings, read from the environment and an optional .env file."""
 
+import sys
 from datetime import datetime
 from enum import StrEnum
 from functools import lru_cache
@@ -9,6 +10,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 MICROS_PER_USD = 1_000_000
 LOCAL_HOSTS = frozenset({"127.0.0.1", "localhost", "::1"})
+# The interactive demo runs this backend inside the visitor's browser (Pyodide). There is
+# no network listener there, so nobody else can send it a forged identity header.
+BROWSER_BIND = "browser"
 
 
 class IdentityMode(StrEnum):
@@ -82,6 +86,8 @@ class UnsafeBindError(RuntimeError):
 
 def assert_safe_bind(settings: Settings, host: str | None = None) -> None:
     bound = host if host is not None else settings.bind_host
+    if bound == BROWSER_BIND and sys.platform == "emscripten":
+        return
     if settings.identity_mode is IdentityMode.FIXTURE and bound not in LOCAL_HOSTS:
         raise UnsafeBindError(
             f"Fixture identity refuses to bind to {bound!r}. "
