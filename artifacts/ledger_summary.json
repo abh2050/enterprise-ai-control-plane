@@ -1,12 +1,12 @@
 {
   "provenance": "MEASURED",
   "pricing": "list prices from the versioned price card",
-  "exported_at": "2026-10-12T00:29:19.631079+00:00",
+  "exported_at": "2026-10-12T05:39:58.627006+00:00",
   "months": {
     "2026-10": {
       "support-triage": {
-        "committed_micros": 4892300,
-        "attempts": 4553,
+        "committed_micros": 6600374,
+        "attempts": 6138,
         "unknown": 9,
         "held_micros": 12783
       }

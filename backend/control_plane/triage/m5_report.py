@@ -60,6 +60,10 @@ def release_recommendation() -> str:
         "",
     ]
     t = shadow["totals"] if shadow else None
+    summary = json.loads((REPO_ROOT / "artifacts" / "experiment_summary.json").read_text())
+    base_ood = summary["configs"]["classifier_v1"]["scorecard"][
+        "risk_route_accuracy.out_of_domain"
+    ]["value"]
     sens_fail = [
         g for g in full["gates"] if g["gate"].startswith("sensitive_recall.") and not g["passed"]
     ]
@@ -73,8 +77,9 @@ def release_recommendation() -> str:
         f"`MEASURED`, and {len(sens_fail)} sensitive intents miss the 0.95 recall gate, the "
         f"lowest at {lowest:.2f} `MEASURED`.",
         f"Where the two models agree, auto-routed precision rises to "
-        f"{sc['auto_precision']['value']:.3f} `MEASURED`, and the LLM abstains on 90% of "
-        "out-of-domain risk cases where the classifier abstains on none `MEASURED`.",
+        f"{sc['auto_precision']['value']:.3f} `MEASURED`, and the LLM routes "
+        f"{sc['risk_route_accuracy.out_of_domain']['value']:.0%} of out-of-domain risk cases "
+        f"to abstain against {base_ood:.0%} for the classifier `MEASURED`.",
     ]
     if t:
         sentences.append(
@@ -249,6 +254,32 @@ def incident_report() -> str:
             f"| {cat} | {c['cases']} | {c['auto']} | {c['review']} | "
             f"{c['candidate_out_of_scope']} |"
         )
+    lines += ["", "## Findings", ""]
+    if inc:
+        margin = inc["observed"] - inc["threshold"]
+        lines.append(
+            f"- Detection was narrow: {inc['signal']} exceeded its threshold by {margin:.4f} "
+            f"`MEASURED`. No other signal breached on day {inc['opened_day']}. A smaller drift "
+            "would likely go unnoticed by these thresholds, so the alert design needs a "
+            "drift-specific signal."
+        )
+    auto_sensitive = [
+        r
+        for r in drill["drift_rows"]
+        if r["category"] == "sensitive_paraphrase" and r["approved_route"] == "auto"
+    ]
+    ood = [r for r in drill["drift_rows"] if r["category"] == "out_of_domain"]
+    ood_llm = sum(r.get("candidate_label") == "out_of_scope" for r in ood)
+    lines.append(
+        f"- classifier_v1 auto-routed {len(auto_sensitive)} sensitive paraphrase(s) that a "
+        "person should have handled `FIXTURE`, the costliest kind of misroute in the "
+        "business model."
+    )
+    lines.append(
+        f"- In shadow, gemini-3.8-flash labeled {ood_llm} of {len(ood)} out-of-domain drift "
+        "cases out_of_scope `FIXTURE`, where the classifier cannot abstain. An out-of-scope "
+        "guard is the strongest measured argument for a narrowly scoped LLM role."
+    )
     lines += [
         "",
         "Signals are `SIMULATED` (shadow traffic) or `FIXTURE` (drift cases). Rollback in "

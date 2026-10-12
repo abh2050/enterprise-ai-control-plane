@@ -86,7 +86,13 @@ export function SignalChart({
         <CartesianGrid stroke="var(--border)" strokeOpacity={0.6} vertical={false} />
         <ReferenceArea x1={drillDays[0]} x2={drillDays[drillDays.length - 1]} fill="var(--chart_4)" fillOpacity={0.12} />
         <XAxis dataKey="day" type="number" domain={[1, 14]} ticks={[1, 4, 7, 10, 12, 14]} tick={AXIS} label={{ value: "Simulated day", position: "insideBottom", offset: -16, ...AXIS }} />
-        <YAxis tick={AXIS} tickCount={6} tickFormatter={fmt} label={{ value: label, angle: -90, position: "insideLeft", offset: -28, ...AXIS }} />
+        <YAxis
+          tick={AXIS}
+          tickCount={6}
+          tickFormatter={fmt}
+          domain={[0, (max: number) => Math.max(max, threshold * scale * 1.15)]}
+          label={{ value: unit === "pct" ? "Percent" : "USD", angle: -90, position: "insideLeft", offset: -28, ...AXIS }}
+        />
         <Tooltip contentStyle={TIP} formatter={(v) => (v === null ? "paused" : fmt(Number(v)))} labelFormatter={(d) => `Day ${d}`} />
         <ReferenceLine y={threshold * scale} stroke="var(--chart_3)" strokeDasharray="6 4" label={{ value: `Alert ${fmt(threshold * scale)}`, position: "insideTopRight", ...AXIS }} />
         {incidentDay !== null && <ReferenceLine x={incidentDay} stroke="var(--chart_4)" label={{ value: "Incident", position: "insideTopLeft", ...AXIS }} />}

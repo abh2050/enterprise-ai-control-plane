@@ -1,0 +1,744 @@
+{
+  "run_id": "shadow_llm_high_capability_v1_20261012T040728Z",
+  "alert_policy": "alerts_shadow_llm_high_capability_v1_20261012T040728Z",
+  "drill_days": [
+    10,
+    11,
+    12
+  ],
+  "drift_cases": 40,
+  "days": [
+    {
+      "day": 1,
+      "cases": 110,
+      "authority": "approved",
+      "review_rate": 0.14545454545454545,
+      "cost_per_correct_usd": 0.92,
+      "sampled_accuracy": 0.7272727272727273,
+      "sampled_cases": 11,
+      "drift_cases": 0,
+      "breaches": [],
+      "shadow_check": null,
+      "shadow_check_breaches": []
+    },
+    {
+      "day": 2,
+      "cases": 110,
+      "authority": "approved",
+      "review_rate": 0.18181818181818182,
+      "cost_per_correct_usd": 0.28703703703703703,
+      "sampled_accuracy": 1.0,
+      "sampled_cases": 11,
+      "drift_cases": 0,
+      "breaches": [],
+      "shadow_check": null,
+      "shadow_check_breaches": []
+    },
+    {
+      "day": 3,
+      "cases": 110,
+      "authority": "approved",
+      "review_rate": 0.16363636363636364,
+      "cost_per_correct_usd": 0.6747572815533981,
+      "sampled_accuracy": 0.9090909090909091,
+      "sampled_cases": 11,
+      "drift_cases": 0,
+      "breaches": [],
+      "shadow_check": null,
+      "shadow_check_breaches": []
+    },
+    {
+      "day": 4,
+      "cases": 110,
+      "authority": "approved",
+      "review_rate": 0.16363636363636364,
+      "cost_per_correct_usd": 0.5095238095238095,
+      "sampled_accuracy": 1.0,
+      "sampled_cases": 11,
+      "drift_cases": 0,
+      "breaches": [],
+      "shadow_check": null,
+      "shadow_check_breaches": []
+    },
+    {
+      "day": 5,
+      "cases": 110,
+      "authority": "approved",
+      "review_rate": 0.17272727272727273,
+      "cost_per_correct_usd": 0.3574766355140187,
+      "sampled_accuracy": 1.0,
+      "sampled_cases": 11,
+      "drift_cases": 0,
+      "breaches": [],
+      "shadow_check": null,
+      "shadow_check_breaches": []
+    },
+    {
+      "day": 6,
+      "cases": 110,
+      "authority": "approved",
+      "review_rate": 0.17272727272727273,
+      "cost_per_correct_usd": 0.20412844036697247,
+      "sampled_accuracy": 1.0,
+      "sampled_cases": 11,
+      "drift_cases": 0,
+      "breaches": [],
+      "shadow_check": null,
+      "shadow_check_breaches": []
+    },
+    {
+      "day": 7,
+      "cases": 110,
+      "authority": "approved",
+      "review_rate": 0.12727272727272726,
+      "cost_per_correct_usd": 0.7303921568627451,
+      "sampled_accuracy": 0.9090909090909091,
+      "sampled_cases": 11,
+      "drift_cases": 0,
+      "breaches": [],
+      "shadow_check": null,
+      "shadow_check_breaches": []
+    },
+    {
+      "day": 8,
+      "cases": 110,
+      "authority": "approved",
+      "review_rate": 0.13636363636363635,
+      "cost_per_correct_usd": 0.3294392523364486,
+      "sampled_accuracy": 0.8181818181818182,
+      "sampled_cases": 11,
+      "drift_cases": 0,
+      "breaches": [],
+      "shadow_check": null,
+      "shadow_check_breaches": []
+    },
+    {
+      "day": 9,
+      "cases": 110,
+      "authority": "approved",
+      "review_rate": 0.16363636363636364,
+      "cost_per_correct_usd": 0.27314814814814814,
+      "sampled_accuracy": 0.9090909090909091,
+      "sampled_cases": 11,
+      "drift_cases": 0,
+      "breaches": [],
+      "shadow_check": null,
+      "shadow_check_breaches": []
+    },
+    {
+      "day": 10,
+      "cases": 124,
+      "authority": "approved",
+      "review_rate": 0.21774193548387097,
+      "cost_per_correct_usd": 0.6517094017094017,
+      "sampled_accuracy": 0.9166666666666666,
+      "sampled_cases": 12,
+      "drift_cases": 14,
+      "breaches": [
+        {
+          "signal": "review_rate",
+          "observed": 0.21774193548387097,
+          "threshold": 0.2171843281070579,
+          "direction": "above"
+        }
+      ],
+      "shadow_check": null,
+      "shadow_check_breaches": []
+    },
+    {
+      "day": 11,
+      "cases": 123,
+      "authority": "manual",
+      "review_rate": 1.0,
+      "cost_per_correct_usd": 0.75,
+      "sampled_accuracy": null,
+      "sampled_cases": 12,
+      "drift_cases": 13,
+      "breaches": [],
+      "shadow_check": {
+        "day": 11,
+        "cases": 123,
+        "authority": "approved",
+        "review_rate": 0.2764227642276423,
+        "cost_per_correct_usd": 0.9336283185840708,
+        "sampled_accuracy": 1.0,
+        "sampled_cases": 12,
+        "drift_cases": 13
+      },
+      "shadow_check_breaches": [
+        {
+          "signal": "review_rate",
+          "observed": 0.2764227642276423,
+          "threshold": 0.2171843281070579,
+          "direction": "above"
+        }
+      ]
+    },
+    {
+      "day": 12,
+      "cases": 123,
+      "authority": "manual",
+      "review_rate": 1.0,
+      "cost_per_correct_usd": 0.75,
+      "sampled_accuracy": null,
+      "sampled_cases": 12,
+      "drift_cases": 13,
+      "breaches": [],
+      "shadow_check": {
+        "day": 12,
+        "cases": 123,
+        "authority": "approved",
+        "review_rate": 0.1951219512195122,
+        "cost_per_correct_usd": 1.8620689655172413,
+        "sampled_accuracy": 0.9166666666666666,
+        "sampled_cases": 12,
+        "drift_cases": 13
+      },
+      "shadow_check_breaches": [
+        {
+          "signal": "cost_per_correct_usd",
+          "observed": 1.8620689655172413,
+          "threshold": 1.3089875221647818,
+          "direction": "above"
+        }
+      ]
+    },
+    {
+      "day": 13,
+      "cases": 110,
+      "authority": "manual",
+      "review_rate": 1.0,
+      "cost_per_correct_usd": 0.75,
+      "sampled_accuracy": null,
+      "sampled_cases": 11,
+      "drift_cases": 0,
+      "breaches": [],
+      "shadow_check": {
+        "day": 13,
+        "cases": 110,
+        "authority": "approved",
+        "review_rate": 0.16363636363636364,
+        "cost_per_correct_usd": 0.35046728971962615,
+        "sampled_accuracy": 1.0,
+        "sampled_cases": 11,
+        "drift_cases": 0
+      },
+      "shadow_check_breaches": []
+    },
+    {
+      "day": 14,
+      "cases": 110,
+      "authority": "approved",
+      "review_rate": 0.15454545454545454,
+      "cost_per_correct_usd": 0.5023809523809524,
+      "sampled_accuracy": 1.0,
+      "sampled_cases": 11,
+      "drift_cases": 0,
+      "breaches": [],
+      "shadow_check": null,
+      "shadow_check_breaches": []
+    }
+  ],
+  "timeline": [
+    {
+      "day": 10,
+      "event": "incident_opened",
+      "actor": "monitoring",
+      "detail": "review_rate 0.218 vs 0.217"
+    },
+    {
+      "day": 10,
+      "event": "automation_paused",
+      "actor": "admin@example.com",
+      "detail": "Governance admin paused automation for Support Triage"
+    },
+    {
+      "day": 10,
+      "event": "rollback",
+      "actor": "admin@example.com",
+      "detail": "Rolled back to the prior process: every case routes to human review until signals recover"
+    },
+    {
+      "day": 13,
+      "event": "automation_resumed",
+      "actor": "admin@example.com",
+      "detail": "Shadow check within every threshold; automation resumed"
+    }
+  ],
+  "incident": {
+    "incident_id": "drill_shadow_llm_high_capability_v1_20261012T040728Z",
+    "app_id": "support-triage",
+    "signal": "review_rate",
+    "threshold": 0.2171843281070579,
+    "observed": 0.21774193548387097,
+    "all_breaches": [
+      {
+        "signal": "review_rate",
+        "observed": 0.21774193548387097,
+        "threshold": 0.2171843281070579,
+        "direction": "above"
+      }
+    ],
+    "status": "closed",
+    "opened_day": 10,
+    "opened_at": "2026-10-12T05:13:08.366244+00:00",
+    "detection_delay_days": 0,
+    "detection_processing_seconds": 0.026,
+    "actions": [
+      "Governance admin paused automation for Support Triage",
+      "Rolled back to the prior process: every case routes to human review until signals recover",
+      "Shadow check within every threshold; automation resumed"
+    ],
+    "closed_at": "2026-10-12T05:13:08.366244+00:00",
+    "provenance": "FIXTURE",
+    "closed_day": 13
+  },
+  "detected": true,
+  "drift_rows": [
+    {
+      "day": 10,
+      "case_id": "drift-ood-13",
+      "category": "out_of_domain",
+      "reference_label": "out_of_scope",
+      "approved_label": "card_arrival",
+      "approved_prob": 0.071475,
+      "approved_route": "review",
+      "candidate_label": "out_of_scope",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 10,
+      "case_id": "drift-sens-08",
+      "category": "sensitive_paraphrase",
+      "reference_label": "compromised_card",
+      "approved_label": "lost_or_stolen_card",
+      "approved_prob": 0.198438,
+      "approved_route": "review",
+      "candidate_label": "compromised_card",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 10,
+      "case_id": "drift-ood-20",
+      "category": "out_of_domain",
+      "reference_label": "out_of_scope",
+      "approved_label": "transfer_fee_charged",
+      "approved_prob": 0.056641,
+      "approved_route": "review",
+      "candidate_label": "out_of_scope",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 10,
+      "case_id": "drift-sens-19",
+      "category": "sensitive_paraphrase",
+      "reference_label": "lost_or_stolen_phone",
+      "approved_label": "lost_or_stolen_phone",
+      "approved_prob": 0.852743,
+      "approved_route": "review",
+      "candidate_label": "lost_or_stolen_phone",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 10,
+      "case_id": "drift-sens-05",
+      "category": "sensitive_paraphrase",
+      "reference_label": "cash_withdrawal_not_recognised",
+      "approved_label": "card_swallowed",
+      "approved_prob": 0.167926,
+      "approved_route": "review",
+      "candidate_label": "cash_withdrawal_not_recognised",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 10,
+      "case_id": "drift-ood-18",
+      "category": "out_of_domain",
+      "reference_label": "out_of_scope",
+      "approved_label": "supported_cards_and_currencies",
+      "approved_prob": 0.106507,
+      "approved_route": "review",
+      "candidate_label": "out_of_scope",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 10,
+      "case_id": "drift-sens-17",
+      "category": "sensitive_paraphrase",
+      "reference_label": "lost_or_stolen_card",
+      "approved_label": "card_arrival",
+      "approved_prob": 0.135701,
+      "approved_route": "review",
+      "candidate_label": "lost_or_stolen_card",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 10,
+      "case_id": "drift-sens-06",
+      "category": "sensitive_paraphrase",
+      "reference_label": "cash_withdrawal_not_recognised",
+      "approved_label": "cash_withdrawal_not_recognised",
+      "approved_prob": 0.535789,
+      "approved_route": "review",
+      "candidate_label": "cash_withdrawal_not_recognised",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 10,
+      "case_id": "drift-ood-06",
+      "category": "out_of_domain",
+      "reference_label": "out_of_scope",
+      "approved_label": "card_not_working",
+      "approved_prob": 0.08254,
+      "approved_route": "review",
+      "candidate_label": "out_of_scope",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 10,
+      "case_id": "drift-ood-09",
+      "category": "out_of_domain",
+      "reference_label": "out_of_scope",
+      "approved_label": "why_verify_identity",
+      "approved_prob": 0.04575,
+      "approved_route": "review",
+      "candidate_label": "out_of_scope",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 10,
+      "case_id": "drift-ood-02",
+      "category": "out_of_domain",
+      "reference_label": "out_of_scope",
+      "approved_label": "edit_personal_details",
+      "approved_prob": 0.33035,
+      "approved_route": "review",
+      "candidate_label": "out_of_scope",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 10,
+      "case_id": "drift-ood-01",
+      "category": "out_of_domain",
+      "reference_label": "out_of_scope",
+      "approved_label": "direct_debit_payment_not_recognised",
+      "approved_prob": 0.09958,
+      "approved_route": "review",
+      "candidate_label": "out_of_scope",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 10,
+      "case_id": "drift-ood-16",
+      "category": "out_of_domain",
+      "reference_label": "out_of_scope",
+      "approved_label": "edit_personal_details",
+      "approved_prob": 0.199019,
+      "approved_route": "review",
+      "candidate_label": "out_of_scope",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 10,
+      "case_id": "drift-ood-05",
+      "category": "out_of_domain",
+      "reference_label": "out_of_scope",
+      "approved_label": "transfer_not_received_by_recipient",
+      "approved_prob": 0.126049,
+      "approved_route": "review",
+      "candidate_label": "out_of_scope",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 11,
+      "case_id": "drift-sens-11",
+      "category": "sensitive_paraphrase",
+      "reference_label": "compromised_card",
+      "approved_label": "lost_or_stolen_phone",
+      "approved_prob": 0.372015,
+      "approved_route": "review",
+      "candidate_label": "compromised_card",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 11,
+      "case_id": "drift-ood-08",
+      "category": "out_of_domain",
+      "reference_label": "out_of_scope",
+      "approved_label": "card_delivery_estimate",
+      "approved_prob": 0.174845,
+      "approved_route": "review",
+      "candidate_label": "out_of_scope",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 11,
+      "case_id": "drift-ood-12",
+      "category": "out_of_domain",
+      "reference_label": "out_of_scope",
+      "approved_label": "country_support",
+      "approved_prob": 0.139747,
+      "approved_route": "review",
+      "candidate_label": "out_of_scope",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 11,
+      "case_id": "drift-ood-11",
+      "category": "out_of_domain",
+      "reference_label": "out_of_scope",
+      "approved_label": "disposable_card_limits",
+      "approved_prob": 0.102894,
+      "approved_route": "review",
+      "candidate_label": "out_of_scope",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 11,
+      "case_id": "drift-ood-07",
+      "category": "out_of_domain",
+      "reference_label": "out_of_scope",
+      "approved_label": "receiving_money",
+      "approved_prob": 0.052535,
+      "approved_route": "review",
+      "candidate_label": "out_of_scope",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 11,
+      "case_id": "drift-sens-07",
+      "category": "sensitive_paraphrase",
+      "reference_label": "cash_withdrawal_not_recognised",
+      "approved_label": "cash_withdrawal_not_recognised",
+      "approved_prob": 0.14627,
+      "approved_route": "review",
+      "candidate_label": "cash_withdrawal_not_recognised",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 11,
+      "case_id": "drift-ood-10",
+      "category": "out_of_domain",
+      "reference_label": "out_of_scope",
+      "approved_label": "passcode_forgotten",
+      "approved_prob": 0.347511,
+      "approved_route": "auto",
+      "candidate_label": "out_of_scope",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 11,
+      "case_id": "drift-sens-12",
+      "category": "sensitive_paraphrase",
+      "reference_label": "direct_debit_payment_not_recognised",
+      "approved_label": "age_limit",
+      "approved_prob": 0.076819,
+      "approved_route": "review",
+      "candidate_label": "direct_debit_payment_not_recognised",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 11,
+      "case_id": "drift-ood-04",
+      "category": "out_of_domain",
+      "reference_label": "out_of_scope",
+      "approved_label": "order_physical_card",
+      "approved_prob": 0.182404,
+      "approved_route": "review",
+      "candidate_label": "out_of_scope",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 11,
+      "case_id": "drift-sens-10",
+      "category": "sensitive_paraphrase",
+      "reference_label": "compromised_card",
+      "approved_label": "card_acceptance",
+      "approved_prob": 0.095921,
+      "approved_route": "review",
+      "candidate_label": "compromised_card",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 11,
+      "case_id": "drift-ood-17",
+      "category": "out_of_domain",
+      "reference_label": "out_of_scope",
+      "approved_label": "lost_or_stolen_card",
+      "approved_prob": 0.060057,
+      "approved_route": "review",
+      "candidate_label": "out_of_scope",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 11,
+      "case_id": "drift-ood-03",
+      "category": "out_of_domain",
+      "reference_label": "out_of_scope",
+      "approved_label": "card_delivery_estimate",
+      "approved_prob": 0.116485,
+      "approved_route": "review",
+      "candidate_label": "out_of_scope",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 11,
+      "case_id": "drift-sens-20",
+      "category": "sensitive_paraphrase",
+      "reference_label": "lost_or_stolen_phone",
+      "approved_label": "lost_or_stolen_phone",
+      "approved_prob": 0.796719,
+      "approved_route": "review",
+      "candidate_label": "lost_or_stolen_phone",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 12,
+      "case_id": "drift-sens-04",
+      "category": "sensitive_paraphrase",
+      "reference_label": "card_payment_not_recognised",
+      "approved_label": "pending_transfer",
+      "approved_prob": 0.11768,
+      "approved_route": "review",
+      "candidate_label": "card_payment_not_recognised",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 12,
+      "case_id": "drift-sens-01",
+      "category": "sensitive_paraphrase",
+      "reference_label": "card_payment_not_recognised",
+      "approved_label": "card_payment_not_recognised",
+      "approved_prob": 0.197704,
+      "approved_route": "review",
+      "candidate_label": "card_payment_not_recognised",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 12,
+      "case_id": "drift-sens-16",
+      "category": "sensitive_paraphrase",
+      "reference_label": "lost_or_stolen_card",
+      "approved_label": "direct_debit_payment_not_recognised",
+      "approved_prob": 0.4457,
+      "approved_route": "review",
+      "candidate_label": "lost_or_stolen_card",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 12,
+      "case_id": "drift-sens-18",
+      "category": "sensitive_paraphrase",
+      "reference_label": "lost_or_stolen_phone",
+      "approved_label": "lost_or_stolen_phone",
+      "approved_prob": 0.789534,
+      "approved_route": "review",
+      "candidate_label": "lost_or_stolen_phone",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 12,
+      "case_id": "drift-ood-15",
+      "category": "out_of_domain",
+      "reference_label": "out_of_scope",
+      "approved_label": "card_not_working",
+      "approved_prob": 0.080799,
+      "approved_route": "review",
+      "candidate_label": "out_of_scope",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 12,
+      "case_id": "drift-sens-13",
+      "category": "sensitive_paraphrase",
+      "reference_label": "direct_debit_payment_not_recognised",
+      "approved_label": "terminate_account",
+      "approved_prob": 0.211207,
+      "approved_route": "review",
+      "candidate_label": "direct_debit_payment_not_recognised",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 12,
+      "case_id": "drift-sens-15",
+      "category": "sensitive_paraphrase",
+      "reference_label": "lost_or_stolen_card",
+      "approved_label": "cash_withdrawal_not_recognised",
+      "approved_prob": 0.095961,
+      "approved_route": "review",
+      "candidate_label": "lost_or_stolen_card",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 12,
+      "case_id": "drift-ood-19",
+      "category": "out_of_domain",
+      "reference_label": "out_of_scope",
+      "approved_label": "transfer_not_received_by_recipient",
+      "approved_prob": 0.124356,
+      "approved_route": "review",
+      "candidate_label": "out_of_scope",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 12,
+      "case_id": "drift-sens-03",
+      "category": "sensitive_paraphrase",
+      "reference_label": "card_payment_not_recognised",
+      "approved_label": "card_payment_not_recognised",
+      "approved_prob": 0.243067,
+      "approved_route": "review",
+      "candidate_label": "card_payment_not_recognised",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 12,
+      "case_id": "drift-ood-14",
+      "category": "out_of_domain",
+      "reference_label": "out_of_scope",
+      "approved_label": "country_support",
+      "approved_prob": 0.204064,
+      "approved_route": "review",
+      "candidate_label": "out_of_scope",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 12,
+      "case_id": "drift-sens-02",
+      "category": "sensitive_paraphrase",
+      "reference_label": "card_payment_not_recognised",
+      "approved_label": "receiving_money",
+      "approved_prob": 0.128344,
+      "approved_route": "review",
+      "candidate_label": "card_payment_not_recognised",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 12,
+      "case_id": "drift-sens-14",
+      "category": "sensitive_paraphrase",
+      "reference_label": "direct_debit_payment_not_recognised",
+      "approved_label": "why_verify_identity",
+      "approved_prob": 0.096902,
+      "approved_route": "review",
+      "candidate_label": "direct_debit_payment_not_recognised",
+      "provenance": "FIXTURE"
+    },
+    {
+      "day": 12,
+      "case_id": "drift-sens-09",
+      "category": "sensitive_paraphrase",
+      "reference_label": "compromised_card",
+      "approved_label": "edit_personal_details",
+      "approved_prob": 0.469119,
+      "approved_route": "auto",
+      "candidate_label": "compromised_card",
+      "provenance": "FIXTURE"
+    }
+  ],
+  "provenance": {
+    "baseline_days": "SIMULATED",
+    "drift_cases": "FIXTURE"
+  },
+  "ran_at": "2026-10-12T05:13:08.366244+00:00"
+}

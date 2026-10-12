@@ -1,0 +1,28 @@
+{
+  "incident_id": "drill_shadow_llm_high_capability_v1_20261012T040728Z",
+  "app_id": "support-triage",
+  "signal": "review_rate",
+  "threshold": 0.2171843281070579,
+  "observed": 0.21774193548387097,
+  "all_breaches": [
+    {
+      "signal": "review_rate",
+      "observed": 0.21774193548387097,
+      "threshold": 0.2171843281070579,
+      "direction": "above"
+    }
+  ],
+  "status": "closed",
+  "opened_day": 10,
+  "opened_at": "2026-10-12T05:13:08.366244+00:00",
+  "detection_delay_days": 0,
+  "detection_processing_seconds": 0.026,
+  "actions": [
+    "Governance admin paused automation for Support Triage",
+    "Rolled back to the prior process: every case routes to human review until signals recover",
+    "Shadow check within every threshold; automation resumed"
+  ],
+  "closed_at": "2026-10-12T05:13:08.366244+00:00",
+  "provenance": "FIXTURE",
+  "closed_day": 13
+}

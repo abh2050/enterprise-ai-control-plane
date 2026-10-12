@@ -121,3 +121,6 @@ Each entry records the decision, the alternatives considered, and the reason.
 - 3.8 Flash is the better candidate on every gate and is cheaper per call with its cached prefix, so it is the one replayed in shadow.
 - With no activation, production stays on classifier_v1. Monitoring, the alert policy, and the drill apply to classifier_v1. Rollback means pausing automation: every case goes to human review until a shadow check passes every frozen threshold.
 - The 40 drift cases (data/drift_cases.jsonl) were written in the build session, labeled FIXTURE, single rater, and are distinct from the risk suite.
+
+## D32. The drill detected drift by a narrow margin (M5)
+- Monitoring opened the incident on day 10, the first drift day, but the review rate cleared its frozen threshold by only 0.0006, and no other signal breached. The incident report states this, and it recommends a drift-specific signal (for example the out-of-scope rate) before relying on these alerts. The thresholds were not adjusted after the drill.
