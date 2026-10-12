@@ -13,39 +13,39 @@ carries a provenance label, and each table names the files that hold its values.
 
 ## Comparison on the frozen set
 
-| Metric | classifier_v1 | llm_low_cost_v1 |
-|---|---|---|
-| Macro F1 (77 labels, abstain counts as miss) | 0.913 `MEASURED` | 0.839 `MEASURED` |
-| Accuracy | 0.913 `MEASURED` | 0.842 `MEASURED` |
-| Automation coverage | 86.2% `MEASURED` | 76.5% `MEASURED` |
-| Precision on auto-routed cases | 0.944 `MEASURED` | 0.974 `MEASURED` |
-| Review rate | 13.8% `MEASURED` | 22.8% `MEASURED` |
-| Abstention rate | 0.0% `MEASURED` | 0.7% `MEASURED` |
-| Latency p50 (ms) | 2 `MEASURED` | 1,069 `MEASURED` |
-| Latency p95 (ms) | 2 `MEASURED` | 1,382 `MEASURED` |
-| Model cost per 1,000 cases (USD, list price) | $0.0000 `MEASURED` | $1.0139 `MEASURED` |
-| Total cost per correctly handled case (USD) | $0.7119 `ASSUMPTION` | $0.4394 `ASSUMPTION` |
+| Metric | classifier_v1 | llm_high_capability_v1 | llm_low_cost_v1 |
+|---|---|---|---|
+| Macro F1 (77 labels, abstain counts as miss) | 0.913 `MEASURED` | 0.885 `MEASURED` | 0.839 `MEASURED` |
+| Accuracy | 0.913 `MEASURED` | 0.886 `MEASURED` | 0.842 `MEASURED` |
+| Automation coverage | 86.2% `MEASURED` | 79.4% `MEASURED` | 76.5% `MEASURED` |
+| Precision on auto-routed cases | 0.944 `MEASURED` | 0.976 `MEASURED` | 0.974 `MEASURED` |
+| Review rate | 13.8% `MEASURED` | 20.5% `MEASURED` | 22.8% `MEASURED` |
+| Abstention rate | 0.0% `MEASURED` | 0.1% `MEASURED` | 0.7% `MEASURED` |
+| Latency p50 (ms) | 2 `MEASURED` | 1,728 `MEASURED` | 1,069 `MEASURED` |
+| Latency p95 (ms) | 2 `MEASURED` | 3,531 `MEASURED` | 1,382 `MEASURED` |
+| Model cost per 1,000 cases (USD, list price) | $0.0000 `MEASURED` | $1.0655 `MEASURED` | $1.0139 `MEASURED` |
+| Total cost per correctly handled case (USD) | $0.7119 `ASSUMPTION` | $0.4060 `ASSUMPTION` | $0.4394 `ASSUMPTION` |
 
-Sources: `artifacts/experiments/exp_classifier_v1_20261011T164751Z/scorecard.json`, `artifacts/experiments/exp_llm_low_cost_v1_20261011T195657Z/scorecard.json`. Total cost per correctly handled case adds assumed review and misroute costs from `configs/business_model.yaml` to measured model cost.
+Sources: `artifacts/experiments/exp_classifier_v1_20261011T164751Z/scorecard.json`, `artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/scorecard.json`, `artifacts/experiments/exp_llm_low_cost_v1_20261011T195657Z/scorecard.json`. Total cost per correctly handled case adds assumed review and misroute costs from `configs/business_model.yaml` to measured model cost.
 
 ### Sensitive intents (gate: recall at least 0.95 on each intent in the cohort)
 
-| Intent | classifier_v1 recall / to review | llm_low_cost_v1 recall / to review |
-|---|---|---|
-| card_payment_not_recognised | 0.75 `MEASURED` / 1.00 `MEASURED` | 0.85 `MEASURED` / 1.00 `MEASURED` |
-| cash_withdrawal_not_recognised | 0.90 `MEASURED` / 1.00 `MEASURED` | 0.80 `MEASURED` / 1.00 `MEASURED` |
-| compromised_card | 0.90 `MEASURED` / 0.95 `MEASURED` | 0.65 `MEASURED` / 1.00 `MEASURED` |
-| direct_debit_payment_not_recognised | 0.85 `MEASURED` / 1.00 `MEASURED` | 0.50 `MEASURED` / 0.95 `MEASURED` |
-| lost_or_stolen_card | 0.95 `MEASURED` / 0.95 `MEASURED` | 1.00 `MEASURED` / 1.00 `MEASURED` |
-| lost_or_stolen_phone | 0.95 `MEASURED` / 1.00 `MEASURED` | 0.75 `MEASURED` / 1.00 `MEASURED` |
+| Intent | classifier_v1 recall / to review | llm_high_capability_v1 recall / to review | llm_low_cost_v1 recall / to review |
+|---|---|---|---|
+| card_payment_not_recognised | 0.75 `MEASURED` / 1.00 `MEASURED` | 0.80 `MEASURED` / 1.00 `MEASURED` | 0.85 `MEASURED` / 1.00 `MEASURED` |
+| cash_withdrawal_not_recognised | 0.90 `MEASURED` / 1.00 `MEASURED` | 0.95 `MEASURED` / 1.00 `MEASURED` | 0.80 `MEASURED` / 1.00 `MEASURED` |
+| compromised_card | 0.90 `MEASURED` / 0.95 `MEASURED` | 0.90 `MEASURED` / 0.95 `MEASURED` | 0.65 `MEASURED` / 1.00 `MEASURED` |
+| direct_debit_payment_not_recognised | 0.85 `MEASURED` / 1.00 `MEASURED` | 0.60 `MEASURED` / 0.95 `MEASURED` | 0.50 `MEASURED` / 0.95 `MEASURED` |
+| lost_or_stolen_card | 0.95 `MEASURED` / 0.95 `MEASURED` | 0.95 `MEASURED` / 1.00 `MEASURED` | 1.00 `MEASURED` / 1.00 `MEASURED` |
+| lost_or_stolen_phone | 0.95 `MEASURED` / 1.00 `MEASURED` | 0.85 `MEASURED` / 1.00 `MEASURED` | 0.75 `MEASURED` / 1.00 `MEASURED` |
 
 ### Risk suite route accuracy (`AUTHORED` cases, single rater)
 
-| Category | classifier_v1 | llm_low_cost_v1 |
-|---|---|---|
-| ambiguous | 0.50 `MEASURED` | 0.55 `MEASURED` |
-| sensitive_indirect | 0.95 `MEASURED` | 0.95 `MEASURED` |
-| out_of_domain | 0.00 `MEASURED` | 0.90 `MEASURED` |
+| Category | classifier_v1 | llm_high_capability_v1 | llm_low_cost_v1 |
+|---|---|---|---|
+| ambiguous | 0.50 `MEASURED` | 0.60 `MEASURED` | 0.55 `MEASURED` |
+| sensitive_indirect | 0.95 `MEASURED` | 1.00 `MEASURED` | 0.95 `MEASURED` |
+| out_of_domain | 0.00 `MEASURED` | 0.90 `MEASURED` | 0.90 `MEASURED` |
 
 ## Paired bootstrap against classifier_v1
 
@@ -53,6 +53,7 @@ Candidate minus baseline on identical cases, 1,000 resamples, seed 42, 95% perce
 
 | Candidate | Macro F1 delta [95% CI] | Auto precision delta [95% CI] |
 |---|---|---|
+| llm_high_capability_v1 | -0.028 [-0.047, -0.010] `MEASURED` | +0.033 [+0.021, +0.045] `MEASURED` |
 | llm_low_cost_v1 | -0.074 [-0.094, -0.056] `MEASURED` | +0.030 [+0.018, +0.042] `MEASURED` |
 
 ## Configs, policies, and usage
@@ -62,6 +63,13 @@ Candidate minus baseline on identical cases, 1,000 resamples, seed 42, 95% perce
 - Experiment `exp_classifier_v1_20261011T164751Z`; model `classifier_v1@869f53871898`; policy `policy_classifier_v1` frozen 2026-10-11T16:47:42.280847+00:00, before the frozen run.
 - Dev tuning (dev): classifier threshold 0.34 `MEASURED`; target dev auto precision 0.95 `ASSUMPTION`; dev auto precision 0.950 `MEASURED`; dev coverage 86.0% `MEASURED`.
 - Frozen-set runs: 1 `MEASURED` (first run).
+
+### llm_high_capability_v1
+
+- Experiment `exp_llm_high_capability_v1_20261011T203415Z`; model `gemini-3.8-flash` on `vertex`; policy `policy_llm_high_capability_v1` frozen 2026-10-11T19:55:03.699560+00:00, before the frozen run.
+- Dev tuning (dev minus prompt examples): agreement threshold 0.0 `MEASURED`; target dev auto precision 0.95 `ASSUMPTION`; dev auto precision 0.976 `MEASURED`; dev coverage 79.7% `MEASURED`.
+- Frozen-set runs: 1 `MEASURED` (first run).
+- Usage `MEASURED`: 1,600 calls (885 fresh), 8,863,131 input tokens of which 7,717,941 cached, 71,208 output tokens including 271 thinking, 9 unknown outcomes, 0 invalid outputs, cost $1.7057 at list price (price card `2026-10-11_vertex`).
 
 ### llm_low_cost_v1
 

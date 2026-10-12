@@ -1,0 +1,28 @@
+{
+  "experiment_id": "exp_llm_high_capability_v1_20261011T203415Z",
+  "config_id": "llm_high_capability_v1",
+  "policy_id": "policy_llm_high_capability_v1",
+  "dataset_id": "banking77_frozen_eval",
+  "dataset_sha256": "a7cc275b7eb234f798f079df819c674a4cb9d1b6dbbbb94b667272b53ef199bb",
+  "case_order_seed": 42,
+  "status": "finished",
+  "backend": "vertex",
+  "model_id": "gemini-3.8-flash",
+  "price_card": "2026-10-11_vertex",
+  "billing_note": "Free-tier calls bill $0. cost_micros_list_price is the same usage at paid-tier list prices.",
+  "usage": {
+    "calls": 1600,
+    "fresh_calls": 885,
+    "unknown_outcomes": 9,
+    "invalid_outputs": 0,
+    "cost_micros_list_price": 1705650,
+    "input_tokens": 8863131,
+    "output_tokens": 71208,
+    "thinking_tokens": 271,
+    "cached_tokens": 7717941
+  },
+  "started_at": "2026-10-11T20:34:15.415215+00:00",
+  "finished_at": "2026-10-12T00:09:40.698246+00:00",
+  "provenance": "MEASURED",
+  "rerun_reason": null
+}

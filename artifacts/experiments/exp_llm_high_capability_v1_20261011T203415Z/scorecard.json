@@ -1,0 +1,158 @@
+{
+  "cases": {
+    "value": 1540,
+    "unit": "cases",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "macro_f1": {
+    "value": 0.8854739159324452,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "accuracy": {
+    "value": 0.8863636363636364,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "automation_coverage": {
+    "value": 0.7941558441558442,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "auto_precision": {
+    "value": 0.9762878168438267,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "review_rate": {
+    "value": 0.20454545454545456,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "abstention_rate": {
+    "value": 0.0012987012987012987,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "latency_p50_ms": {
+    "value": 1728,
+    "unit": "ms",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "latency_p95_ms": {
+    "value": 3531,
+    "unit": "ms",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "model_cost_per_1k_usd": {
+    "value": 1.0654636363636365,
+    "unit": "USD per 1,000 cases",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "total_cost_per_correct_usd": {
+    "value": null,
+    "unit": "USD per correctly handled case",
+    "provenance": "ASSUMPTION",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "sensitive_recall.card_payment_not_recognised": {
+    "value": 0.8,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "sensitive_review_rate.card_payment_not_recognised": {
+    "value": 1.0,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "sensitive_recall.cash_withdrawal_not_recognised": {
+    "value": 0.95,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "sensitive_review_rate.cash_withdrawal_not_recognised": {
+    "value": 1.0,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "sensitive_recall.compromised_card": {
+    "value": 0.9,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "sensitive_review_rate.compromised_card": {
+    "value": 0.95,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "sensitive_recall.direct_debit_payment_not_recognised": {
+    "value": 0.6,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "sensitive_review_rate.direct_debit_payment_not_recognised": {
+    "value": 0.95,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "sensitive_recall.lost_or_stolen_card": {
+    "value": 0.95,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "sensitive_review_rate.lost_or_stolen_card": {
+    "value": 1.0,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "sensitive_recall.lost_or_stolen_phone": {
+    "value": 0.85,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "sensitive_review_rate.lost_or_stolen_phone": {
+    "value": 1.0,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "risk_route_accuracy.ambiguous": {
+    "value": 0.6,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "risk_route_accuracy.out_of_domain": {
+    "value": 0.9,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  },
+  "risk_route_accuracy.sensitive_indirect": {
+    "value": 1.0,
+    "unit": "ratio",
+    "provenance": "MEASURED",
+    "source": "artifacts/experiments/exp_llm_high_capability_v1_20261011T203415Z/results.jsonl"
+  }
+}

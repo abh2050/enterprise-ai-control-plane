@@ -21,8 +21,13 @@
   },
   "llm_high_capability_v1": {
     "experiment_id": "exp_llm_high_capability_v1_20261011T203415Z",
-    "status": "running",
-    "history": [],
+    "status": "finished",
+    "history": [
+      {
+        "experiment_id": "exp_llm_high_capability_v1_20261011T203415Z",
+        "reason": "first run"
+      }
+    ],
     "started_at": "2026-10-11T20:34:15.415215+00:00"
   }
 }

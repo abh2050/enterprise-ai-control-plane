@@ -26,6 +26,7 @@ back to the manual process at no extra cost.
 | Config | Coverage | Auto precision | Breakeven precision | Gate (breakeven + 0.03) | Net monthly value |
 |---|---|---|---|---|---|
 | classifier_v1 | 86.2% `MEASURED` | 0.944 `MEASURED` | 0.849 `ASSUMPTION` | pass | $57,270 `ASSUMPTION` |
+| llm_high_capability_v1 | 79.4% `MEASURED` | 0.976 `MEASURED` | 0.865 `ASSUMPTION` | pass | $66,957 `ASSUMPTION` |
 | llm_low_cost_v1 | 76.5% `MEASURED` | 0.974 `MEASURED` | 0.864 `ASSUMPTION` | pass | $62,130 `ASSUMPTION` |
 
 ## Monthly breakdown (USD, `ASSUMPTION`)
@@ -33,6 +34,7 @@ back to the manual process at no extra cost.
 | Config | Labor saved | Misroutes | Review labor | Model | Infrastructure |
 |---|---|---|---|---|---|
 | classifier_v1 | $91,534 | $28,701 | $5,162 | $0.00 | $400 |
+| llm_high_capability_v1 | $87,224 | $12,143 | $7,670 | $53.27 | $400 |
 | llm_low_cost_v1 | $83,791 | $12,662 | $8,547 | $50.69 | $400 |
 
 ## Sensitivity: classifier_v1
@@ -46,6 +48,18 @@ minutes vary. All values `ASSUMPTION`.
 | $8 | $59,852 (0.845) | $57,270 (0.849) | $52,108 (0.857) |
 | $16 | $40,891 (0.900) | $38,309 (0.903) | $33,147 (0.908) |
 | $32 | $2,969 (0.942) | $387 (0.943) | −$4,775 (0.946) |
+
+## Sensitivity: llm_high_capability_v1
+
+Net monthly value (breakeven precision) as the standard misroute cost and review
+minutes vary. All values `ASSUMPTION`.
+
+| Misroute cost \ Review minutes | 0.5 min | 1 min | 2 min |
+|---|---|---|---|
+| $4 | $74,429 (0.810) | $70,594 (0.819) | $62,923 (0.836) |
+| $8 | $70,793 (0.859) | $66,957 (0.865) | $59,287 (0.878) |
+| $16 | $63,520 (0.906) | $59,685 (0.911) | $52,014 (0.919) |
+| $32 | $48,974 (0.944) | $45,139 (0.947) | $37,469 (0.952) |
 
 ## Sensitivity: llm_low_cost_v1
 

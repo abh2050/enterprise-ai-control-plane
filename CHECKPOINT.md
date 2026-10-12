@@ -1,44 +1,20 @@
-# Checkpoint: M3 in progress, LLM configs tuned and frozen; frozen runs await owner go-ahead (2026-10-11)
+# Checkpoint: M3 LLM configs and economics complete (2026-10-12)
 
-Plan: ~/.claude/plans/enterprise-ai-control-temporal-magpie.md. GCP project: spheric-bloom-350617 (billing on, Vertex AI enabled, ADC set with quota project).
+Plan: ~/.claude/plans/enterprise-ai-control-temporal-magpie.md. Console spec: docs/spec/console_spec.md (applies to M4 and M8). Next: M4 (Section 9A design system, then Section 9 pages, lifecycle, registry seed, importer).
 
-## Spend so far
-$0.1896 at Vertex list prices (`uv run cp ledger`), all on dev-set pilots and preflight. Cap: $10 total, $5 per app per day.
+## Exit evidence
+- All three configs were evaluated on the identical 1,540-case frozen set in the same order (docs/experiment_report.md, all MEASURED):
+  - classifier_v1: macro F1 0.913, auto precision 0.944, coverage 86.2%, p95 2 ms, $0 per 1k cases
+  - llm_high_capability_v1 (gemini-3.8-flash, cached prefix): macro F1 0.885, auto precision 0.976, coverage 79.4%, p95 3.5 s, $1.07 per 1k cases
+  - llm_low_cost_v1 (gemini-3.1-flash-lite): macro F1 0.839, auto precision 0.974, coverage 76.5%, p95 1.4 s, $1.01 per 1k cases
+  - Paired bootstrap against the classifier: both LLMs have significantly lower macro F1 and significantly higher auto precision (CIs exclude 0)
+  - No config reaches 0.95 recall on all six sensitive intents. The LLMs abstain on 90% of out-of-domain risk cases; the classifier on 0%.
+- docs/business_case.md, all ASSUMPTION: net monthly value $66,957 (3.8 Flash), $62,130 (flash-lite), $57,270 (classifier); all pass breakeven plus 0.03.
+- Ledger tests pass on memory, file, and the Firestore emulator; 142 tests total; ruff and mypy clean.
+- Spend: $4.89 of the $10 cap at Vertex list prices. 9 unknown outcomes (dropped connections) in the 3.8 Flash run were held and never re-called; they route to review.
 
-## Done in M3
-- Vertex price card `configs/price_cards/2026-10-11_vertex.yaml` (standard table, Global endpoint, <= 200K tier, cache storage rate)
-- Preflight passed for both models (artifacts/preflight/): flash-lite with thinking `minimal`; 3.8 Flash rejects `minimal`, uses `low`. Both 0 thinking tokens.
-- Uncached 50-case dev pilots (real Vertex calls):
-  - gemini-3.1-flash-lite: 50/50 valid, ~3,557 input tokens, ~42 output, ~1.0 s, $0.00095 per call, projected M3 $2.19
-  - gemini-3.8-flash: 50/50 valid, ~3,557 input, ~43 output, ~1.7 s, $0.00283 per call, projected M3 $6.49
-  - Projected M3 plus M5 is about $10.20, over the cap. Implicit caching gave 0 cached tokens.
-  - Token count vs billed input: flash-lite 6 percent under, 3.8 Flash 20 percent under (structured output overhead); no reservation was exceeded.
-- Owner chose explicit context caching to fit the cap. Code is built and tested (cache session, storage charged through the ledger, cached reservations), 138 tests pass.
-
-## Blocker found just before the pause (explicit caching probe, ledgered, $0)
-- gemini-3.1-flash-lite: cache create on global returns 403 PERMISSION_DENIED; the model is 404 in us-central1 and us-east5. Explicit caching appears unavailable for it.
-- gemini-3.8-flash on global: 400 INVALID_ARGUMENT, "The cached content is of 2836 tokens..." (below the minimum cache size; message truncated). It is 404 in us-central1 and us-east5.
-- `configs/triage_configs.yaml` currently sets `context_cache: true` for both LLM configs, so `cp pilot` will fail until this is resolved.
-
-## Options to decide after the spec revision
-1. 3.8 Flash: pad or enlarge the static prefix above the minimum (e.g. 2 examples per label) and cache it; flash-lite: run uncached (it is cheap).
-2. Drop caching; use a smaller prompt or raise the cap.
-3. Vertex batch prediction (50 percent off) for dev tuning and the frozen set.
-
-## Not yet done in M3
-- Dev tuning, freezing, and frozen evaluation of both LLM configs
-- Experiment report LLM sections, paired bootstrap, total cost per correct case, docs/business_case.md
-
-## Housekeeping for the owner
-- Rotate the secrets pasted in chat: AI Studio Gemini key, OpenAI key, Hugging Face token, and HF_CREDENTIALS (printed by mistake)
-- After the Gemini key is revoked, remove GEMINI_API_KEY from .env
-
-## Update: caching resolved, dev tuning done (2026-10-11)
-- Console spec saved to docs/spec/console_spec.md (replaces Sections 9, 9A, and 9B; applies to M4 and M8).
-- Caching: both configs use 2 dev examples per label (4,850-token prefix). 3.8 Flash uses Vertex explicit caching; flash-lite runs uncached. The owner pre-approved a $11 cap if needed; it was not needed.
-- Re-run pilots: flash-lite $0.00139/call, 3.8 Flash $0.00107/call (cached).
-- Dev tuning on 616 rows and freezing (both MEASURED):
-  - llm_low_cost_v1: dev LLM accuracy 0.847, auto precision 0.975, coverage 77.1%, agreement threshold 0.00
-  - llm_high_capability_v1: dev LLM accuracy 0.881, auto precision 0.976, coverage 79.7%, agreement threshold 0.00
-- Spend $1.55 of $10. The frozen runs are projected at about $3.90 and would cross the $5 per-app daily limit today.
-- The report generator now covers three configs, paired bootstrap, total cost per correct case, and docs/business_case.md.
+## Carried into M4 and M5
+- M5 signature scenario: sensitive-intent gates fail for every config. Release decisions and cohort economics come from these measured numbers (decisions D6, D7).
+- The owner should review the risk suite labels (single rater, AI drafted).
+- Rotate the secrets pasted in chat (Gemini, OpenAI, Hugging Face, HF_CREDENTIALS) and remove GEMINI_API_KEY from .env.
+- Spec questions for M4 are listed in the plan (two stall definitions, visual baseline approval, 1,000-app load fixture, Higgsfield key name).
