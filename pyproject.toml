@@ -56,6 +56,10 @@ ignore = ["S101"]
 # SQL text interpolates only fixed identifiers (project, dataset, table names from config);
 # every value is a named query parameter. Long lines are SQL.
 "backend/control_plane/analytics/*.py" = ["S608", "E501"]
+# Diagram sources are coordinates and label text; draw.io style strings are copied verbatim.
+# The build calls the draw.io CLI with fixed arguments; the validator parses our own files.
+"docs/diagrams/**/*.py" = ["E501", "S603"]
+".claude/skills/gcp-architecture-diagram/scripts/*.py" = ["E501", "S310", "S314"]
 
 [tool.mypy]
 python_version = "3.12"
