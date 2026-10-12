@@ -251,12 +251,12 @@ def move(
         app = tx.get("apps", app_id)
         if app is None:
             raise NotFoundError(f"app {app_id} not found")
+        check = check_move(app, to_stage, actor, reason, now)
+        if not check.allowed and check.code in ("role", "not_owner"):
+            raise ForbiddenError(check.message or "forbidden")
         if app.get("version", 1) != expected_version:
             raise VersionConflictError(app)
-        check = check_move(app, to_stage, actor, reason, now)
         if not check.allowed:
-            if check.code in ("role", "not_owner"):
-                raise ForbiddenError(check.message or "forbidden")
             raise RequirementMissingError(check.code or "invalid", check.message or "invalid")
         from_stage = app["stage"]
         updates: dict[str, Any] = {

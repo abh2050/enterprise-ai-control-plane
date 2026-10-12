@@ -1,5 +1,6 @@
 """Runtime settings, read from the environment and an optional .env file."""
 
+from datetime import datetime
 from enum import StrEnum
 from functools import lru_cache
 
@@ -49,6 +50,8 @@ class Settings(BaseSettings):
     file_store_dir: str = ".local/store"
 
     iap_audience: str | None = None
+    # Fixed clock for visual tests and the snapshot export (ISO 8601). Unset in normal use.
+    fixed_now: datetime | None = None
 
     # Spec defaults are $5, $40, and $60. The owner capped all LLM spend at $10
     # (docs/decisions.md D11), measured at paid-tier list prices.

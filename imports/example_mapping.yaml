@@ -1,8 +1,14 @@
-# Column mapping for `cp importregistry` (M4). Keys are control plane fields,
-# values are column names in your CSV export.
+# Column mapping for `cp importregistry`. Keys are control plane fields; values are the
+# column names in your CSV export. Optional usage columns may be omitted.
 name: Application Name
 owner: Owner Email
 business_unit: Department
 platform: Platform
 risk_tier: Risk Rating
 business_problem: Problem Statement
+monthly_spend_usd: Monthly Spend
+monthly_budget_usd: Monthly Budget
+active_users: Active Users
+# Provenance for imported usage figures: MEASURED if your platform's billing export
+# produced them, otherwise ASSUMPTION.
+usage_provenance: ASSUMPTION

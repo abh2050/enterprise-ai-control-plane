@@ -308,15 +308,55 @@ def pricecheck(
 
 
 @app.command()
-def importregistry() -> None:
-    """Import an organization's app list from CSV plus a column mapping."""
-    _not_yet("M4")
+def importregistry(
+    csv_path: Annotated[str, typer.Argument(help="CSV export of your app list")],
+    mapping: Annotated[str, typer.Option(help="YAML column mapping")] = (
+        "imports/example_mapping.yaml"
+    ),
+    actor: Annotated[str, typer.Option(help="Recorded as the importer")] = "admin@example.com",
+) -> None:
+    """Import an organization's app list from CSV plus a column mapping (all or nothing)."""
+    from pathlib import Path
+
+    from control_plane.importer import import_csv
+
+    store = _live_store(get_settings())
+    report = import_csv(store, Path(csv_path), Path(mapping), actor)
+    for err in report.errors:
+        typer.echo(f"error: {err}", err=True)
+    if report.errors:
+        typer.echo(f"Nothing imported: {len(report.errors)} problem(s) in {report.rows} rows.")
+        raise typer.Exit(code=1)
+    typer.echo(f"Imported {len(report.created)} apps into intake.")
 
 
 @users_app.command("set-role")
-def users_set_role() -> None:
-    """Assign a role to a user."""
-    _not_yet("M4")
+def users_set_role(
+    email: Annotated[str, typer.Argument()],
+    role: Annotated[
+        str, typer.Argument(help="app_owner, reviewer, governance_admin, or executive_viewer")
+    ],
+    security_reviewer: Annotated[bool, typer.Option()] = False,
+) -> None:
+    """Assign a role to a user (governance admins also use the Settings page)."""
+    from datetime import UTC, datetime
+
+    from control_plane.contracts import Role
+
+    store = _live_store(get_settings())
+    existing = store.get("users", email.lower()) or {}
+    store.set(
+        "users",
+        email.lower(),
+        {
+            "email": email.lower(),
+            "role": Role(role).value,
+            "active": True,
+            "security_reviewer": security_reviewer,
+            "created_at": existing.get("created_at", datetime.now(UTC).isoformat()),
+        },
+    )
+    typer.echo(f"{email.lower()} is now {role}.")
 
 
 @app.command()

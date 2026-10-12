@@ -4,7 +4,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from control_plane.api import create_app
-from control_plane.fixtures import seed_fixture
+from control_plane.fixtures import seed_registry
 from control_plane.settings import Settings
 from control_plane.store import FileStore, FirestoreStore, MemoryStore, Store
 
@@ -37,6 +37,6 @@ def any_store(request: pytest.FixtureRequest, tmp_path_factory: pytest.TempPathF
 
 def make_client(settings: Settings | None = None, store: Store | None = None) -> TestClient:
     store = store or MemoryStore()
-    seed_fixture(store)
+    seed_registry(store)
     app = create_app(settings or Settings(_env_file=None), store)
     return TestClient(app, client=LOOPBACK)

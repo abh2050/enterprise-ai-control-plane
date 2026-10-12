@@ -266,6 +266,7 @@ def generate() -> str:
     text = "\n".join(lines)
     REPORT_PATH.write_text(text)
     BUSINESS_CASE_PATH.write_text(business_case(data, assumptions))
+    write_summary(data, assumptions)
     return text
 
 
@@ -364,3 +365,122 @@ def business_case(data: dict[str, dict[str, Any]], a: Assumptions) -> str:
             lines.append(f"| ${cost:g} | " + " | ".join(cells) + " |")
     lines.append("")
     return "\n".join(lines)
+
+
+SUMMARY_PATH = REPO_ROOT / "artifacts" / "experiment_summary.json"
+
+
+def _per_intent(rows: list[dict[str, Any]], labels: list[str]) -> list[dict[str, Any]]:
+    out = []
+    for label in labels:
+        support = [r for r in rows if r["reference_label"] == label]
+        predicted = [r for r in rows if r["predicted_label"] == label and r["route"] != "abstain"]
+        tp = sum(r["predicted_label"] == label for r in support)
+        out.append(
+            {
+                "intent": label,
+                "support": len(support),
+                "recall": tp / len(support) if support else None,
+                "precision": tp / len(predicted) if predicted else None,
+                "auto_rate": sum(r["route"] == "auto" for r in support) / len(support)
+                if support
+                else None,
+                "sensitive": label in SENSITIVE_INTENTS,
+            }
+        )
+    return out
+
+
+def _sensitive_confusion(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Where each sensitive intent's cases went: label and route counts."""
+    out = []
+    for intent in sorted(SENSITIVE_INTENTS):
+        cases = [r for r in rows if r["reference_label"] == intent]
+        predicted: dict[str, int] = {}
+        for r in cases:
+            key = r["predicted_label"] or "(no label)"
+            predicted[key] = predicted.get(key, 0) + 1
+        out.append(
+            {
+                "intent": intent,
+                "cases": len(cases),
+                "predicted": dict(sorted(predicted.items(), key=lambda kv: -kv[1])),
+                "routes": {
+                    route: sum(r["route"] == route for r in cases)
+                    for route in ("auto", "review", "abstain")
+                },
+            }
+        )
+    return out
+
+
+def write_summary(data: dict[str, dict[str, Any]], a: Assumptions) -> dict[str, Any]:
+    labels = load_categories()
+    configs = list(data)
+    _, raw = load_assumptions()
+    summary: dict[str, Any] = {
+        "provenance_note": "Metrics are MEASURED on the frozen set; economics are ASSUMPTION.",
+        "configs": {},
+        "bootstrap": [],
+        "assumptions": raw["assumptions"],
+        "sensitivity_grid": raw["sensitivity"],
+    }
+    for c in configs:
+        d = data[c]
+        r = rates_from(d["results"])
+        be = breakeven_precision(a, r)
+        grid = raw["sensitivity"]
+        summary["configs"][c] = {
+            "experiment_id": d["experiment"]["experiment_id"],
+            "model_id": d["config"]["model_id"],
+            "policy": {
+                "policy_id": d["policy"]["policy_id"],
+                "thresholds": d["policy"]["thresholds"],
+                "sensitive_intents": d["policy"]["sensitive_intents"],
+                "eligible_cohort": d["policy"]["eligible_cohort"],
+                "tuning": d["policy"]["tuning"],
+                "created_at": d["policy"]["created_at"],
+            },
+            "scorecard": d["card"],
+            "usage": d["experiment"].get("usage"),
+            "per_intent": _per_intent(d["rows"], labels),
+            "sensitive_confusion": _sensitive_confusion(d["rows"]),
+            "economics": {
+                "rates": r.__dict__,
+                "breakeven_precision": be,
+                "gate_threshold": None if be is None else be + GATE_MARGIN,
+                "net_monthly": net_monthly_value(a, r),
+                "total_cost_per_correct_usd": total_cost_per_correct(
+                    d["results"], a.economics(), frozenset(SENSITIVE_INTENTS)
+                ),
+                "sensitivity": sensitivity_table(
+                    a, r, grid["misroute_cost_standard"], grid["review_minutes"]
+                ),
+            },
+            "source": _rel(d["dir"] / "scorecard.json"),
+        }
+    if BASELINE in data:
+        base = data[BASELINE]["results"]
+        for c in configs:
+            if c == BASELINE:
+                continue
+            cand = data[c]["results"]
+            for name, fn in (
+                ("macro_f1", lambda rs: macro_f1(rs, labels)),
+                ("auto_precision", auto_precision),
+            ):
+                point, lo, hi = paired_bootstrap(base, cand, fn)
+                summary["bootstrap"].append(
+                    {
+                        "candidate": c,
+                        "baseline": BASELINE,
+                        "metric": name,
+                        "delta": point,
+                        "ci_low": lo,
+                        "ci_high": hi,
+                        "resamples": 1000,
+                        "seed": 42,
+                    }
+                )
+    SUMMARY_PATH.write_text(json.dumps(summary, indent=1, default=str) + "\n")
+    return summary

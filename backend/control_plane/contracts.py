@@ -23,6 +23,7 @@ class DatasetLabel(StrEnum):
 
     SYNTHETIC = "SYNTHETIC"
     AUTHORED = "AUTHORED"
+    IMPORTED = "IMPORTED"
 
 
 class DataMode(StrEnum):
@@ -186,6 +187,7 @@ class App(Record):
     approvals_expire_at: datetime | None = None
     last_decision: str | None = None
     last_activity_at: datetime | None = None
+    usage_provenance: Provenance | None = None
     stage_entered_at: datetime
     created_at: datetime
     provenance: Provenance | DatasetLabel

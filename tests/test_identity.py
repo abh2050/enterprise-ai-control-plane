@@ -46,7 +46,8 @@ def test_unknown_fixture_user_rejected() -> None:
 def test_known_fixture_user_gets_role_from_store() -> None:
     r = make_client().get("/api/me", headers={FIXTURE_HEADER: "Admin@Example.com"})
     assert r.status_code == 200
-    assert r.json() == {"email": "admin@example.com", "role": "governance_admin"}
+    assert r.json()["email"] == "admin@example.com"
+    assert r.json()["role"] == "governance_admin"
 
 
 def test_non_loopback_client_rejected_in_fixture_mode() -> None:
@@ -69,7 +70,7 @@ def test_iap_mode_fails_closed(headers: dict[str, str]) -> None:
 def test_executive_viewer_reads_portfolio_only() -> None:
     client = make_client()
     h = {FIXTURE_HEADER: "exec@example.com"}
-    assert client.get("/api/portfolio/summary", headers=h).status_code == 200
+    assert client.get("/api/portfolio", headers=h).status_code == 200
     assert client.get("/api/apps/support-triage", headers=h).status_code == 403
     assert client.get("/api/incidents", headers=h).status_code == 403
 

@@ -31,3 +31,4 @@ test-results/
 artifacts/models/*.pkl
 .local/
 .cache/
+!imports/example_export.csv

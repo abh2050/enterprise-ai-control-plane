@@ -31,6 +31,21 @@ gate_approvers:
   security: [security_reviewer]   # a reviewer whose user record has security_reviewer: true
 approval_valid_days: 180
 
+# What each gate's reviewer checks (shown on the Reviews page).
+review_rubric:
+  reviewer:
+    - The business problem names who does the work today and what it costs them
+    - The value hypothesis can be checked after launch
+    - The cost estimate covers licenses and usage
+  governance:
+    - The risk tier matches the data and decisions involved
+    - A person stays accountable for every customer-facing or financial outcome
+    - Monitoring, pause, and rollback owners are named
+  security:
+    - Data classification and retention are documented
+    - No credentials, secrets, or customer data leave approved systems
+    - Access is limited to the roles that need it
+
 # Allowed moves. "any" covers every stage except retired. Requirements are checked in
 # order and the first missing one is reported before any mutation.
 transitions:

@@ -12,7 +12,7 @@ NOW = datetime(2026, 10, 12, tzinfo=UTC)
 def app(**kw):  # type: ignore[no-untyped-def]
     base = {
         "app_id": "a1",
-        "stage": "monitored",
+        "stage": "review_gates",
         "owner": "o@x.com",
         "stage_entered_at": (NOW - timedelta(days=5)).isoformat(),
         "monthly_budget_micros": 100,
@@ -26,7 +26,7 @@ def app(**kw):  # type: ignore[no-untyped-def]
 
 def score(a, **kw):  # type: ignore[no-untyped-def]
     args = {
-        "medians": {"monitored": 10.0},
+        "medians": {"review_gates": 10.0},
         "open_incident_apps": set(),
         "dismissals": [],
         "owners_active": {"o@x.com": True},
